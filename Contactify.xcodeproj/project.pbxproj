@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		443963931A9657D600E0C385 /* TestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443963921A9657D600E0C385 /* TestSpec.swift */; };
 		44E9D5EC1A952D2F001E4792 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */; };
 		44E9D5EE1A952D2F001E4792 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9D5ED1A952D2F001E4792 /* ViewController.swift */; };
 		44E9D5F11A952D2F001E4792 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5EF1A952D2F001E4792 /* Main.storyboard */; };
 		44E9D5F31A952D2F001E4792 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F21A952D2F001E4792 /* Images.xcassets */; };
 		44E9D5F61A952D2F001E4792 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F41A952D2F001E4792 /* LaunchScreen.xib */; };
 		44E9D6021A952D2F001E4792 /* ContactifyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9D6011A952D2F001E4792 /* ContactifyTests.swift */; };
+		7A79AEFF80BE6EC8A7DF98D8 /* Pods_ContactifyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		443963921A9657D600E0C385 /* TestSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSpec.swift; sourceTree = "<group>"; };
 		44E9D5E61A952D2F001E4792 /* Contactify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Contactify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D5EA1A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -36,6 +39,9 @@
 		44E9D5FB1A952D2F001E4792 /* ContactifyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ContactifyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D6001A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44E9D6011A952D2F001E4792 /* ContactifyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactifyTests.swift; sourceTree = "<group>"; };
+		7F1FEA9E6D968643657B0B3A /* Pods-ContactifyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ContactifyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests.release.xcconfig"; sourceTree = "<group>"; };
+		C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ContactifyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3D4EF98625A9FAB6E22AD59 /* Pods-ContactifyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ContactifyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A79AEFF80BE6EC8A7DF98D8 /* Pods_ContactifyTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +69,8 @@
 				44E9D5E81A952D2F001E4792 /* Contactify */,
 				44E9D5FE1A952D2F001E4792 /* ContactifyTests */,
 				44E9D5E71A952D2F001E4792 /* Products */,
+				BBEFF3283B3521024DBEA91B /* Pods */,
+				5267B1DE1C08D6BCF6EE1253 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -100,6 +109,7 @@
 			children = (
 				44E9D6011A952D2F001E4792 /* ContactifyTests.swift */,
 				44E9D5FF1A952D2F001E4792 /* Supporting Files */,
+				443963921A9657D600E0C385 /* TestSpec.swift */,
 			);
 			path = ContactifyTests;
 			sourceTree = "<group>";
@@ -110,6 +120,23 @@
 				44E9D6001A952D2F001E4792 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5267B1DE1C08D6BCF6EE1253 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BBEFF3283B3521024DBEA91B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E3D4EF98625A9FAB6E22AD59 /* Pods-ContactifyTests.debug.xcconfig */,
+				7F1FEA9E6D968643657B0B3A /* Pods-ContactifyTests.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,9 +163,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 44E9D6081A952D2F001E4792 /* Build configuration list for PBXNativeTarget "ContactifyTests" */;
 			buildPhases = (
+				4BA1D03B91D06747FDF7E62A /* Check Pods Manifest.lock */,
 				44E9D5F71A952D2F001E4792 /* Sources */,
 				44E9D5F81A952D2F001E4792 /* Frameworks */,
 				44E9D5F91A952D2F001E4792 /* Resources */,
+				F4B3D3A630F7B1B25A6B8717 /* Embed Pods Frameworks */,
+				F2A3C5E45FC33A8E62E28CE9 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -207,6 +237,54 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4BA1D03B91D06747FDF7E62A /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F2A3C5E45FC33A8E62E28CE9 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F4B3D3A630F7B1B25A6B8717 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		44E9D5E21A952D2F001E4792 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -221,6 +299,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				443963931A9657D600E0C385 /* TestSpec.swift in Sources */,
 				44E9D6021A952D2F001E4792 /* ContactifyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -358,6 +437,7 @@
 		};
 		44E9D6091A952D2F001E4792 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3D4EF98625A9FAB6E22AD59 /* Pods-ContactifyTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -377,6 +457,7 @@
 		};
 		44E9D60A1A952D2F001E4792 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7F1FEA9E6D968643657B0B3A /* Pods-ContactifyTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
