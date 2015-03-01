@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1626BD4B92B820EDC793B971 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFF842C549D9522FF3D0601 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		443963931A9657D600E0C385 /* TestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443963921A9657D600E0C385 /* TestSpec.swift */; };
 		443963951A9755FA00E0C385 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963941A9755FA00E0C385 /* AVFoundation.framework */; };
 		443963971A97563D00E0C385 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963961A97563D00E0C385 /* Spotify.framework */; };
 		4439639D1A97B0DE00E0C385 /* SpotifySpike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4439639C1A97B0DE00E0C385 /* SpotifySpike.swift */; };
 		4439639E1A97B6F100E0C385 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963961A97563D00E0C385 /* Spotify.framework */; };
+		443F9EC11AA39CAE00705340 /* echonest-response-data-one-song.txt in Resources */ = {isa = PBXBuildFile; fileRef = 443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */; };
 		44E9D5EC1A952D2F001E4792 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */; };
 		44E9D5EE1A952D2F001E4792 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9D5ED1A952D2F001E4792 /* ViewController.swift */; };
 		44E9D5F11A952D2F001E4792 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5EF1A952D2F001E4792 /* Main.storyboard */; };
@@ -20,8 +22,7 @@
 		44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */; };
 		44FDE0C01A9EB52E0052C6D1 /* EchoNestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */; };
 		44FDE0C21A9F40040052C6D1 /* SongData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0C11A9F40040052C6D1 /* SongData.swift */; };
-		7A79AEFF80BE6EC8A7DF98D8 /* Pods_ContactifyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		81E9400B6AED26BE4AACC395 /* libPods-Contactify.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66D3FB3813FB5D7D03611B18 /* libPods-Contactify.a */; };
+		EB6288CF377998ECD558338C /* Pods_ContactifyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C42088056DB800A75BCFC0F /* Pods_Contactify.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Contactify.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		443963921A9657D600E0C385 /* TestSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSpec.swift; sourceTree = "<group>"; };
 		443963941A9755FA00E0C385 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		443963961A97563D00E0C385 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = "Pods/Spotify-iOS-SDK/Spotify.framework"; sourceTree = "<group>"; };
@@ -42,6 +44,7 @@
 		4439639C1A97B0DE00E0C385 /* SpotifySpike.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifySpike.swift; sourceTree = "<group>"; };
 		4439639F1A97D53800E0C385 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "Pods/build/Debug-iphoneos/Pods-ContactifyTests/Quick.framework"; sourceTree = "<group>"; };
 		443963A11A97D53D00E0C385 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Pods/build/Debug-iphoneos/Pods-ContactifyTests/Nimble.framework"; sourceTree = "<group>"; };
+		443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-one-song.txt"; sourceTree = "<group>"; };
 		44E9D5E61A952D2F001E4792 /* Contactify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Contactify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D5EA1A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -54,12 +57,13 @@
 		44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EchoNestServiceSpec.swift; sourceTree = "<group>"; };
 		44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EchoNestService.swift; sourceTree = "<group>"; };
 		44FDE0C11A9F40040052C6D1 /* SongData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongData.swift; sourceTree = "<group>"; };
-		66D3FB3813FB5D7D03611B18 /* libPods-Contactify.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Contactify.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CFF842C549D9522FF3D0601 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		7F1FEA9E6D968643657B0B3A /* Pods-ContactifyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ContactifyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests.release.xcconfig"; sourceTree = "<group>"; };
 		8B0A10FCB31F7FC575879C59 /* Pods-Contactify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Contactify.release.xcconfig"; path = "Pods/Target Support Files/Pods-Contactify/Pods-Contactify.release.xcconfig"; sourceTree = "<group>"; };
 		8D9DA7E43ABBFE8437691456 /* Pods-Contactify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Contactify.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Contactify/Pods-Contactify.debug.xcconfig"; sourceTree = "<group>"; };
+		A2393EA9661264AFAB780F39 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ContactifyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D7A17646DF3DF7C3F9CA107F /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D4EF98625A9FAB6E22AD59 /* Pods-ContactifyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ContactifyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,7 +74,7 @@
 			files = (
 				443963971A97563D00E0C385 /* Spotify.framework in Frameworks */,
 				443963951A9755FA00E0C385 /* AVFoundation.framework in Frameworks */,
-				81E9400B6AED26BE4AACC395 /* libPods-Contactify.a in Frameworks */,
+				1626BD4B92B820EDC793B971 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,7 +83,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4439639E1A97B6F100E0C385 /* Spotify.framework in Frameworks */,
-				7A79AEFF80BE6EC8A7DF98D8 /* Pods_ContactifyTests.framework in Frameworks */,
+				EB6288CF377998ECD558338C /* Pods_ContactifyTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,6 +148,7 @@
 		44E9D5FF1A952D2F001E4792 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */,
 				44E9D6001A952D2F001E4792 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -157,8 +162,8 @@
 				443963961A97563D00E0C385 /* Spotify.framework */,
 				443963941A9755FA00E0C385 /* AVFoundation.framework */,
 				C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */,
-				66D3FB3813FB5D7D03611B18 /* libPods-Contactify.a */,
-				D7A17646DF3DF7C3F9CA107F /* libPods.a */,
+				2C42088056DB800A75BCFC0F /* Pods_Contactify.framework */,
+				4CFF842C549D9522FF3D0601 /* Pods.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -170,6 +175,8 @@
 				7F1FEA9E6D968643657B0B3A /* Pods-ContactifyTests.release.xcconfig */,
 				8D9DA7E43ABBFE8437691456 /* Pods-Contactify.debug.xcconfig */,
 				8B0A10FCB31F7FC575879C59 /* Pods-Contactify.release.xcconfig */,
+				750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */,
+				A2393EA9661264AFAB780F39 /* Pods.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -186,6 +193,7 @@
 				44E9D5E31A952D2F001E4792 /* Frameworks */,
 				44E9D5E41A952D2F001E4792 /* Resources */,
 				8EAF43C33285473A560D9C6D /* Copy Pods Resources */,
+				44CC22AC0DEE2B01DAA5B259 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -269,12 +277,28 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				443F9EC11AA39CAE00705340 /* echonest-response-data-one-song.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		44CC22AC0DEE2B01DAA5B259 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		4BA1D03B91D06747FDF7E62A /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -317,7 +341,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Contactify/Pods-Contactify-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F2A3C5E45FC33A8E62E28CE9 /* Copy Pods Resources */ = {
@@ -485,7 +509,7 @@
 		};
 		44E9D6061A952D2F001E4792 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D9DA7E43ABBFE8437691456 /* Pods-Contactify.debug.xcconfig */;
+			baseConfigurationReference = 750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -504,7 +528,7 @@
 		};
 		44E9D6071A952D2F001E4792 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8B0A10FCB31F7FC575879C59 /* Pods-Contactify.release.xcconfig */;
+			baseConfigurationReference = A2393EA9661264AFAB780F39 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

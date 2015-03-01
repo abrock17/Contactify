@@ -1,6 +1,14 @@
 import Foundation
+import SwiftyJSON
 
 public class EchoNestService {
+    
+    let apiKey = "GVZ7FFJUMMXBG58VQ"
+    let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
+    let songSearchResultLimit = 50
+    let songSearchSortValue = "song_hotttnesss-desc"
+    let songSearchBuckets = ["tracks", "id:spotify"]
+    let limitResultsToCatalog = true
     
     let urlConnection: NSURLConnectionWrapper!
     
@@ -9,15 +17,30 @@ public class EchoNestService {
     }
     
     public func findSongData(#titleSearchTerm: String!, completionHandler searchCompletionHandler: (SongData?, NSError!) -> Void) {
-        var songData: SongData?
-        let urlString : String = "http://developer.echonest.com/api/v4/song/search?api_key=GVZ7FFJUMMXBG58VQ&format=json&results=100&sort=artist_hotttnesss-desc&bucket=tracks&bucket=id:spotify&limit=true&title=\(titleSearchTerm)"
-        var request = NSMutableURLRequest(URL: NSURL(string: urlString)!)
+
+        var urlString = "\(songSearchEndpoint)?api_key=\(apiKey)&format=json&results=\(songSearchResultLimit)&sort=\(songSearchSortValue)&limit=\(limitResultsToCatalog)&title=\(titleSearchTerm)"
+        for bucket in songSearchBuckets {
+            urlString += "&bucket=\(bucket)"
+        }
+        let encodedURLString = urlString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+        let request = NSMutableURLRequest(URL: NSURL(string: encodedURLString!)!)
         request.HTTPMethod = "GET"
         let queue = NSOperationQueue()
         
-        urlConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: { (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-                searchCompletionHandler(nil, error)
-            })
+        urlConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: {
+            (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
+            var songData: SongData?
+            
+            if data != nil {
+                let json = JSON(data: data)
+                let songJSON = json["response"]["songs"][0]
+                if let title = songJSON["title"].string {
+                    songData = SongData(title: title, artistName: songJSON["artist_name"].string, catalogID: nil)
+                }
+            }
+            
+            searchCompletionHandler(songData, error)
+        })
     }
 }
 
