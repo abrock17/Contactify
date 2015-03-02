@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1626BD4B92B820EDC793B971 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFF842C549D9522FF3D0601 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		443963931A9657D600E0C385 /* TestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443963921A9657D600E0C385 /* TestSpec.swift */; };
 		443963951A9755FA00E0C385 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963941A9755FA00E0C385 /* AVFoundation.framework */; };
 		443963971A97563D00E0C385 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963961A97563D00E0C385 /* Spotify.framework */; };
 		4439639D1A97B0DE00E0C385 /* SpotifySpike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4439639C1A97B0DE00E0C385 /* SpotifySpike.swift */; };
@@ -37,7 +36,6 @@
 
 /* Begin PBXFileReference section */
 		2C42088056DB800A75BCFC0F /* Pods_Contactify.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Contactify.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		443963921A9657D600E0C385 /* TestSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSpec.swift; sourceTree = "<group>"; };
 		443963941A9755FA00E0C385 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		443963961A97563D00E0C385 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = "Pods/Spotify-iOS-SDK/Spotify.framework"; sourceTree = "<group>"; };
 		443963981A97567100E0C385 /* Contactify-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Contactify-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -90,6 +88,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		443F9EC21AA3FC4800705340 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		443F9EC31AA3FCA500705340 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				44E9D5ED1A952D2F001E4792 /* ViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		443F9EC41AA3FCBE00705340 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				44FDE0C11A9F40040052C6D1 /* SongData.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		443F9EC51AA3FCED00705340 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		44E9D5DD1A952D2F001E4792 = {
 			isa = PBXGroup;
 			children = (
@@ -113,15 +143,15 @@
 		44E9D5E81A952D2F001E4792 /* Contactify */ = {
 			isa = PBXGroup;
 			children = (
+				443F9EC41AA3FCBE00705340 /* Models */,
+				443F9EC31AA3FCA500705340 /* Controllers */,
+				443F9EC21AA3FC4800705340 /* Services */,
 				44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */,
-				44E9D5ED1A952D2F001E4792 /* ViewController.swift */,
 				44E9D5EF1A952D2F001E4792 /* Main.storyboard */,
 				44E9D5F21A952D2F001E4792 /* Images.xcassets */,
 				44E9D5F41A952D2F001E4792 /* LaunchScreen.xib */,
 				44E9D5E91A952D2F001E4792 /* Supporting Files */,
 				443963981A97567100E0C385 /* Contactify-Bridging-Header.h */,
-				44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */,
-				44FDE0C11A9F40040052C6D1 /* SongData.swift */,
 			);
 			path = Contactify;
 			sourceTree = "<group>";
@@ -137,10 +167,9 @@
 		44E9D5FE1A952D2F001E4792 /* ContactifyTests */ = {
 			isa = PBXGroup;
 			children = (
+				443F9EC51AA3FCED00705340 /* Services */,
 				44E9D5FF1A952D2F001E4792 /* Supporting Files */,
-				443963921A9657D600E0C385 /* TestSpec.swift */,
 				4439639C1A97B0DE00E0C385 /* SpotifySpike.swift */,
-				44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */,
 			);
 			path = ContactifyTests;
 			sourceTree = "<group>";
@@ -393,7 +422,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */,
-				443963931A9657D600E0C385 /* TestSpec.swift in Sources */,
 				4439639D1A97B0DE00E0C385 /* SpotifySpike.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
