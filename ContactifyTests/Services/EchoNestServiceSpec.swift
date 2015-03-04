@@ -40,10 +40,17 @@ class EchoNestServiceSpec: QuickSpec {
             describe("find song data for title search term") {
 
                 context("when performing a search") {
-                    it("contains the correct title string") {
+                    beforeEach() {
                         echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
-
+                    }
+                    
+                    it("contains the correct title string") {
                         expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=Susie"))
+                    }
+                    
+                    it("contains the expected bucket parameters") {
+                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("bucket=tracks"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("bucket=id:spotify"))
                     }
                 }
                 

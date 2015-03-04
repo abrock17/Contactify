@@ -15,7 +15,7 @@ public class EchoNestService {
     
     let alamoFireManager: Manager!
     
-    public init(alamoFireManager: Manager) {
+    public init(alamoFireManager: Manager = Manager.sharedInstance) {
         self.alamoFireManager = alamoFireManager
     }
     
