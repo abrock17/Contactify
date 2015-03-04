@@ -38,34 +38,29 @@ class EchoNestServiceSpec: QuickSpec {
             }
             
             describe("find song data for title search term") {
+
                 context("when performing a search") {
-                    beforeEach() {
-                        echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
-                    }
-                    
                     it("contains the correct title string") {
+                        echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
+
                         expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=Susie"))
                     }
                 }
                 
                 context("when the search term has special characters") {
-                    beforeEach() {
-                        echoNestService!.findSongData(titleSearchTerm: "\"Special, Characters ... (&)\"", completionHandler: self.findSongDataCompletionHandler)
-                    }
-                    
                     it("is encoded in the URL request") {
+                        echoNestService!.findSongData(titleSearchTerm: "\"Special, Characters ... (&)\"", completionHandler: self.findSongDataCompletionHandler)
+                        
                         expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=%22Special%2C%20Characters%20...%20%28%26%29%22"))
                     }
                 }
                 
                 context("when the underlying URL connection returns no data") {
-                    beforeEach() {
+                    it("calls back with nil SongData") {
                         self.callbackSongData = SongData(title: "non-nil song so we can check for nil later", artistName: nil, catalogID: nil)
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
                         echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
-                    }
-                    
-                    it("calls back with nil SongData") {
+
                         expect(self.callbackSongData).toEventually(beNil())
                     }
                 }
@@ -73,12 +68,10 @@ class EchoNestServiceSpec: QuickSpec {
                 context("when the underlying URL connection returns an error") {
                     let expectedError = NSError(domain: "MockError", code: 99999, userInfo: nil)
                     
-                    beforeEach() {
+                    it("passes back the same error") {
                         MockURLProtocol.setMockError(expectedError)
                         echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
-                    }
-                    
-                    it("passes back the same error") {
+
                         expect(self.callbackError?.domain).toEventually(equal(expectedError.domain))
                         expect(self.callbackError?.code).toEventually(equal(expectedError.code))
                     }
