@@ -19,11 +19,15 @@ class EchoNestServiceSpec: QuickSpec {
         
         describe("The EchoNestService") {
             var echoNestService: EchoNestService?
-            var mockURLConnection: MockURLConnectionWrapper?
             
             beforeEach() {
-                mockURLConnection = MockURLConnectionWrapper(response: NSURLResponse(), data: "".dataUsingEncoding(NSUTF8StringEncoding), error: NSError())
-                echoNestService = EchoNestService(urlConnectionWrapper: mockURLConnection!)
+                echoNestService = EchoNestService()
+                NSURLProtocol.registerClass(MockURLProtocol)
+            }
+            
+            afterEach() {
+                MockURLProtocol.clear()
+                NSURLProtocol.unregisterClass(MockURLProtocol)
             }
             
             describe("find song data for title search term") {
@@ -33,7 +37,7 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                     
                     it("uses the correct URL string") {
-                        expect(mockURLConnection?.request?.URL.absoluteString).toEventually(equal("http://developer.echonest.com/api/v4/song/search?api_key=GVZ7FFJUMMXBG58VQ&format=json&results=50&sort=song_hotttnesss-desc&limit=true&title=Susie&bucket=tracks&bucket=id:spotify"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(equal("http://developer.echonest.com/api/v4/song/search?api_key=GVZ7FFJUMMXBG58VQ&format=json&results=50&sort=song_hotttnesss-desc&limit=true&title=Susie&bucket=tracks&bucket=id:spotify"))
                     }
                 }
                 
@@ -43,32 +47,33 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                     
                     it("is encoded in the URL request") {
-                        expect(mockURLConnection?.request?.URL.absoluteString).toEventually(contain("title=X%20Y$Z%25&1%232(3)4%5B5%5D6%7B7%7D8%229%22"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=X%20Y$Z%25&1%232(3)4%5B5%5D6%7B7%7D8%229%22"))
                     }
                 }
                 
                 context("when the underlying URL connection returns no data") {
                     beforeEach() {
                         self.callbackSongData = SongData(title: "non-nil song so we can check for nil later", artistName: nil, catalogID: nil)
+                        MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
                         echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
                     }
                     
                     it("calls back with nil SongData") {
-
                         expect(self.callbackSongData).toEventually(beNil())
                     }
                 }
                 
                 context("when the underlying URL connection returns an error") {
-                    let expectedError = NSError(domain: "ERROR:", code: 1, userInfo: nil)
+                    let expectedError = NSError(domain: "MockError", code: 99999, userInfo: nil)
                     
                     beforeEach() {
-                        mockURLConnection!.error = expectedError
+                        MockURLProtocol.setMockError(expectedError)
                         echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
                     }
                     
                     it("passes back the same error") {
-                        expect(self.callbackError).toEventually(equal(expectedError))
+                        expect(self.callbackError?.domain).toEventually(equal(expectedError.domain))
+                        expect(self.callbackError?.code).toEventually(equal(expectedError.code))
                     }
                 }
                 
@@ -77,7 +82,7 @@ class EchoNestServiceSpec: QuickSpec {
                     let data = NSData(contentsOfURL: url!)
                     
                     beforeEach() {
-                        mockURLConnection!.data = data
+                        MockURLProtocol.setMockResponseData(data)
                         echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
                     }
                     
@@ -98,22 +103,3 @@ class EchoNestServiceSpec: QuickSpec {
     }
 }
 
-class MockURLConnectionWrapper: NSURLConnectionWrapper {
-    
-    var response: NSURLResponse!
-    var data: NSData!
-    var error: NSError!
-    var request: NSURLRequest?
-    
-    init(response: NSURLResponse!, data: NSData!, error: NSError!) {
-        self.response = response
-        self.data = data
-        self.error = error
-        super.init()
-    }
-    
-    override func sendAsynchronousRequest(request: NSURLRequest, queue: NSOperationQueue!, completionHandler handler: (NSURLResponse!, NSData!, NSError!) -> Void) {
-        self.request = request
-        handler(response, data, error)
-    }
-}

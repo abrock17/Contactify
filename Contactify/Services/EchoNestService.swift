@@ -10,10 +10,7 @@ public class EchoNestService {
     let songSearchBuckets = ["tracks", "id:spotify"]
     let limitResultsToCatalog = true
     
-    let urlConnection: NSURLConnectionWrapper!
-    
-    public init(urlConnectionWrapper: NSURLConnectionWrapper) {
-        self.urlConnection = urlConnectionWrapper
+    public init() {
     }
     
     public func findSongData(#titleSearchTerm: String!, completionHandler searchCompletionHandler: (SongData?, NSError!) -> Void) {
@@ -27,7 +24,7 @@ public class EchoNestService {
         request.HTTPMethod = "GET"
         let queue = NSOperationQueue()
         
-        urlConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: {
+        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: {
             (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
             var songData: SongData?
             
@@ -41,12 +38,5 @@ public class EchoNestService {
             
             searchCompletionHandler(songData, error)
         })
-    }
-}
-
-public class NSURLConnectionWrapper: NSURLConnection {
-    
-    public func sendAsynchronousRequest(request: NSURLRequest, queue: NSOperationQueue!, completionHandler handler: (NSURLResponse!, NSData!, NSError!) -> Void) {
-        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: handler)
     }
 }
