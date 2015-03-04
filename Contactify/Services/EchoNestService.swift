@@ -4,40 +4,63 @@ import SwiftyJSON
 
 public class EchoNestService {
     
-    let apiKey = "GVZ7FFJUMMXBG58VQ"
-    let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
-    let songSearchResultLimit = 50
-    let songSearchSortValue = "song_hotttnesss-desc"
-    let songSearchBuckets = ["tracks", "id:spotify"]
-    let limitResultsToCatalog = true
-    
-    public init() {
+    public enum SongDataResult {
+        case Success(SongData?)
+        case Failure(NSError)
     }
     
-    public func findSongData(#titleSearchTerm: String!, completionHandler searchCompletionHandler: (SongData?, NSError!) -> Void) {
+    let apiKey = "GVZ7FFJUMMXBG58VQ"
+    let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
+    let songSearchBuckets = ["tracks", "id:spotify"]
+    
+    let alamoFireManager: Manager!
+    
+    public init(alamoFireManager: Manager) {
+        self.alamoFireManager = alamoFireManager
+    }
+    
+    public func findSongData(#titleSearchTerm: String!, completionHandler searchCompletionHandler: (SongDataResult) -> Void) {
 
-        var urlString = "\(songSearchEndpoint)?api_key=\(apiKey)&format=json&results=\(songSearchResultLimit)&sort=\(songSearchSortValue)&limit=\(limitResultsToCatalog)&title=\(titleSearchTerm)"
-        for bucket in songSearchBuckets {
-            urlString += "&bucket=\(bucket)"
-        }
-        let encodedURLString = urlString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-        let request = NSMutableURLRequest(URL: NSURL(string: encodedURLString!)!)
-        request.HTTPMethod = "GET"
-        let queue = NSOperationQueue()
+        var urlString = buildSongSearchEndpointStringWithBucketParameters()
         
-        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: {
-            (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-            var songData: SongData?
-            
-            if data != nil {
-                let json = JSON(data: data)
-                let songJSON = json["response"]["songs"][0]
-                if let title = songJSON["title"].string {
-                    songData = SongData(title: title, artistName: songJSON["artist_name"].string, catalogID: nil)
+        let parameters: [String: AnyObject] = [
+            "api_key": apiKey,
+            "format": "json",
+            "results": 50,
+            "sort": "song_hotttnesss-desc",
+            "limit": true,
+            "title": titleSearchTerm
+        ]
+        
+        alamoFireManager.request(.GET, urlString, parameters: parameters)
+            .responseJSON {(request, response, data, error) in
+                var songData: SongData?
+                
+                if let error = error {
+                    searchCompletionHandler(.Failure(error))
+                } else {
+                    var songData: SongData?
+                    
+                    if let data: AnyObject = data {
+                        var songData: SongData?
+                        let json = JSON(data)
+                        let songJSON = json["response"]["songs"][0]
+                        if let title = songJSON["title"].string {
+                            songData = SongData(title: title, artistName: songJSON["artist_name"].string, catalogID: nil)
+                        }
+                    }
+                    searchCompletionHandler(.Success(songData))
                 }
-            }
-            
-            searchCompletionHandler(songData, error)
-        })
+        }
+    }
+    
+    func buildSongSearchEndpointStringWithBucketParameters() -> String! {
+        var urlString = "\(songSearchEndpoint)?"
+        var separator = ""
+        for bucket in songSearchBuckets {
+            urlString += "\(separator)bucket=\(bucket)"
+            separator = "&"
+        }
+        return urlString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
     }
 }

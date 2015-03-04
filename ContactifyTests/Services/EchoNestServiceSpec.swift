@@ -1,5 +1,6 @@
 import Contactify
 import Foundation
+import Alamofire
 import Quick
 import Nimble
 
@@ -10,9 +11,13 @@ class EchoNestServiceSpec: QuickSpec {
     var callbackSongData: SongData?
     var callbackError: NSError?
     
-    func findSongDataCompletionHandler (songData: SongData?, error: NSError!) -> Void {
-        callbackSongData = songData
-        callbackError = error
+    func findSongDataCompletionHandler (songDataResult: EchoNestService.SongDataResult) {
+        switch (songDataResult) {
+        case .Success(let songData):
+            callbackSongData = songData
+        case .Failure(let error):
+            callbackError = error
+        }
     }
     
     override func spec() {
@@ -21,8 +26,12 @@ class EchoNestServiceSpec: QuickSpec {
             var echoNestService: EchoNestService?
             
             beforeEach() {
-                echoNestService = EchoNestService()
+                let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+                configuration.protocolClasses?.insert(MockURLProtocol.self, atIndex: 0)
+                let alamoFireManager = Manager(configuration: configuration)
                 NSURLProtocol.registerClass(MockURLProtocol)
+                
+                echoNestService = EchoNestService(alamoFireManager: alamoFireManager)
             }
             
             afterEach() {
@@ -36,22 +45,22 @@ class EchoNestServiceSpec: QuickSpec {
                         echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
                     }
                     
-                    it("uses the correct URL string") {
-                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(equal("http://developer.echonest.com/api/v4/song/search?api_key=GVZ7FFJUMMXBG58VQ&format=json&results=50&sort=song_hotttnesss-desc&limit=true&title=Susie&bucket=tracks&bucket=id:spotify"))
+                    it("contains the correct title string") {
+                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=Susie"))
                     }
                 }
                 
                 context("when the search term has special characters") {
                     beforeEach() {
-                        echoNestService!.findSongData(titleSearchTerm: "X Y$Z%&1#2(3)4[5]6{7}8\"9\"", completionHandler: self.findSongDataCompletionHandler)
+                        echoNestService!.findSongData(titleSearchTerm: "\"Special, Characters ... (&)\"", completionHandler: self.findSongDataCompletionHandler)
                     }
                     
                     it("is encoded in the URL request") {
-                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=X%20Y$Z%25&1%232(3)4%5B5%5D6%7B7%7D8%229%22"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=%22Special%2C%20Characters%20...%20%28%26%29%22"))
                     }
                 }
                 
-                context("when the underlying URL connection returns no data") {
+                fcontext("when the underlying URL connection returns no data") {
                     beforeEach() {
                         self.callbackSongData = SongData(title: "non-nil song so we can check for nil later", artistName: nil, catalogID: nil)
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
