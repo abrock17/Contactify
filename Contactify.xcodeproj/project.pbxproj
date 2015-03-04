@@ -593,7 +593,6 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(PROJECT_DIR)/Pods/Spotify-iOS-SDK",
-					"$(PROJECT_DIR)/Pods/build/Debug-iphoneos/Pods-ContactifyTests",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -616,7 +615,6 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(PROJECT_DIR)/Pods/Spotify-iOS-SDK",
-					"$(PROJECT_DIR)/Pods/build/Debug-iphoneos/Pods-ContactifyTests",
 				);
 				INFOPLIST_FILE = ContactifyTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
