@@ -28,7 +28,7 @@ public class EchoNestService {
             "format": "json",
             "results": 50,
             "sort": "song_hotttnesss-desc",
-            "limit": true,
+            "limit": "true",
             "title": titleSearchTerm
         ]
         
@@ -42,7 +42,6 @@ public class EchoNestService {
                     var songData: SongData?
                     
                     if let data: AnyObject = data {
-                        var songData: SongData?
                         let json = JSON(data)
                         let songJSON = json["response"]["songs"][0]
                         if let title = songJSON["title"].string {
@@ -51,6 +50,7 @@ public class EchoNestService {
                     }
                     searchCompletionHandler(.Success(songData))
                 }
+
         }
     }
     

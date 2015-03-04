@@ -26,17 +26,15 @@ class EchoNestServiceSpec: QuickSpec {
             var echoNestService: EchoNestService?
             
             beforeEach() {
-                let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-                configuration.protocolClasses?.insert(MockURLProtocol.self, atIndex: 0)
-                let alamoFireManager = Manager(configuration: configuration)
-                NSURLProtocol.registerClass(MockURLProtocol)
+                let urlSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
+                urlSessionConfiguration.protocolClasses?.insert(MockURLProtocol.self, atIndex: 0)
+                let alamoFireManager = Manager(configuration: urlSessionConfiguration)
                 
                 echoNestService = EchoNestService(alamoFireManager: alamoFireManager)
             }
             
             afterEach() {
                 MockURLProtocol.clear()
-                NSURLProtocol.unregisterClass(MockURLProtocol)
             }
             
             describe("find song data for title search term") {
@@ -60,7 +58,7 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                 }
                 
-                fcontext("when the underlying URL connection returns no data") {
+                context("when the underlying URL connection returns no data") {
                     beforeEach() {
                         self.callbackSongData = SongData(title: "non-nil song so we can check for nil later", artistName: nil, catalogID: nil)
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
