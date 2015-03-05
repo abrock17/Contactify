@@ -1,14 +1,10 @@
-//
-//  PlaylistTableViewController.swift
-//  Contactify
-//
-//  Created by Tony Brock on 3/4/15.
-//  Copyright (c) 2015 Tony Brock. All rights reserved.
-//
-
 import UIKit
 
 class PlaylistTableViewController: UITableViewController {
+    
+    var songDataList = [SongData]()
+    
+    let echoNestService = EchoNestService()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,8 +14,34 @@ class PlaylistTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        loadSongDataList()
     }
-
+    
+    func loadSongDataList() {
+        let names = ["John", "Paul", "George", "Ringo"]
+        var retrievalCompleted = 0
+        for name in names {
+            echoNestService.findSongData(titleSearchTerm: name,
+                completionHandler: {(songDataResult: EchoNestService.SongDataResult) -> Void in
+                    
+                    retrievalCompleted++
+                    
+                    switch (songDataResult) {
+                    case .Success(let songData):
+                        if let songData = songData {
+                            self.songDataList.append(songData)
+                            if names.count == retrievalCompleted {
+                                self.tableView.reloadData()
+                            }
+                        }
+                        println("song title: \(songData?.title)")
+                    case .Failure(let error):
+                        println("error: \(error)")
+                    }
+            })
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -30,24 +52,24 @@ class PlaylistTableViewController: UITableViewController {
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Potentially incomplete method implementation.
         // Return the number of sections.
-        return 0
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
-        return 0
+        return songDataList.count
     }
 
-    /*
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath) as UITableViewCell
+        var cell = tableView.dequeueReusableCellWithIdentifier("PlaylistTableCell", forIndexPath: indexPath) as UITableViewCell
 
-        // Configure the cell...
+        let songData = songDataList[indexPath.row]
+        cell.textLabel?.text = songData.title
+        cell.detailTextLabel?.text = songData.artistName
 
         return cell
     }
-    */
 
     /*
     // Override to support conditional editing of the table view.

@@ -14,8 +14,9 @@
 		4439639E1A97B6F100E0C385 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963961A97563D00E0C385 /* Spotify.framework */; };
 		443F9EC11AA39CAE00705340 /* echonest-response-data-one-song.txt in Resources */ = {isa = PBXBuildFile; fileRef = 443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */; };
 		443F9EC81AA4BCFF00705340 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */; };
+		44BE53901AA76A1E0089BFCD /* PlaylistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE538F1AA76A1E0089BFCD /* PlaylistTableViewController.swift */; };
+		44BE53921AA7ED9B0089BFCD /* CreatePlaylistController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE53911AA7ED9A0089BFCD /* CreatePlaylistController.swift */; };
 		44E9D5EC1A952D2F001E4792 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */; };
-		44E9D5EE1A952D2F001E4792 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9D5ED1A952D2F001E4792 /* ViewController.swift */; };
 		44E9D5F11A952D2F001E4792 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5EF1A952D2F001E4792 /* Main.storyboard */; };
 		44E9D5F31A952D2F001E4792 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F21A952D2F001E4792 /* Images.xcassets */; };
 		44E9D5F61A952D2F001E4792 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F41A952D2F001E4792 /* LaunchScreen.xib */; };
@@ -45,10 +46,11 @@
 		443963A11A97D53D00E0C385 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Pods/build/Debug-iphoneos/Pods-ContactifyTests/Nimble.framework"; sourceTree = "<group>"; };
 		443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-one-song.txt"; sourceTree = "<group>"; };
 		443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
+		44BE538F1AA76A1E0089BFCD /* PlaylistTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistTableViewController.swift; sourceTree = "<group>"; };
+		44BE53911AA7ED9A0089BFCD /* CreatePlaylistController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatePlaylistController.swift; sourceTree = "<group>"; };
 		44E9D5E61A952D2F001E4792 /* Contactify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Contactify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D5EA1A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		44E9D5ED1A952D2F001E4792 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		44E9D5F01A952D2F001E4792 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		44E9D5F21A952D2F001E4792 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		44E9D5F51A952D2F001E4792 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -101,7 +103,8 @@
 		443F9EC31AA3FCA500705340 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				44E9D5ED1A952D2F001E4792 /* ViewController.swift */,
+				44BE538F1AA76A1E0089BFCD /* PlaylistTableViewController.swift */,
+				44BE53911AA7ED9A0089BFCD /* CreatePlaylistController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -421,10 +424,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44BE53901AA76A1E0089BFCD /* PlaylistTableViewController.swift in Sources */,
 				44FDE0C01A9EB52E0052C6D1 /* EchoNestService.swift in Sources */,
-				44E9D5EE1A952D2F001E4792 /* ViewController.swift in Sources */,
 				44FDE0C21A9F40040052C6D1 /* SongData.swift in Sources */,
 				44E9D5EC1A952D2F001E4792 /* AppDelegate.swift in Sources */,
+				44BE53921AA7ED9B0089BFCD /* CreatePlaylistController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
