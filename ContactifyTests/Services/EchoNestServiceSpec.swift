@@ -105,6 +105,19 @@ class EchoNestServiceSpec: QuickSpec {
                         expect(self.callbackSongData?.artistName).toEventually(equal("Creedence Clearwater Revival"))
                     }
                 }
+                
+                fcontext("when multiple songs are found and only the last one contains the word as part of the actual title") {
+                    let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-multiple-songs-with-incorrect-title", withExtension: "txt")
+                    let data = NSData(contentsOfURL: url!)
+                    
+                    it("calls back with the expected song") {
+                        MockURLProtocol.setMockResponseData(data)
+                        echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
+
+                        expect(self.callbackSongData).toEventuallyNot(beNil())
+                        expect(self.callbackSongData?.title).toEventually(equal("Susie Q"))
+                    }
+                }
             }
         }
     }

@@ -27,7 +27,7 @@ public class EchoNestService {
             "api_key": apiKey,
             "format": "json",
             "results": 50,
-            "sort": "song_hotttnesss-desc",
+//            "sort": "song_hotttnesss-desc",
             "limit": "true",
             "title": titleSearchTerm
         ]
@@ -43,15 +43,43 @@ public class EchoNestService {
                     
                     if let data: AnyObject = data {
                         let json = JSON(data)
-                        let songJSON = json["response"]["songs"][0]
-                        if let title = songJSON["title"].string {
-                            songData = SongData(title: title, artistName: songJSON["artist_name"].string, catalogID: nil)
+                        let jsonSongs = json["response"]["songs"]
+                        for (index, songJSON: JSON) in jsonSongs {
+                            if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
+                                songData = SongData(title: title, artistName: songJSON["artist_name"].string, catalogID: nil)
+                                break
+                            }
                         }
                     }
                     searchCompletionHandler(.Success(songData))
                 }
 
         }
+    }
+    
+    func getValidMatchingTitle(songJSON: JSON, titleSearchTerm: String!) -> String? {
+        var validTitle: String?
+        
+        if let title = songJSON["title"].string? {
+            var valid = true
+            let lowercaseTitle = title.lowercaseString
+            let lowercaseSearchTerm = titleSearchTerm.lowercaseString
+            let exclusionExpressions = [
+                "feat.*\(lowercaseSearchTerm)",
+                "\\(.*\(lowercaseSearchTerm).*\\)",
+                "-\\s.*\(lowercaseSearchTerm).*(remix|edit)"]
+            
+            for regex in exclusionExpressions {
+                if lowercaseTitle.rangeOfString(regex, options: .RegularExpressionSearch) != nil {
+                    valid = false
+                    break
+                }
+            }
+            
+            validTitle = valid ? title : nil
+        }
+        
+        return validTitle
     }
     
     func buildSongSearchEndpointStringWithBucketParameters() -> String! {
