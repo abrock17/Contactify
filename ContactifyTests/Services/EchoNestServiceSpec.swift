@@ -106,7 +106,7 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                 }
                 
-                fcontext("when multiple songs are found and only the last one contains the word as part of the actual title") {
+                context("when multiple songs are found and only the last one contains the word as part of the actual title") {
                     let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-multiple-songs-with-incorrect-title", withExtension: "txt")
                     let data = NSData(contentsOfURL: url!)
                     

@@ -27,7 +27,6 @@ public class EchoNestService {
             "api_key": apiKey,
             "format": "json",
             "results": 50,
-//            "sort": "song_hotttnesss-desc",
             "limit": "true",
             "title": titleSearchTerm
         ]
