@@ -1,5 +1,8 @@
 import Foundation
 
+let spotifyTokenSwapURL = "https://name-playlist-spt-token-swap.herokuapp.com/swap"
+let spotifyTokenRefreshURL = "https://name-playlist-spt-token-swap.herokuapp.com/refresh"
+
 public class SpotifyService {
     
     let clientID = "02b72a9ba42742acbebb0d3277c9996f"
@@ -11,21 +14,43 @@ public class SpotifyService {
         self.uiApplicationWrapper = uiApplicationWrapper
     }
     
-    public func getSession() -> SPTSession? {
-        var session: SPTSession?
+    public func doWithSession(auth: SPTAuth = SPTAuth.defaultInstance(), sessionCallback: SPTAuthCallback!) {
         if let sessionData = NSUserDefaults.standardUserDefaults().objectForKey(sessionDataKey) as? NSData {
-            session = NSKeyedUnarchiver.unarchiveObjectWithData(sessionData) as? SPTSession
-        } else {
-            let auth = SPTAuth.defaultInstance()
-            let loginURL = auth.loginURLForClientId(clientID, declaredRedirectURL: NSURL(string: callbackURL), scopes: [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope])
-            dispatch_after(
-                dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC))),
-                dispatch_get_main_queue()) {
-                    self.uiApplicationWrapper.openURL(loginURL)
-                    return
+            if let storedSession = NSKeyedUnarchiver.unarchiveObjectWithData(sessionData) as? SPTSession {
+                handleCallbackForStoredSession(storedSession, auth: auth, sessionCallback: sessionCallback)
             }
+        } else {
+            handleLoginAndCallback(auth: auth, sessionCallback: sessionCallback)
         }
-        return session
+    }
+    
+    func handleCallbackForStoredSession(storedSession: SPTSession!, auth: SPTAuth = SPTAuth.defaultInstance(), sessionCallback: SPTAuthCallback!) {
+        
+        if storedSession.isValid() {
+            sessionCallback(nil, storedSession)
+        } else {
+            auth.renewSession(storedSession, withServiceEndpointAtURL: NSURL(string: spotifyTokenRefreshURL), callback: {(error: NSError?, session: SPTSession?) in
+                
+                if let renewedSession = session {
+                    let renewedSessionData = NSKeyedArchiver.archivedDataWithRootObject(renewedSession)
+                    NSUserDefaults.standardUserDefaults().setObject(renewedSessionData, forKey: self.sessionDataKey)
+                }
+                sessionCallback(error, session)
+            })
+        }
+    }
+    
+    func handleLoginAndCallback(auth: SPTAuth = SPTAuth.defaultInstance(), sessionCallback: SPTAuthCallback!) {
+        let loginURL = auth.loginURLForClientId(clientID, declaredRedirectURL: NSURL(string: callbackURL), scopes: [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope])
+        
+        dispatch_after(
+            dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC))),
+            dispatch_get_main_queue()) {
+                self.uiApplicationWrapper.openURL(loginURL)
+                return
+        }
+        
+        // wait for login to complete, fail, or timeout -- then handle callback
     }
 }
 
