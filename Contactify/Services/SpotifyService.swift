@@ -1,12 +1,13 @@
 import Foundation
 
-let spotifyTokenSwapURL = "https://name-playlist-spt-token-swap.herokuapp.com/swap"
-let spotifyTokenRefreshURL = "https://name-playlist-spt-token-swap.herokuapp.com/refresh"
+var loggingIn = false
 
 public class SpotifyService {
     
     let clientID = "02b72a9ba42742acbebb0d3277c9996f"
     let callbackURL = "name-playlist-creator-login://return"
+    let tokenSwapURLString = "https://name-playlist-spt-token-swap.herokuapp.com/swap"
+    let tokenRefreshURLString = "https://name-playlist-spt-token-swap.herokuapp.com/refresh"
     let sessionDataKey = "SpotifySessionData"
     let uiApplicationWrapper: UIApplicationWrapper!
     
@@ -14,22 +15,32 @@ public class SpotifyService {
         self.uiApplicationWrapper = uiApplicationWrapper
     }
     
-    public func doWithSession(auth: SPTAuth = SPTAuth.defaultInstance(), sessionCallback: SPTAuthCallback!) {
+    class var sharedInstance: SpotifyService {
+        struct Singleton {
+            static let instance = SpotifyService()
+        }
+
+        return Singleton.instance
+    }
+    
+    public func doWithSession(sessionCallback: SPTAuthCallback!, auth: SPTAuth = SPTAuth.defaultInstance()) {
         if let sessionData = NSUserDefaults.standardUserDefaults().objectForKey(sessionDataKey) as? NSData {
             if let storedSession = NSKeyedUnarchiver.unarchiveObjectWithData(sessionData) as? SPTSession {
-                handleCallbackForStoredSession(storedSession, auth: auth, sessionCallback: sessionCallback)
+                handleCallbackForStoredSession(storedSession, sessionCallback: sessionCallback, auth: auth)
             }
         } else {
-            handleLoginAndCallback(auth: auth, sessionCallback: sessionCallback)
+            redirectToLogin(auth)
+            
+            // wait for login to complete, fail, or timeout -- then handle callback
         }
     }
     
-    func handleCallbackForStoredSession(storedSession: SPTSession!, auth: SPTAuth = SPTAuth.defaultInstance(), sessionCallback: SPTAuthCallback!) {
+    func handleCallbackForStoredSession(storedSession: SPTSession!, sessionCallback: SPTAuthCallback!, auth: SPTAuth) {
         
         if storedSession.isValid() {
             sessionCallback(nil, storedSession)
         } else {
-            auth.renewSession(storedSession, withServiceEndpointAtURL: NSURL(string: spotifyTokenRefreshURL), callback: {(error: NSError?, session: SPTSession?) in
+            auth.renewSession(storedSession, withServiceEndpointAtURL: NSURL(string: tokenRefreshURLString), callback: {(error: NSError?, session: SPTSession?) in
                 
                 if let renewedSession = session {
                     let renewedSessionData = NSKeyedArchiver.archivedDataWithRootObject(renewedSession)
@@ -40,7 +51,7 @@ public class SpotifyService {
         }
     }
     
-    func handleLoginAndCallback(auth: SPTAuth = SPTAuth.defaultInstance(), sessionCallback: SPTAuthCallback!) {
+    func redirectToLogin(auth: SPTAuth) {
         let loginURL = auth.loginURLForClientId(clientID, declaredRedirectURL: NSURL(string: callbackURL), scopes: [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope])
         
         dispatch_after(
@@ -49,8 +60,26 @@ public class SpotifyService {
                 self.uiApplicationWrapper.openURL(loginURL)
                 return
         }
+    }
+    
+    public func handleLoginCallback(callbackURL: NSURL!, auth: SPTAuth = SPTAuth.defaultInstance()) -> Bool {
+        var handledAuthCallback = false
+        let tokenSwapURL = NSURL(string: tokenSwapURLString)
+        if auth.canHandleURL(callbackURL, withDeclaredRedirectURL: tokenSwapURL) {
+            
+            auth.handleAuthCallbackWithTriggeredAuthURL(callbackURL, tokenSwapServiceEndpointAtURL: tokenSwapURL,
+                callback: {(error: NSError?, session: SPTSession?) in
+                    if let authenticationError = error {
+                        println("Authentication error: \(authenticationError)")
+                    } else {
+                        let sessionData = NSKeyedArchiver.archivedDataWithRootObject(session!)
+                        NSUserDefaults.standardUserDefaults().setObject(sessionData, forKey: self.sessionDataKey)
+                    }
+            })
+            handledAuthCallback = true
+        }
         
-        // wait for login to complete, fail, or timeout -- then handle callback
+        return handledAuthCallback
     }
 }
 
