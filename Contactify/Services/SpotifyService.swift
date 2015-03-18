@@ -40,14 +40,14 @@ public class SpotifyService {
         if storedSession.isValid() {
             sessionCallback(nil, storedSession)
         } else {
-            auth.renewSession(storedSession, withServiceEndpointAtURL: NSURL(string: tokenRefreshURLString), callback: {(error: NSError?, session: SPTSession?) in
-                
+            auth.renewSession(storedSession, withServiceEndpointAtURL: NSURL(string: tokenRefreshURLString)) {
+                (error, session) in
                 if let renewedSession = session {
                     let renewedSessionData = NSKeyedArchiver.archivedDataWithRootObject(renewedSession)
                     NSUserDefaults.standardUserDefaults().setObject(renewedSessionData, forKey: self.sessionDataKey)
                 }
                 sessionCallback(error, session)
-            })
+            }
         }
     }
     
@@ -64,18 +64,18 @@ public class SpotifyService {
     
     public func handleLoginCallback(callbackURL: NSURL!, auth: SPTAuth = SPTAuth.defaultInstance()) -> Bool {
         var handledAuthCallback = false
-        let tokenSwapURL = NSURL(string: tokenSwapURLString)
-        if auth.canHandleURL(callbackURL, withDeclaredRedirectURL: tokenSwapURL) {
+        
+        if auth.canHandleURL(callbackURL, withDeclaredRedirectURL: NSURL(string: self.callbackURL)) {
             
-            auth.handleAuthCallbackWithTriggeredAuthURL(callbackURL, tokenSwapServiceEndpointAtURL: tokenSwapURL,
-                callback: {(error: NSError?, session: SPTSession?) in
-                    if let authenticationError = error {
-                        println("Authentication error: \(authenticationError)")
-                    } else {
-                        let sessionData = NSKeyedArchiver.archivedDataWithRootObject(session!)
-                        NSUserDefaults.standardUserDefaults().setObject(sessionData, forKey: self.sessionDataKey)
-                    }
-            })
+            auth.handleAuthCallbackWithTriggeredAuthURL(callbackURL, tokenSwapServiceEndpointAtURL: NSURL(string: tokenSwapURLString)) {
+                (error, session) in
+                if error != nil {
+                    println("Auth error: \(error)")
+                } else {
+                    let sessionData = NSKeyedArchiver.archivedDataWithRootObject(session!)
+                    NSUserDefaults.standardUserDefaults().setObject(sessionData, forKey: self.sessionDataKey)
+                }
+            }
             handledAuthCallback = true
         }
         

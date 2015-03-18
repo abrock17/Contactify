@@ -17,6 +17,16 @@ class PlaylistTableViewController: UITableViewController {
         loadSongDataList()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setToolbarHidden(false, animated: animated)
+    }
+
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setToolbarHidden(true, animated: animated)
+    }
+    
     func loadSongDataList() {
         let names = ["John", "Paul", "George", "Ringo"]
         var retrievalCompleted = 0
@@ -115,5 +125,15 @@ class PlaylistTableViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
+    
+    @IBAction func savePlaylist(sender: AnyObject) {
+        SpotifyService.sharedInstance.doWithSession({(error: NSError?, session: SPTSession?) in
+            if error != nil {
+                println("error : \(error)")
+            } else {
+                println("session with token : \(session?.accessToken) expires on \(session?.expirationDate)")
+            }
+        })
+        println("savePlaylist")
+    }
 }
