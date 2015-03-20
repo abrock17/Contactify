@@ -8,7 +8,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        initializeDefaultSPTAuth()
         return true
+    }
+    
+    func initializeDefaultSPTAuth() {
+        let auth = SPTAuth.defaultInstance()
+        auth.clientID = "02b72a9ba42742acbebb0d3277c9996f"
+        auth.requestedScopes = [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope]
+        auth.redirectURL = NSURL(string: "name-playlist-creator-login://return")
+        auth.tokenSwapURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/swap")
+        auth.tokenRefreshURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/refresh")
+        auth.sessionUserDefaultsKey = "SpotifySessionData"
     }
 
     func applicationWillResignActive(application: UIApplication) {
@@ -31,10 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
-
-    func application(application: UIApplication!, openURL url: NSURL!, sourceApplication: String!, annotation: AnyObject!) -> Bool {
-        return SpotifyService.sharedInstance.handleLoginCallback(url)
     }
 }
 

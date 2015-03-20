@@ -1,7 +1,8 @@
 import UIKit
 
-class PlaylistTableViewController: UITableViewController {
+class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     
+    var authViewController: SPTAuthViewController!
     var songDataList = [SongData]()
     
     let echoNestService = EchoNestService()
@@ -14,6 +15,7 @@ class PlaylistTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+
         loadSongDataList()
     }
     
@@ -127,13 +129,30 @@ class PlaylistTableViewController: UITableViewController {
     */
     
     @IBAction func savePlaylist(sender: AnyObject) {
-        SpotifyService.sharedInstance.doWithSession({(error: NSError?, session: SPTSession?) in
-            if error != nil {
-                println("error : \(error)")
-            } else {
-                println("session with token : \(session?.accessToken) expires on \(session?.expirationDate)")
-            }
-        })
-        println("savePlaylist")
+        openLogin()
+    }
+    
+    func openLogin() {
+        authViewController = SPTAuthViewController.authenticationViewController()
+        authViewController.delegate = self
+        authViewController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
+        authViewController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
+        
+        self.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
+        self.definesPresentationContext = true
+        
+        presentViewController(self.authViewController, animated: false, completion: nil)
+    }
+    
+    func authenticationViewController(viewController: SPTAuthViewController, didFailToLogin error: NSError) {
+        println("Login failed... error: \(error)")
+    }
+    
+    func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
+        println("Login succeeded... session: \(session)")
+    }
+    
+    func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
+        println("Login cancelled")
     }
 }

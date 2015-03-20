@@ -3,7 +3,6 @@
 
 use_frameworks!
 
-pod 'Spotify-iOS-SDK', '0.6.0'
 pod 'SwiftyJSON', '2.1.3'
 pod 'Alamofire', '1.1.4'
 
