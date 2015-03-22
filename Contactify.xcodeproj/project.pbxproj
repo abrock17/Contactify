@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1626BD4B92B820EDC793B971 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFF842C549D9522FF3D0601 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4433E6261ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4433E6251ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift */; };
 		443963951A9755FA00E0C385 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963941A9755FA00E0C385 /* AVFoundation.framework */; };
 		4439639D1A97B0DE00E0C385 /* SpotifySpike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4439639C1A97B0DE00E0C385 /* SpotifySpike.swift */; };
 		443F9EC11AA39CAE00705340 /* echonest-response-data-one-song.txt in Resources */ = {isa = PBXBuildFile; fileRef = 443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */; };
@@ -41,6 +42,7 @@
 
 /* Begin PBXFileReference section */
 		2C42088056DB800A75BCFC0F /* Pods_Contactify.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Contactify.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4433E6251ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistTableViewControllerSpec.swift; sourceTree = "<group>"; };
 		443963941A9755FA00E0C385 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		443963981A97567100E0C385 /* Contactify-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Contactify-Bridging-Header.h"; sourceTree = "<group>"; };
 		4439639C1A97B0DE00E0C385 /* SpotifySpike.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifySpike.swift; sourceTree = "<group>"; };
@@ -98,6 +100,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4433E6241ABD9634006CE8B8 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				4433E6251ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 		443F9EC21AA3FC4800705340 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,6 +198,7 @@
 		44E9D5FE1A952D2F001E4792 /* ContactifyTests */ = {
 			isa = PBXGroup;
 			children = (
+				4433E6241ABD9634006CE8B8 /* Controllers */,
 				443F9EC61AA4BC9500705340 /* Mocks */,
 				443F9EC51AA3FCED00705340 /* Services */,
 				44E9D5FF1A952D2F001E4792 /* Supporting Files */,
@@ -451,6 +462,7 @@
 				44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */,
 				44BE53961AACEA1D0089BFCD /* SpotifyServiceSpec.swift in Sources */,
 				4439639D1A97B0DE00E0C385 /* SpotifySpike.swift in Sources */,
+				4433E6261ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift in Sources */,
 				443F9EC81AA4BCFF00705340 /* MockURLProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

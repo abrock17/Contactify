@@ -1,13 +1,16 @@
 import UIKit
 
-class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
+public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     
+    public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var authViewController: SPTAuthViewController!
     var songDataList = [SongData]()
     
     let echoNestService = EchoNestService()
 
-    override func viewDidLoad() {
+    @IBOutlet public weak var saveButton: UIBarButtonItem!
+    
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
@@ -19,12 +22,12 @@ class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
         loadSongDataList()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override public func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setToolbarHidden(false, animated: animated)
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override public func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setToolbarHidden(true, animated: animated)
     }
@@ -54,26 +57,26 @@ class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
         }
     }
     
-    override func didReceiveMemoryWarning() {
+    override public func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Potentially incomplete method implementation.
         // Return the number of sections.
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
         return songDataList.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCellWithIdentifier("PlaylistTableCell", forIndexPath: indexPath) as UITableViewCell
 
         let songData = songDataList[indexPath.row]
@@ -128,31 +131,33 @@ class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     }
     */
     
-    @IBAction func savePlaylist(sender: AnyObject) {
-        openLogin()
+    @IBAction public func savePlaylist(sender: AnyObject) {
+        openLoginIfNecessary()
     }
     
-    func openLogin() {
-        authViewController = SPTAuthViewController.authenticationViewController()
-        authViewController.delegate = self
-        authViewController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
-        authViewController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
-        
-        self.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
-        self.definesPresentationContext = true
-        
-        presentViewController(self.authViewController, animated: false, completion: nil)
+    func openLoginIfNecessary() {
+        if spotifyAuth.session == nil {
+            authViewController = SPTAuthViewController.authenticationViewControllerWithAuth(spotifyAuth)
+            authViewController.delegate = self
+            authViewController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
+            authViewController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
+            
+            self.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
+            self.definesPresentationContext = true
+            
+            presentViewController(self.authViewController, animated: false, completion: nil)
+        }
     }
     
-    func authenticationViewController(viewController: SPTAuthViewController, didFailToLogin error: NSError) {
+    public func authenticationViewController(viewController: SPTAuthViewController, didFailToLogin error: NSError) {
         println("Login failed... error: \(error)")
     }
     
-    func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
+    public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
         println("Login succeeded... session: \(session)")
     }
     
-    func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
+    public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
         println("Login cancelled")
     }
 }
