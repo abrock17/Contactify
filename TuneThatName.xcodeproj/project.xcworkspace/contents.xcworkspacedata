@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Contactify.xcodeproj">
+      location = "self:TuneThatName.xcodeproj">
    </FileRef>
 </Workspace>

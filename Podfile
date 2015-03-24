@@ -6,11 +6,11 @@ use_frameworks!
 pod 'SwiftyJSON', '2.1.3'
 pod 'Alamofire', '1.1.4'
 
-target 'Contactify' do
+target 'TuneThatName' do
 
 end
 
-target 'ContactifyTests' do
+target 'TuneThatNameTests' do
 
     pod 'Quick', '0.2.2'
     pod 'Nimble', '0.3.0'

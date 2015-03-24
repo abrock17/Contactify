@@ -27,7 +27,7 @@
 		44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */; };
 		44FDE0C01A9EB52E0052C6D1 /* EchoNestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */; };
 		44FDE0C21A9F40040052C6D1 /* SongData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0C11A9F40040052C6D1 /* SongData.swift */; };
-		EB6288CF377998ECD558338C /* Pods_ContactifyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		EB6288CF377998ECD558338C /* Pods_TuneThatNameTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9038133D111DE159169DBFD /* Pods_TuneThatNameTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,18 +36,18 @@
 			containerPortal = 44E9D5DE1A952D2F001E4792 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 44E9D5E51A952D2F001E4792;
-			remoteInfo = Contactify;
+			remoteInfo = TuneThatName;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2C42088056DB800A75BCFC0F /* Pods_Contactify.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Contactify.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C42088056DB800A75BCFC0F /* Pods_TuneThatName.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TuneThatName.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4433E6251ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistTableViewControllerSpec.swift; sourceTree = "<group>"; };
 		443963941A9755FA00E0C385 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		443963981A97567100E0C385 /* Contactify-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Contactify-Bridging-Header.h"; sourceTree = "<group>"; };
+		443963981A97567100E0C385 /* TuneThatName-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TuneThatName-Bridging-Header.h"; sourceTree = "<group>"; };
 		4439639C1A97B0DE00E0C385 /* SpotifySpike.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifySpike.swift; sourceTree = "<group>"; };
-		4439639F1A97D53800E0C385 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "Pods/build/Debug-iphoneos/Pods-ContactifyTests/Quick.framework"; sourceTree = "<group>"; };
-		443963A11A97D53D00E0C385 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Pods/build/Debug-iphoneos/Pods-ContactifyTests/Nimble.framework"; sourceTree = "<group>"; };
+		4439639F1A97D53800E0C385 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "Pods/build/Debug-iphoneos/Pods-TuneThatNameTests/Quick.framework"; sourceTree = "<group>"; };
+		443963A11A97D53D00E0C385 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Pods/build/Debug-iphoneos/Pods-TuneThatNameTests/Nimble.framework"; sourceTree = "<group>"; };
 		443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-one-song.txt"; sourceTree = "<group>"; };
 		443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
 		44BDFB081ABC4F720060BB25 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = "../Vendor/ios-sdk-beta-7/Spotify.framework"; sourceTree = "<group>"; };
@@ -56,25 +56,25 @@
 		44BE53931AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-multiple-songs-with-incorrect-title.txt"; sourceTree = "<group>"; };
 		44BE53951AACEA1D0089BFCD /* SpotifyServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyServiceSpec.swift; sourceTree = "<group>"; };
 		44BE53971AACEAD50089BFCD /* SpotifyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyService.swift; sourceTree = "<group>"; };
-		44E9D5E61A952D2F001E4792 /* Contactify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Contactify.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		44E9D5E61A952D2F001E4792 /* TuneThatName.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TuneThatName.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D5EA1A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		44E9D5F01A952D2F001E4792 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		44E9D5F21A952D2F001E4792 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		44E9D5F51A952D2F001E4792 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		44E9D5FB1A952D2F001E4792 /* ContactifyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ContactifyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		44E9D5FB1A952D2F001E4792 /* TuneThatNameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuneThatNameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D6001A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EchoNestServiceSpec.swift; sourceTree = "<group>"; };
 		44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EchoNestService.swift; sourceTree = "<group>"; };
 		44FDE0C11A9F40040052C6D1 /* SongData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongData.swift; sourceTree = "<group>"; };
 		4CFF842C549D9522FF3D0601 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		7F1FEA9E6D968643657B0B3A /* Pods-ContactifyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ContactifyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests.release.xcconfig"; sourceTree = "<group>"; };
-		8B0A10FCB31F7FC575879C59 /* Pods-Contactify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Contactify.release.xcconfig"; path = "Pods/Target Support Files/Pods-Contactify/Pods-Contactify.release.xcconfig"; sourceTree = "<group>"; };
-		8D9DA7E43ABBFE8437691456 /* Pods-Contactify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Contactify.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Contactify/Pods-Contactify.debug.xcconfig"; sourceTree = "<group>"; };
+		7F1FEA9E6D968643657B0B3A /* Pods-TuneThatNameTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatNameTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatNameTests/Pods-TuneThatNameTests.release.xcconfig"; sourceTree = "<group>"; };
+		8B0A10FCB31F7FC575879C59 /* Pods-TuneThatName.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatName.release.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatName/Pods-TuneThatName.release.xcconfig"; sourceTree = "<group>"; };
+		8D9DA7E43ABBFE8437691456 /* Pods-TuneThatName.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatName.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatName/Pods-TuneThatName.debug.xcconfig"; sourceTree = "<group>"; };
 		A2393EA9661264AFAB780F39 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
-		C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ContactifyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3D4EF98625A9FAB6E22AD59 /* Pods-ContactifyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ContactifyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests.debug.xcconfig"; sourceTree = "<group>"; };
+		C9038133D111DE159169DBFD /* Pods_TuneThatNameTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TuneThatNameTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3D4EF98625A9FAB6E22AD59 /* Pods-TuneThatNameTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatNameTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatNameTests/Pods-TuneThatNameTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB6288CF377998ECD558338C /* Pods_ContactifyTests.framework in Frameworks */,
+				EB6288CF377998ECD558338C /* Pods_TuneThatNameTests.framework in Frameworks */,
 				44BDFB0A1ABC4F720060BB25 /* Spotify.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,8 +154,8 @@
 		44E9D5DD1A952D2F001E4792 = {
 			isa = PBXGroup;
 			children = (
-				44E9D5E81A952D2F001E4792 /* Contactify */,
-				44E9D5FE1A952D2F001E4792 /* ContactifyTests */,
+				44E9D5E81A952D2F001E4792 /* TuneThatName */,
+				44E9D5FE1A952D2F001E4792 /* TuneThatNameTests */,
 				44E9D5E71A952D2F001E4792 /* Products */,
 				BBEFF3283B3521024DBEA91B /* Pods */,
 				5267B1DE1C08D6BCF6EE1253 /* Frameworks */,
@@ -165,13 +165,13 @@
 		44E9D5E71A952D2F001E4792 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				44E9D5E61A952D2F001E4792 /* Contactify.app */,
-				44E9D5FB1A952D2F001E4792 /* ContactifyTests.xctest */,
+				44E9D5E61A952D2F001E4792 /* TuneThatName.app */,
+				44E9D5FB1A952D2F001E4792 /* TuneThatNameTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		44E9D5E81A952D2F001E4792 /* Contactify */ = {
+		44E9D5E81A952D2F001E4792 /* TuneThatName */ = {
 			isa = PBXGroup;
 			children = (
 				443F9EC41AA3FCBE00705340 /* Models */,
@@ -182,9 +182,9 @@
 				44E9D5F21A952D2F001E4792 /* Images.xcassets */,
 				44E9D5F41A952D2F001E4792 /* LaunchScreen.xib */,
 				44E9D5E91A952D2F001E4792 /* Supporting Files */,
-				443963981A97567100E0C385 /* Contactify-Bridging-Header.h */,
+				443963981A97567100E0C385 /* TuneThatName-Bridging-Header.h */,
 			);
-			path = Contactify;
+			path = TuneThatName;
 			sourceTree = "<group>";
 		};
 		44E9D5E91A952D2F001E4792 /* Supporting Files */ = {
@@ -195,7 +195,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		44E9D5FE1A952D2F001E4792 /* ContactifyTests */ = {
+		44E9D5FE1A952D2F001E4792 /* TuneThatNameTests */ = {
 			isa = PBXGroup;
 			children = (
 				4433E6241ABD9634006CE8B8 /* Controllers */,
@@ -204,7 +204,7 @@
 				44E9D5FF1A952D2F001E4792 /* Supporting Files */,
 				4439639C1A97B0DE00E0C385 /* SpotifySpike.swift */,
 			);
-			path = ContactifyTests;
+			path = TuneThatNameTests;
 			sourceTree = "<group>";
 		};
 		44E9D5FF1A952D2F001E4792 /* Supporting Files */ = {
@@ -224,8 +224,8 @@
 				443963A11A97D53D00E0C385 /* Nimble.framework */,
 				4439639F1A97D53800E0C385 /* Quick.framework */,
 				443963941A9755FA00E0C385 /* AVFoundation.framework */,
-				C9038133D111DE159169DBFD /* Pods_ContactifyTests.framework */,
-				2C42088056DB800A75BCFC0F /* Pods_Contactify.framework */,
+				C9038133D111DE159169DBFD /* Pods_TuneThatNameTests.framework */,
+				2C42088056DB800A75BCFC0F /* Pods_TuneThatName.framework */,
 				4CFF842C549D9522FF3D0601 /* Pods.framework */,
 			);
 			name = Frameworks;
@@ -234,10 +234,10 @@
 		BBEFF3283B3521024DBEA91B /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				E3D4EF98625A9FAB6E22AD59 /* Pods-ContactifyTests.debug.xcconfig */,
-				7F1FEA9E6D968643657B0B3A /* Pods-ContactifyTests.release.xcconfig */,
-				8D9DA7E43ABBFE8437691456 /* Pods-Contactify.debug.xcconfig */,
-				8B0A10FCB31F7FC575879C59 /* Pods-Contactify.release.xcconfig */,
+				E3D4EF98625A9FAB6E22AD59 /* Pods-TuneThatNameTests.debug.xcconfig */,
+				7F1FEA9E6D968643657B0B3A /* Pods-TuneThatNameTests.release.xcconfig */,
+				8D9DA7E43ABBFE8437691456 /* Pods-TuneThatName.debug.xcconfig */,
+				8B0A10FCB31F7FC575879C59 /* Pods-TuneThatName.release.xcconfig */,
 				750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */,
 				A2393EA9661264AFAB780F39 /* Pods.release.xcconfig */,
 			);
@@ -247,9 +247,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		44E9D5E51A952D2F001E4792 /* Contactify */ = {
+		44E9D5E51A952D2F001E4792 /* TuneThatName */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 44E9D6051A952D2F001E4792 /* Build configuration list for PBXNativeTarget "Contactify" */;
+			buildConfigurationList = 44E9D6051A952D2F001E4792 /* Build configuration list for PBXNativeTarget "TuneThatName" */;
 			buildPhases = (
 				5E1B1FE13304475754D2C9F8 /* Check Pods Manifest.lock */,
 				44E9D5E21A952D2F001E4792 /* Sources */,
@@ -262,14 +262,14 @@
 			);
 			dependencies = (
 			);
-			name = Contactify;
-			productName = Contactify;
-			productReference = 44E9D5E61A952D2F001E4792 /* Contactify.app */;
+			name = TuneThatName;
+			productName = TuneThatName;
+			productReference = 44E9D5E61A952D2F001E4792 /* TuneThatName.app */;
 			productType = "com.apple.product-type.application";
 		};
-		44E9D5FA1A952D2F001E4792 /* ContactifyTests */ = {
+		44E9D5FA1A952D2F001E4792 /* TuneThatNameTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 44E9D6081A952D2F001E4792 /* Build configuration list for PBXNativeTarget "ContactifyTests" */;
+			buildConfigurationList = 44E9D6081A952D2F001E4792 /* Build configuration list for PBXNativeTarget "TuneThatNameTests" */;
 			buildPhases = (
 				4BA1D03B91D06747FDF7E62A /* Check Pods Manifest.lock */,
 				44E9D5F71A952D2F001E4792 /* Sources */,
@@ -283,9 +283,9 @@
 			dependencies = (
 				44E9D5FD1A952D2F001E4792 /* PBXTargetDependency */,
 			);
-			name = ContactifyTests;
-			productName = ContactifyTests;
-			productReference = 44E9D5FB1A952D2F001E4792 /* ContactifyTests.xctest */;
+			name = TuneThatNameTests;
+			productName = TuneThatNameTests;
+			productReference = 44E9D5FB1A952D2F001E4792 /* TuneThatNameTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -307,7 +307,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 44E9D5E11A952D2F001E4792 /* Build configuration list for PBXProject "Contactify" */;
+			buildConfigurationList = 44E9D5E11A952D2F001E4792 /* Build configuration list for PBXProject "TuneThatName" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -320,8 +320,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				44E9D5E51A952D2F001E4792 /* Contactify */,
-				44E9D5FA1A952D2F001E4792 /* ContactifyTests */,
+				44E9D5E51A952D2F001E4792 /* TuneThatName */,
+				44E9D5FA1A952D2F001E4792 /* TuneThatNameTests */,
 			);
 		};
 /* End PBXProject section */
@@ -421,7 +421,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TuneThatNameTests/Pods-TuneThatNameTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F4B3D3A630F7B1B25A6B8717 /* Embed Pods Frameworks */ = {
@@ -436,7 +436,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ContactifyTests/Pods-ContactifyTests-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TuneThatNameTests/Pods-TuneThatNameTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -472,7 +472,7 @@
 /* Begin PBXTargetDependency section */
 		44E9D5FD1A952D2F001E4792 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 44E9D5E51A952D2F001E4792 /* Contactify */;
+			target = 44E9D5E51A952D2F001E4792 /* TuneThatName */;
 			targetProxy = 44E9D5FC1A952D2F001E4792 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -589,12 +589,12 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/../Vendor/ios-sdk-beta-7",
 				);
-				INFOPLIST_FILE = Contactify/Info.plist;
+				INFOPLIST_FILE = TuneThatName/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Contactify/Contactify-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TuneThatName/TuneThatName-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -612,18 +612,18 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/../Vendor/ios-sdk-beta-7",
 				);
-				INFOPLIST_FILE = Contactify/Info.plist;
+				INFOPLIST_FILE = TuneThatName/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Contactify/Contactify-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TuneThatName/TuneThatName-Bridging-Header.h";
 			};
 			name = Release;
 		};
 		44E9D6091A952D2F001E4792 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E3D4EF98625A9FAB6E22AD59 /* Pods-ContactifyTests.debug.xcconfig */;
+			baseConfigurationReference = E3D4EF98625A9FAB6E22AD59 /* Pods-TuneThatNameTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -636,17 +636,17 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = ContactifyTests/Info.plist;
+				INFOPLIST_FILE = TuneThatNameTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Contactify/Contactify-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Contactify.app/Contactify";
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/TuneThatName/TuneThatName-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TuneThatName.app/TuneThatName";
 			};
 			name = Debug;
 		};
 		44E9D60A1A952D2F001E4792 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F1FEA9E6D968643657B0B3A /* Pods-ContactifyTests.release.xcconfig */;
+			baseConfigurationReference = 7F1FEA9E6D968643657B0B3A /* Pods-TuneThatNameTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -655,18 +655,18 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/../Vendor/ios-sdk-beta-7",
 				);
-				INFOPLIST_FILE = ContactifyTests/Info.plist;
+				INFOPLIST_FILE = TuneThatNameTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Contactify/Contactify-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Contactify.app/Contactify";
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/TuneThatName/TuneThatName-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TuneThatName.app/TuneThatName";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		44E9D5E11A952D2F001E4792 /* Build configuration list for PBXProject "Contactify" */ = {
+		44E9D5E11A952D2F001E4792 /* Build configuration list for PBXProject "TuneThatName" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				44E9D6031A952D2F001E4792 /* Debug */,
@@ -675,7 +675,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		44E9D6051A952D2F001E4792 /* Build configuration list for PBXNativeTarget "Contactify" */ = {
+		44E9D6051A952D2F001E4792 /* Build configuration list for PBXNativeTarget "TuneThatName" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				44E9D6061A952D2F001E4792 /* Debug */,
@@ -684,7 +684,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		44E9D6081A952D2F001E4792 /* Build configuration list for PBXNativeTarget "ContactifyTests" */ = {
+		44E9D6081A952D2F001E4792 /* Build configuration list for PBXNativeTarget "TuneThatNameTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				44E9D6091A952D2F001E4792 /* Debug */,
