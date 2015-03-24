@@ -4,7 +4,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var authViewController: SPTAuthViewController!
-    var songDataList = [SongData]()
+    var songList = [Song]()
     
     let echoNestService = EchoNestService()
 
@@ -19,7 +19,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
 
-        loadSongDataList()
+        loadSongList()
     }
     
     override public func viewWillAppear(animated: Bool) {
@@ -32,24 +32,24 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         self.navigationController?.setToolbarHidden(true, animated: animated)
     }
     
-    func loadSongDataList() {
+    func loadSongList() {
         let names = ["John", "Paul", "George", "Ringo"]
         var retrievalCompleted = 0
         for name in names {
-            echoNestService.findSongData(titleSearchTerm: name,
-                completionHandler: {(songDataResult: EchoNestService.SongDataResult) -> Void in
+            echoNestService.findSong(titleSearchTerm: name,
+                completionHandler: {(songResult: EchoNestService.SongResult) -> Void in
                     
                     retrievalCompleted++
                     
-                    switch (songDataResult) {
-                    case .Success(let songData):
-                        if let songData = songData {
-                            self.songDataList.append(songData)
+                    switch (songResult) {
+                    case .Success(let song):
+                        if let song = song {
+                            self.songList.append(song)
                             if names.count == retrievalCompleted {
                                 self.tableView.reloadData()
                             }
                         }
-                        println("song title: \(songData?.title)")
+                        println("song title: \(song?.title)")
                     case .Failure(let error):
                         println("error: \(error)")
                     }
@@ -73,15 +73,15 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
-        return songDataList.count
+        return songList.count
     }
 
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCellWithIdentifier("PlaylistTableCell", forIndexPath: indexPath) as UITableViewCell
 
-        let songData = songDataList[indexPath.row]
-        cell.textLabel?.text = songData.title
-        cell.detailTextLabel?.text = songData.artistName
+        let song = songList[indexPath.row]
+        cell.textLabel?.text = song.title
+        cell.detailTextLabel?.text = song.artistName
 
         return cell
     }

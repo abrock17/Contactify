@@ -4,8 +4,8 @@ import SwiftyJSON
 
 public class EchoNestService {
     
-    public enum SongDataResult {
-        case Success(SongData?)
+    public enum SongResult {
+        case Success(Song?)
         case Failure(NSError)
     }
     
@@ -19,7 +19,7 @@ public class EchoNestService {
         self.alamoFireManager = alamoFireManager
     }
     
-    public func findSongData(#titleSearchTerm: String!, completionHandler searchCompletionHandler: (SongDataResult) -> Void) {
+    public func findSong(#titleSearchTerm: String!, completionHandler searchCompletionHandler: (SongResult) -> Void) {
 
         var urlString = buildSongSearchEndpointStringWithBucketParameters()
         
@@ -33,24 +33,24 @@ public class EchoNestService {
         
         alamoFireManager.request(.GET, urlString, parameters: parameters)
             .responseJSON {(request, response, data, error) in
-                var songData: SongData?
+                var song: Song?
                 
                 if let error = error {
                     searchCompletionHandler(.Failure(error))
                 } else {
-                    var songData: SongData?
+                    var song: Song?
                     
                     if let data: AnyObject = data {
                         let json = JSON(data)
                         let jsonSongs = json["response"]["songs"]
                         for (index, songJSON: JSON) in jsonSongs {
                             if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
-                                songData = SongData(title: title, artistName: songJSON["artist_name"].string, catalogID: nil)
+                                song = Song(title: title, artistName: songJSON["artist_name"].string, catalogID: nil)
                                 break
                             }
                         }
                     }
-                    searchCompletionHandler(.Success(songData))
+                    searchCompletionHandler(.Success(song))
                 }
 
         }

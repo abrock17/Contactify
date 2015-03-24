@@ -1,6 +1,6 @@
 import Foundation
 
-public struct SongData {
+public struct Song {
     public let title: String!
     public let artistName: String?
     public let catalogID: String?

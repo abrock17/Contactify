@@ -26,7 +26,7 @@
 		44E9D5F61A952D2F001E4792 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F41A952D2F001E4792 /* LaunchScreen.xib */; };
 		44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */; };
 		44FDE0C01A9EB52E0052C6D1 /* EchoNestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */; };
-		44FDE0C21A9F40040052C6D1 /* SongData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0C11A9F40040052C6D1 /* SongData.swift */; };
+		44FDE0C21A9F40040052C6D1 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0C11A9F40040052C6D1 /* Song.swift */; };
 		EB6288CF377998ECD558338C /* Pods_TuneThatNameTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9038133D111DE159169DBFD /* Pods_TuneThatNameTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
@@ -51,7 +51,7 @@
 		443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-one-song.txt"; sourceTree = "<group>"; };
 		443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
 		44BDFB081ABC4F720060BB25 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = "../Vendor/ios-sdk-beta-7/Spotify.framework"; sourceTree = "<group>"; };
-		44BE538F1AA76A1E0089BFCD /* PlaylistTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistTableViewController.swift; sourceTree = "<group>"; };
+		44BE538F1AA76A1E0089BFCD /* PlaylistTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PlaylistTableViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		44BE53911AA7ED9A0089BFCD /* CreatePlaylistController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatePlaylistController.swift; sourceTree = "<group>"; };
 		44BE53931AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-multiple-songs-with-incorrect-title.txt"; sourceTree = "<group>"; };
 		44BE53951AACEA1D0089BFCD /* SpotifyServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyServiceSpec.swift; sourceTree = "<group>"; };
@@ -64,9 +64,9 @@
 		44E9D5F51A952D2F001E4792 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		44E9D5FB1A952D2F001E4792 /* TuneThatNameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuneThatNameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D6001A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EchoNestServiceSpec.swift; sourceTree = "<group>"; };
-		44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EchoNestService.swift; sourceTree = "<group>"; };
-		44FDE0C11A9F40040052C6D1 /* SongData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongData.swift; sourceTree = "<group>"; };
+		44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EchoNestServiceSpec.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EchoNestService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		44FDE0C11A9F40040052C6D1 /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		4CFF842C549D9522FF3D0601 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		7F1FEA9E6D968643657B0B3A /* Pods-TuneThatNameTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatNameTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatNameTests/Pods-TuneThatNameTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -129,7 +129,7 @@
 		443F9EC41AA3FCBE00705340 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				44FDE0C11A9F40040052C6D1 /* SongData.swift */,
+				44FDE0C11A9F40040052C6D1 /* Song.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -448,7 +448,7 @@
 			files = (
 				44BE53901AA76A1E0089BFCD /* PlaylistTableViewController.swift in Sources */,
 				44FDE0C01A9EB52E0052C6D1 /* EchoNestService.swift in Sources */,
-				44FDE0C21A9F40040052C6D1 /* SongData.swift in Sources */,
+				44FDE0C21A9F40040052C6D1 /* Song.swift in Sources */,
 				44E9D5EC1A952D2F001E4792 /* AppDelegate.swift in Sources */,
 				44BE53981AACEAD50089BFCD /* SpotifyService.swift in Sources */,
 				44BE53921AA7ED9B0089BFCD /* CreatePlaylistController.swift in Sources */,

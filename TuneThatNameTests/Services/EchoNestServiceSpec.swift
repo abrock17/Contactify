@@ -8,13 +8,13 @@ let arbitrarySongTitleSearchTerm = "Susie"
 
 class EchoNestServiceSpec: QuickSpec {
     
-    var callbackSongData: SongData?
+    var callbackSong: Song?
     var callbackError: NSError?
     
-    func findSongDataCompletionHandler (songDataResult: EchoNestService.SongDataResult) {
-        switch (songDataResult) {
-        case .Success(let songData):
-            callbackSongData = songData
+    func findSongCompletionHandler (songResult: EchoNestService.SongResult) {
+        switch (songResult) {
+        case .Success(let song):
+            callbackSong = song
         case .Failure(let error):
             callbackError = error
         }
@@ -41,7 +41,7 @@ class EchoNestServiceSpec: QuickSpec {
 
                 context("when performing a search") {
                     beforeEach() {
-                        echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
                     }
                     
                     it("contains the correct title string") {
@@ -56,19 +56,19 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the search term has special characters") {
                     it("is encoded in the URL request") {
-                        echoNestService!.findSongData(titleSearchTerm: "\"Special, Characters ... (&)\"", completionHandler: self.findSongDataCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: "\"Special, Characters ... (&)\"", completionHandler: self.findSongCompletionHandler)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=%22Special%2C%20Characters%20...%20%28%26%29%22"))
                     }
                 }
                 
                 context("when the underlying URL connection returns no data") {
-                    it("calls back with nil SongData") {
-                        self.callbackSongData = SongData(title: "non-nil song so we can check for nil later", artistName: nil, catalogID: nil)
+                    it("calls back with nil Song") {
+                        self.callbackSong = Song(title: "non-nil song so we can check for nil later", artistName: nil, catalogID: nil)
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
-                        echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
 
-                        expect(self.callbackSongData).toEventually(beNil())
+                        expect(self.callbackSong).toEventually(beNil())
                     }
                 }
                 
@@ -77,7 +77,7 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     it("passes back the same error") {
                         MockURLProtocol.setMockError(expectedError)
-                        echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
 
                         expect(self.callbackError?.domain).toEventually(equal(expectedError.domain))
                         expect(self.callbackError?.code).toEventually(equal(expectedError.code))
@@ -90,19 +90,19 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     beforeEach() {
                         MockURLProtocol.setMockResponseData(data)
-                        echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
                     }
                     
                     it("calls back with song data") {
-                        expect(self.callbackSongData).toEventuallyNot(beNil())
+                        expect(self.callbackSong).toEventuallyNot(beNil())
                     }
                     
                     it("has the expected title") {
-                        expect(self.callbackSongData?.title).toEventually(equal("Susie Q"))
+                        expect(self.callbackSong?.title).toEventually(equal("Susie Q"))
                     }
                     
                     it("has the expected artist name") {
-                        expect(self.callbackSongData?.artistName).toEventually(equal("Creedence Clearwater Revival"))
+                        expect(self.callbackSong?.artistName).toEventually(equal("Creedence Clearwater Revival"))
                     }
                 }
                 
@@ -112,10 +112,10 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     it("calls back with the expected song") {
                         MockURLProtocol.setMockResponseData(data)
-                        echoNestService!.findSongData(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongDataCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
 
-                        expect(self.callbackSongData).toEventuallyNot(beNil())
-                        expect(self.callbackSongData?.title).toEventually(equal("Susie Q"))
+                        expect(self.callbackSong).toEventuallyNot(beNil())
+                        expect(self.callbackSong?.title).toEventually(equal("Susie Q"))
                     }
                 }
             }
