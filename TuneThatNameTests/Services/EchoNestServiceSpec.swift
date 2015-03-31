@@ -64,8 +64,9 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the underlying URL connection returns no data") {
                     it("calls back with nil Song") {
-                        self.callbackSong = Song(title: "non-nil song so we can check for nil later", artistName: nil, catalogID: nil)
+                        self.callbackSong = Song(title: "non-nil song so we can check for nil later", artistName: nil, uri: nil)
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
+                        
                         echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
 
                         expect(self.callbackSong).toEventually(beNil())
@@ -103,6 +104,24 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     it("has the expected artist name") {
                         expect(self.callbackSong?.artistName).toEventually(equal("Creedence Clearwater Revival"))
+                    }
+                    
+                    it("has the expected uri") {
+                        expect(self.callbackSong?.uri).toEventually(equal(NSURL(string: "spotify:track:38kWGB8ab6UflBPWQcQ8Ua")))
+                    }
+                }
+                
+                context("when only a song with no foreign catalog ID is found") {
+                    self.callbackSong = Song(title: "non-nil song so we can check for nil later", artistName: nil, uri: nil)
+                    let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-one-song-no-foreign_id", withExtension: "txt")
+                    let data = NSData(contentsOfURL: url!)
+                    
+                    it("calls back with nil Song") {
+                        MockURLProtocol.setMockResponseData(data)
+
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
+                        
+                        expect(self.callbackSong).toEventually(beNil())
                     }
                 }
                 

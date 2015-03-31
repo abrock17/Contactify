@@ -2,11 +2,13 @@ import UIKit
 
 public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     
+    var playlist = Playlist(name: "Tune That Name")
+    
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var authViewController: SPTAuthViewController!
-    var songList = [Song]()
     
-    let echoNestService = EchoNestService()
+    var echoNestService = EchoNestService()
+    var spotifyService = SpotifyService()
 
     @IBOutlet public weak var saveButton: UIBarButtonItem!
     
@@ -19,7 +21,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
 
-        loadSongList()
+        loadPlaylistSongs()
     }
     
     override public func viewWillAppear(animated: Bool) {
@@ -32,7 +34,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         self.navigationController?.setToolbarHidden(true, animated: animated)
     }
     
-    func loadSongList() {
+    func loadPlaylistSongs() {
         let names = ["John", "Paul", "George", "Ringo"]
         var retrievalCompleted = 0
         for name in names {
@@ -44,7 +46,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                     switch (songResult) {
                     case .Success(let song):
                         if let song = song {
-                            self.songList.append(song)
+                            self.playlist.songs.append(song)
                             if names.count == retrievalCompleted {
                                 self.tableView.reloadData()
                             }
@@ -73,13 +75,13 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
-        return songList.count
+        return playlist.songs.count
     }
 
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCellWithIdentifier("PlaylistTableCell", forIndexPath: indexPath) as UITableViewCell
 
-        let song = songList[indexPath.row]
+        let song = playlist.songs[indexPath.row]
         cell.textLabel?.text = song.title
         cell.detailTextLabel?.text = song.artistName
 
@@ -131,22 +133,25 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     */
     
-    @IBAction public func savePlaylist(sender: AnyObject) {
-        openLoginIfNecessary()
+    
+    @IBAction public func savePlaylistClicked(sender: AnyObject) {
+        if spotifyAuth.session == nil || !spotifyAuth.session.isValid() {
+            openLogin()
+        } else {
+            savePlaylist()
+        }
     }
     
-    func openLoginIfNecessary() {
-        if spotifyAuth.session == nil {
-            authViewController = SPTAuthViewController.authenticationViewControllerWithAuth(spotifyAuth)
-            authViewController.delegate = self
-            authViewController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
-            authViewController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
-            
-            self.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
-            self.definesPresentationContext = true
-            
-            presentViewController(self.authViewController, animated: false, completion: nil)
-        }
+    func openLogin() {
+        authViewController = SPTAuthViewController.authenticationViewControllerWithAuth(spotifyAuth)
+        authViewController.delegate = self
+        authViewController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
+        authViewController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
+        
+        self.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
+        self.definesPresentationContext = true
+        
+        presentViewController(self.authViewController, animated: false, completion: nil)
     }
     
     public func authenticationViewController(viewController: SPTAuthViewController, didFailToLogin error: NSError) {
@@ -155,9 +160,29 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
         println("Login succeeded... session: \(session)")
+        savePlaylist()
     }
     
     public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
         println("Login cancelled")
+    }
+    
+    func savePlaylist() {
+        let session = spotifyAuth.session
+        println("access token: \(session?.accessToken)")
+        spotifyService.savePlaylist(playlist, session: session) {
+            playlistResult in
+            
+            switch (playlistResult) {
+            case .Success(let playlist):
+                self.playlist = playlist
+                println("playlist: \(playlist.name), \(playlist.songs.count) songs")
+                for song in playlist.songs {
+                    println("song : \(song.title), \(song.artistName), \(song.uri?.absoluteString)")
+                }
+            case .Failure(let error):
+                println("error: \(error)")
+            }
+        }
     }
 }

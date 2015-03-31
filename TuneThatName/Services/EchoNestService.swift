@@ -11,7 +11,7 @@ public class EchoNestService {
     
     let apiKey = "GVZ7FFJUMMXBG58VQ"
     let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
-    let songSearchBuckets = ["tracks", "id:spotify"]
+    let songSearchBuckets = ["tracks", "id:spotify-US"]
     
     let alamoFireManager: Manager!
     
@@ -45,8 +45,10 @@ public class EchoNestService {
                         let jsonSongs = json["response"]["songs"]
                         for (index, songJSON: JSON) in jsonSongs {
                             if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
-                                song = Song(title: title, artistName: songJSON["artist_name"].string, catalogID: nil)
-                                break
+                                if let uri = self.getValidURI(songJSON) {
+                                    song = Song(title: title, artistName: songJSON["artist_name"].string, uri: uri)
+                                    break
+                                }
                             }
                         }
                     }
@@ -79,6 +81,17 @@ public class EchoNestService {
         }
         
         return validTitle
+    }
+    
+    func getValidURI(songJSON: JSON) -> NSURL? {
+        var uri: NSURL?
+        
+        if let uriStringWithLocale = songJSON["tracks"][0]["foreign_id"].string {
+            var uriString = uriStringWithLocale.stringByReplacingOccurrencesOfString("-US", withString: "")
+            uri = NSURL(string: uriString)
+        }
+        
+        return uri
     }
     
     func buildSongSearchEndpointStringWithBucketParameters() -> String! {
