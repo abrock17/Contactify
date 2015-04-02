@@ -2,13 +2,13 @@ import UIKit
 
 public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     
-    var playlist = Playlist(name: "Tune That Name")
-    
+    public var playlist = Playlist(name: "Tune That Name")
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
-    var authViewController: SPTAuthViewController!
     
-    var echoNestService = EchoNestService()
-    var spotifyService = SpotifyService()
+    public var echoNestService = EchoNestService()
+    public var spotifyService = SpotifyService()
+
+    var authViewController: SPTAuthViewController!
 
     @IBOutlet public weak var saveButton: UIBarButtonItem!
     
