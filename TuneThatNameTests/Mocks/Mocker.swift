@@ -6,6 +6,11 @@ class Mocker {
     var mockedReturns = [String: [Any?]]()
     
     // to be used by mocks
+    func mockCallto(methodName: String, parameters: Any?...) -> Any? {
+        recordCall(methodName, parameters: parameters)
+        return returnValueForCallTo(methodName)
+    }
+
     func recordCall(methodName: String, parameters: Any?...) {
         var recordedParametersSequence = recordedParameters[methodName]
         if recordedParametersSequence == nil {

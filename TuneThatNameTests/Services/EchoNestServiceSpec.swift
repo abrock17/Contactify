@@ -11,7 +11,7 @@ class EchoNestServiceSpec: QuickSpec {
     var callbackSong: Song?
     var callbackError: NSError?
     
-    func findSongCompletionHandler (songResult: EchoNestService.SongResult) {
+    func findSongCallback (songResult: EchoNestService.SongResult) {
         switch (songResult) {
         case .Success(let song):
             callbackSong = song
@@ -35,13 +35,15 @@ class EchoNestServiceSpec: QuickSpec {
             
             afterEach() {
                 MockURLProtocol.clear()
+                self.callbackSong = nil
+                self.callbackError = nil
             }
             
             describe("find song data for title search term") {
 
                 context("when performing a search") {
                     beforeEach() {
-                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, callback: self.findSongCallback)
                     }
                     
                     it("contains the correct title string") {
@@ -56,20 +58,20 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the search term has special characters") {
                     it("is encoded in the URL request") {
-                        echoNestService!.findSong(titleSearchTerm: "\"Special, Characters ... (&)\"", completionHandler: self.findSongCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: "\"Special, Characters ... (&)\"", callback: self.findSongCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=%22Special%2C%20Characters%20...%20%28%26%29%22"))
                     }
                 }
                 
                 context("when the underlying URL connection returns no data") {
-                    it("calls back with nil Song") {
-                        self.callbackSong = Song(title: "non-nil song so we can check for nil later", artistName: nil, uri: nil)
+                    it("calls back with a generic error message") {
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
                         
-                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, callback: self.findSongCallback)
 
-                        expect(self.callbackSong).toEventually(beNil())
+                        expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
+                        expect(self.callbackError?.userInfo?[NSLocalizedDescriptionKey] as? String).toEventually(equal("Unexpected response from the Echo Nest."))
                     }
                 }
                 
@@ -78,10 +80,24 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     it("passes back the same error") {
                         MockURLProtocol.setMockError(expectedError)
-                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, callback: self.findSongCallback)
 
                         expect(self.callbackError?.domain).toEventually(equal(expectedError.domain))
                         expect(self.callbackError?.code).toEventually(equal(expectedError.code))
+                    }
+                }
+                
+                context("when the response data status is not successful") {
+                    let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-timeout-error", withExtension: "txt")
+                    let data = NSData(contentsOfURL: url!)
+
+                    it("calls back with an error with the status message") {
+                        MockURLProtocol.setMockResponseData(data)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, callback: self.findSongCallback)
+                        
+                        expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
+                        expect(self.callbackError?.userInfo?[NSLocalizedDescriptionKey] as? String).toEventually(equal("Non-zero status code from the Echo Nest."))
+                        expect(self.callbackError?.userInfo?[NSLocalizedFailureReasonErrorKey] as? String).toEventually(equal("The operation timed out"))
                     }
                 }
                 
@@ -91,7 +107,7 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     beforeEach() {
                         MockURLProtocol.setMockResponseData(data)
-                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, callback: self.findSongCallback)
                     }
                     
                     it("calls back with song data") {
@@ -119,7 +135,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with nil Song") {
                         MockURLProtocol.setMockResponseData(data)
 
-                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, callback: self.findSongCallback)
                         
                         expect(self.callbackSong).toEventually(beNil())
                     }
@@ -131,7 +147,7 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     it("calls back with the expected song") {
                         MockURLProtocol.setMockResponseData(data)
-                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, completionHandler: self.findSongCompletionHandler)
+                        echoNestService!.findSong(titleSearchTerm: arbitrarySongTitleSearchTerm, callback: self.findSongCallback)
 
                         expect(self.callbackSong).toEventuallyNot(beNil())
                         expect(self.callbackSong?.title).toEventually(equal("Susie Q"))

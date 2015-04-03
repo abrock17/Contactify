@@ -14,10 +14,12 @@ class PlaylistTableViewControllerSpec: QuickSpec {
             var mockSpotifyService: MockSpotifyService!
             
             beforeEach() {
-                mockSpotifyService = MockSpotifyService()
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 playlistTableViewController = storyboard.instantiateViewControllerWithIdentifier("PlaylistTableViewController") as  PlaylistTableViewController
+
+                mockSpotifyService = MockSpotifyService()
                 playlistTableViewController.spotifyService = mockSpotifyService
+                
                 let window = UIWindow(frame: UIScreen.mainScreen().bounds)
                 window.rootViewController = playlistTableViewController
                 window.makeKeyAndVisible()
@@ -48,14 +50,12 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                 }
                 
                 context("when there is a valid session") {
-                    let playlistToBeSaved = Playlist(name: "playlist")
                     let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                    let playlistToBeSaved = Playlist(name: "playlist to be saved")
 
                     beforeEach() {
                         playlistTableViewController.spotifyAuth = spotifyAuth
-                        
                         playlistTableViewController.playlist = playlistToBeSaved
-                        mockSpotifyService.mocker.prepareForCallTo(savePlaylistMethod, returnValue: SpotifyService.PlaylistResult.Success(playlistToBeSaved))
                     }
                     
                     it("does not prompt the user to log in") {
@@ -71,11 +71,45 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                         var playlistParameter = mockSpotifyService.mocker.verifyNthCallTo(savePlaylistMethod, n: 0)?.first as? Playlist
                         expect(playlistParameter).to(equal(playlistToBeSaved))
                     }
+                    
+                    context("upon saving the playlist successfully") {
+                        let savedPlaylist = Playlist(name: "saved playlist", uri: NSURL(string: "uri"))
+                        beforeEach() {
+                            mockSpotifyService.mocker.prepareForCallTo(savePlaylistMethod, returnValue: SpotifyService.PlaylistResult.Success(savedPlaylist))
+                            
+                            self.pressSaveButton(playlistTableViewController)
+                        }
+                        
+                        it("has the saved playlist") {
+                            expect(playlistTableViewController.playlist).toEventually(equal(savedPlaylist))
+                        }
+                        
+                        it("updates the save button text") {
+                            expect(playlistTableViewController.saveButton.title).toEventually(equal("Playlist Saved"))
+                        }
+
+                        it("disables the save button") {
+                            let enabled = playlistTableViewController.saveButton.enabled
+                            expect(playlistTableViewController.saveButton.enabled).toEventuallyNot(beTrue())
+                        }
+                    }
+                    
+                    context("upon failing to save the playlist") {
+                        beforeEach() {
+                            mockSpotifyService.mocker.prepareForCallTo(savePlaylistMethod, returnValue: SpotifyService.PlaylistResult.Failure(NSError(domain: "SpotifyDomain", code: 777, userInfo: nil)))
+                            
+                            self.pressSaveButton(playlistTableViewController)
+                        }
+                        
+                        it("displays the error in an alert") {
+                            
+                        }
+                    }
                 }
             }
             
             describe("successful login") {
-                let playlistToBeSaved = Playlist(name: "playlist")
+                let playlistToBeSaved = Playlist(name: "playlist to be saved")
                 let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
 
                 context("when login is successful") {
@@ -122,10 +156,13 @@ class MockSpotifyService: SpotifyService {
     
     let mocker = Mocker()
     
-    var savePlaylistError: NSError?
-    
     override func savePlaylist(playlist: Playlist!, session: SPTSession!, callback: (SpotifyService.PlaylistResult) -> Void) {
         mocker.recordCall(savePlaylistMethod, parameters: playlist, session)
-        callback(mocker.returnValueForCallTo(savePlaylistMethod) as SpotifyService.PlaylistResult!)
+        let mockedResult = mocker.returnValueForCallTo(savePlaylistMethod)
+        if let mockedResult = mockedResult as? SpotifyService.PlaylistResult {
+            callback(mockedResult)
+        } else {
+            callback(.Success(Playlist(name: "unimportant mocked playlist")))
+        }
     }
 }

@@ -13,49 +13,58 @@ public class EchoNestService {
     let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
     let songSearchBuckets = ["tracks", "id:spotify-US"]
     
+    let unexpectedResponseMessage = "Unexpected response from the Echo Nest."
+    
     let alamoFireManager: Manager!
     
     public init(alamoFireManager: Manager = Manager.sharedInstance) {
         self.alamoFireManager = alamoFireManager
     }
     
-    public func findSong(#titleSearchTerm: String!, completionHandler searchCompletionHandler: (SongResult) -> Void) {
+    public func findSong(#titleSearchTerm: String!, callback: (SongResult) -> Void) {
 
-        var urlString = buildSongSearchEndpointStringWithBucketParameters()
+        let urlString = buildSongSearchEndpointStringWithBucketParameters() as URLStringConvertible
+        let parameters = getParameters(titleSearchTerm: titleSearchTerm)
         
-        let parameters: [String: AnyObject] = [
-            "api_key": apiKey,
-            "format": "json",
-            "results": 50,
-            "limit": "true",
-            "title": titleSearchTerm
-        ]
-        
-        alamoFireManager.request(.GET, urlString, parameters: parameters)
-            .responseJSON {(request, response, data, error) in
-                var song: Song?
+        alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
+            (request, response, data, error) in
+            
+            if let error = error {
+                callback(.Failure(error))
+            } else if let data: AnyObject = data {
+                let json = JSON(data)
                 
-                if let error = error {
-                    searchCompletionHandler(.Failure(error))
-                } else {
-                    var song: Song?
-                    
-                    if let data: AnyObject = data {
-                        let json = JSON(data)
-                        let jsonSongs = json["response"]["songs"]
-                        for (index, songJSON: JSON) in jsonSongs {
-                            if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
-                                if let uri = self.getValidURI(songJSON) {
-                                    song = Song(title: title, artistName: songJSON["artist_name"].string, uri: uri)
-                                    break
-                                }
-                            }
-                        }
+                let statusJSON = json["response"]["status"]
+                if let code = statusJSON["code"].int {
+                    if code == 0 {
+                        callback(.Success(self.getValidSongFromJSON(json, titleSearchTerm: titleSearchTerm)))
+                    } else {
+                        callback(.Failure(self.errorForUnexpectedStatusJSON(statusJSON)))
                     }
-                    searchCompletionHandler(.Success(song))
+                } else {
+                    callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No status code in the response.")))
+                    println("json : \(json.rawString())")
                 }
-
+            } else {
+                callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No data in the response.")))
+            }
         }
+    }
+    
+    func getValidSongFromJSON(json: JSON, titleSearchTerm: String!) -> Song? {
+        var song: Song?
+        
+        let jsonSongs = json["response"]["songs"]
+        for (index, songJSON: JSON) in jsonSongs {
+            if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
+                if let uri = self.getValidURI(songJSON) {
+                    song = Song(title: title, artistName: songJSON["artist_name"].string, uri: uri)
+                    break
+                }
+            }
+        }
+
+        return song
     }
     
     func getValidMatchingTitle(songJSON: JSON, titleSearchTerm: String!) -> String? {
@@ -92,6 +101,31 @@ public class EchoNestService {
         }
         
         return uri
+    }
+    
+    func errorForUnexpectedStatusJSON(statusJSON: JSON) -> NSError {
+        var statusMessage: String!
+        let message = statusJSON["message"].string
+        if let message = message {
+            statusMessage = message
+        } else {
+            statusMessage = "[no message]"
+        }
+        return errorForMessage("Non-zero status code from the Echo Nest.", andFailureReason: statusMessage)
+    }
+    
+    func errorForMessage(message: String, andFailureReason reason: String) -> NSError {
+        return NSError(domain: Constants.Error.Domain, code: 0, userInfo: [NSLocalizedDescriptionKey: message, NSLocalizedFailureReasonErrorKey: reason])
+    }
+    
+    func getParameters(#titleSearchTerm: String) -> [String : AnyObject] {
+        return [
+            "api_key": apiKey,
+            "format": "json",
+            "results": 50,
+            "limit": "true",
+            "title": titleSearchTerm
+        ]
     }
     
     func buildSongSearchEndpointStringWithBucketParameters() -> String! {

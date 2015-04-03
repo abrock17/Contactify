@@ -82,9 +82,9 @@
                     </tableView>
                     <toolbarItems>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="9ZZ-s8-bZs"/>
-                        <barButtonItem title="Save Playlist in Spotify" style="plain" id="kyd-NY-KvY">
+                        <barButtonItem style="plain" id="kyd-NY-KvY">
                             <connections>
-                                <action selector="savePlaylistClicked:" destination="197-cV-9aq" id="bUF-Pd-Uyi"/>
+                                <action selector="savePlaylistPressed:" destination="197-cV-9aq" id="bUF-Pd-Uyi"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="AYl-A9-mwF"/>

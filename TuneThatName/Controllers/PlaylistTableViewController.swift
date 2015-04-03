@@ -2,7 +2,7 @@ import UIKit
 
 public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     
-    public var playlist = Playlist(name: "Tune That Name")
+    public var playlist: Playlist!
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     
     public var echoNestService = EchoNestService()
@@ -21,7 +21,11 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
 
-        loadPlaylistSongs()
+        if playlist == nil {
+            loadDummyPlaylist()
+        }
+        
+        updateButtonForUnsavedPlaylist()
     }
     
     override public func viewWillAppear(animated: Bool) {
@@ -34,28 +38,30 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         self.navigationController?.setToolbarHidden(true, animated: animated)
     }
     
-    func loadPlaylistSongs() {
+    func loadDummyPlaylist() {
+        playlist = Playlist(name: "Tune That Name")
+        
         let names = ["John", "Paul", "George", "Ringo"]
         var retrievalCompleted = 0
         for name in names {
-            echoNestService.findSong(titleSearchTerm: name,
-                completionHandler: {(songResult: EchoNestService.SongResult) -> Void in
-                    
-                    retrievalCompleted++
-                    
-                    switch (songResult) {
-                    case .Success(let song):
-                        if let song = song {
-                            self.playlist.songs.append(song)
-                            if names.count == retrievalCompleted {
-                                self.tableView.reloadData()
-                            }
-                        }
-                        println("song title: \(song?.title)")
-                    case .Failure(let error):
-                        println("error: \(error)")
+            echoNestService.findSong(titleSearchTerm: name) {
+                (songResult: EchoNestService.SongResult) in
+                
+                switch (songResult) {
+                case .Success(let song):
+                    if let song = song {
+                        self.playlist.songs.append(song)
                     }
-            })
+                    println("song title: \(song?.title)")
+                case .Failure(let error):
+                    println("error: \(error)")
+                }
+                
+                retrievalCompleted++
+                if names.count == retrievalCompleted {
+                    self.tableView.reloadData()
+                }
+            }
         }
     }
     
@@ -134,7 +140,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     */
     
     
-    @IBAction public func savePlaylistClicked(sender: AnyObject) {
+    @IBAction public func savePlaylistPressed(sender: AnyObject) {
         if spotifyAuth.session == nil || !spotifyAuth.session.isValid() {
             openLogin()
         } else {
@@ -173,16 +179,29 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         spotifyService.savePlaylist(playlist, session: session) {
             playlistResult in
             
+//            let localPlaylistResult = SpotifyService.PlaylistResult.Failure(NSError(domain: "domain", code: 0, userInfo: [NSLocalizedDescriptionKey: "some error"]))
             switch (playlistResult) {
             case .Success(let playlist):
-                self.playlist = playlist
                 println("playlist: \(playlist.name), \(playlist.songs.count) songs")
-                for song in playlist.songs {
-                    println("song : \(song.title), \(song.artistName), \(song.uri?.absoluteString)")
-                }
+                self.playlist = playlist
+                self.updateButtonAfterPlaylistSaved()
             case .Failure(let error):
                 println("error: \(error)")
+//                let errorAlertViewController = UIAlertController(title: "Unable to Save Playlist", message: error.userInfo?[NSLocalizedDescriptionKey] as? String, preferredStyle: .Alert)
+//                let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+//                errorAlertViewController.addAction(okAction)
+//                self.presentViewController(errorAlertViewController, animated: true, completion: nil)
             }
         }
+    }
+    
+    func updateButtonForUnsavedPlaylist() {
+        self.saveButton.title = "Save to Spotify"
+        self.saveButton.enabled = true
+    }
+    
+    func updateButtonAfterPlaylistSaved() {
+        self.saveButton.title = "Playlist Saved"
+        self.saveButton.enabled = false
     }
 }
