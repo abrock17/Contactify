@@ -12,7 +12,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
         
         describe("PlaylistTableViewController") {
             var playlistTableViewController: PlaylistTableViewController!
-//            var mockEchoNestService: MockEchoNestService!
+            var mockEchoNestService: MockEchoNestService!
             var mockSpotifyService: MockSpotifyService!
             
             beforeEach() {
@@ -21,8 +21,9 @@ class PlaylistTableViewControllerSpec: QuickSpec {
 
                 mockSpotifyService = MockSpotifyService()
                 playlistTableViewController.spotifyService = mockSpotifyService
-//                mockEchoNestService = MockEchoNestService()
-//                playlistTableViewController.echoNestService = mockEchoNestService
+                mockEchoNestService = MockEchoNestService()
+                playlistTableViewController.echoNestService = mockEchoNestService
+                playlistTableViewController.playlist = Playlist(name: "existing playlist to keep view from reloading")
                 
                 let window = UIWindow(frame: UIScreen.mainScreen().bounds)
                 window.rootViewController = playlistTableViewController
@@ -160,21 +161,20 @@ class PlaylistTableViewControllerSpec: QuickSpec {
     }
 }
 
-//class MockEchoNestService: EchoNestService {
-//    
-//
-//    let mocker = Mocker()
-//    
-//    override func findSong(#titleSearchTerm: String!, callback: (EchoNestService.SongResult) -> Void) {
-//        mocker.recordCall(findSongMethod, parameters: titleSearchTerm)
-//        let mockedResult = mocker.returnValueForCallTo(findSongMethod)
-//        if let mockedResult = mockedResult as? EchoNestService.SongResult {
-//            callback(mockedResult)
-//        } else {
-//            callback(.Success(Song(title: "unimportant mocked title", artistName: nil, uri: nil)))
-//        }
-//    }
-//}
+class MockEchoNestService: EchoNestService {
+
+    let mocker = Mocker()
+    
+    override func findSong(#titleSearchTerm: String!, callback: (EchoNestService.SongResult) -> Void) {
+        mocker.recordCall(findSongMethod, parameters: titleSearchTerm)
+        let mockedResult = mocker.returnValueForCallTo(findSongMethod)
+        if let mockedResult = mockedResult as? EchoNestService.SongResult {
+            callback(mockedResult)
+        } else {
+            callback(.Success(Song(title: "unimportant mocked song", artistName: nil, uri: nil)))
+        }
+    }
+}
 
 class MockSpotifyService: SpotifyService {
     
