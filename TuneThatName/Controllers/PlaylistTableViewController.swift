@@ -9,6 +9,13 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     public var spotifyService = SpotifyService()
 
     var authViewController: SPTAuthViewController!
+    
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let inidicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+        self.tableView.addSubview(inidicator)
+        inidicator.center = self.tableView.center
+        return inidicator
+    }()
 
     @IBOutlet public weak var saveButton: UIBarButtonItem!
     
@@ -20,7 +27,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-
+        
         if playlist == nil {
             loadDummyPlaylist()
         }
@@ -39,6 +46,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     func loadDummyPlaylist() {
+        activityIndicator.startAnimating()
         playlist = Playlist(name: "Tune That Name")
         
         let names = ["John", "Paul", "George", "Ringo"]
@@ -60,6 +68,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 retrievalCompleted++
                 if names.count == retrievalCompleted {
                     self.tableView.reloadData()
+                    self.activityIndicator.stopAnimating()
                 }
             }
         }
@@ -174,12 +183,12 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     func savePlaylist() {
+        activityIndicator.startAnimating()
         let session = spotifyAuth.session
         println("access token: \(session?.accessToken)")
         spotifyService.savePlaylist(playlist, session: session) {
             playlistResult in
             
-//            let localPlaylistResult = SpotifyService.PlaylistResult.Failure(NSError(domain: "domain", code: 0, userInfo: [NSLocalizedDescriptionKey: "some error"]))
             switch (playlistResult) {
             case .Success(let playlist):
                 println("playlist: \(playlist.name), \(playlist.songs.count) songs")
@@ -189,6 +198,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 println("error: \(error)")
                 self.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String)
             }
+            self.activityIndicator.stopAnimating()
         }
     }
     
