@@ -31,7 +31,7 @@ public class SpotifyService {
             } else if let playlists = playlists as? SPTPlaylistList {
                 self.createPlaylist(playlist, inPlaylistList: playlists, withSession: session, callback: callback)
             } else {
-                callback(.Failure(NSError(domain: "List of SPTPlaylists was nil", code: 0, userInfo: nil)))
+                self.errorForMessage("Unable to retrieve users playlists", andFailureReason: "List of SPTPlaylists from Spotify was nil")
             }
         }
     }
@@ -121,7 +121,7 @@ public class SpotifyService {
                 } else if let nextPage = nextPage as? SPTListPage {
                     self.completePlaylistRetrieval(playlist, withPlaylistSnapshotPage: nextPage, withSession: session, callback: callback)
                 } else {
-                    callback(.Failure(NSError(domain: "SPTPlaylistSnapshot page was nil", code: 0, userInfo: nil)))
+                    self.errorForMessage("Unable to retrieve playlist", andFailureReason: "SPTPlaylistSnapshot page from Spotify was nil")
                 }
             }
         } else {
@@ -138,5 +138,9 @@ public class SpotifyService {
         }
         
         return ", ".join(artistNames)
+    }
+    
+    func errorForMessage(message: String, andFailureReason reason: String) -> NSError {
+        return NSError(domain: Constants.Error.Domain, code: 0, userInfo: [NSLocalizedDescriptionKey: message, NSLocalizedFailureReasonErrorKey: reason])
     }
 }
