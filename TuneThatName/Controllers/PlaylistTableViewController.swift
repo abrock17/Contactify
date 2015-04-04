@@ -2,6 +2,7 @@ import UIKit
 
 public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     
+    var searchNames = [String]()
     public var playlist: Playlist!
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     
@@ -49,9 +50,8 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         activityIndicator.startAnimating()
         playlist = Playlist(name: "Tune That Name")
         
-        let names = ["John", "Paul", "George", "Ringo"]
         var retrievalCompleted = 0
-        for name in names {
+        for name in searchNames {
             echoNestService.findSong(titleSearchTerm: name) {
                 (songResult: EchoNestService.SongResult) in
                 
@@ -66,7 +66,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 }
                 
                 retrievalCompleted++
-                if names.count == retrievalCompleted {
+                if self.searchNames.count == retrievalCompleted {
                     self.tableView.reloadData()
                     self.activityIndicator.stopAnimating()
                 }
