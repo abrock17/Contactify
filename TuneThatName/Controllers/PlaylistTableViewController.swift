@@ -187,10 +187,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 self.updateButtonAfterPlaylistSaved()
             case .Failure(let error):
                 println("error: \(error)")
-//                let errorAlertViewController = UIAlertController(title: "Unable to Save Playlist", message: error.userInfo?[NSLocalizedDescriptionKey] as? String, preferredStyle: .Alert)
-//                let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
-//                errorAlertViewController.addAction(okAction)
-//                self.presentViewController(errorAlertViewController, animated: true, completion: nil)
+                self.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String)
             }
         }
     }
@@ -203,5 +200,12 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     func updateButtonAfterPlaylistSaved() {
         self.saveButton.title = "Playlist Saved"
         self.saveButton.enabled = false
+    }
+    
+    func displaySimpleAlertForTitle(title: String, andMessage message: String) {
+        let errorAlertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        let okAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
+        errorAlertViewController.addAction(okAction)
+        self.presentViewController(errorAlertViewController, animated: true, completion: nil)
     }
 }

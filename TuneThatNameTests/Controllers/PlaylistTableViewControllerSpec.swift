@@ -4,6 +4,7 @@ import Quick
 import Nimble
 
 let savePlaylistMethod = "savePlaylist"
+let findSongMethod = "findSong"
 
 class PlaylistTableViewControllerSpec: QuickSpec {
     
@@ -11,6 +12,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
         
         describe("PlaylistTableViewController") {
             var playlistTableViewController: PlaylistTableViewController!
+//            var mockEchoNestService: MockEchoNestService!
             var mockSpotifyService: MockSpotifyService!
             
             beforeEach() {
@@ -19,6 +21,8 @@ class PlaylistTableViewControllerSpec: QuickSpec {
 
                 mockSpotifyService = MockSpotifyService()
                 playlistTableViewController.spotifyService = mockSpotifyService
+//                mockEchoNestService = MockEchoNestService()
+//                playlistTableViewController.echoNestService = mockEchoNestService
                 
                 let window = UIWindow(frame: UIScreen.mainScreen().bounds)
                 window.rootViewController = playlistTableViewController
@@ -95,14 +99,18 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                     }
                     
                     context("upon failing to save the playlist") {
-                        beforeEach() {
-                            mockSpotifyService.mocker.prepareForCallTo(savePlaylistMethod, returnValue: SpotifyService.PlaylistResult.Failure(NSError(domain: "SpotifyDomain", code: 777, userInfo: nil)))
+                        let error = NSError(domain: "com.spotify.ios", code: 777, userInfo: [NSLocalizedDescriptionKey: "error description"])
+                        
+                        it("displays the error message in an alert") {
+                            mockSpotifyService.mocker.prepareForCallTo(savePlaylistMethod, returnValue: SpotifyService.PlaylistResult.Failure(error))
                             
                             self.pressSaveButton(playlistTableViewController)
-                        }
-                        
-                        it("displays the error in an alert") {
-                            
+
+                            expect(playlistTableViewController.presentedViewController).toEventuallyNot(beNil())
+                            expect(playlistTableViewController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
+                            let alertController = playlistTableViewController.presentedViewController as UIAlertController
+                            expect(alertController.title).toEventually(equal("Unable to Save Your Playlist"))
+                            expect(alertController.message).toEventually(equal(error.userInfo![NSLocalizedDescriptionKey] as String?))
                         }
                     }
                 }
@@ -151,6 +159,22 @@ class PlaylistTableViewControllerSpec: QuickSpec {
         UIApplication.sharedApplication().sendAction(saveButton.action, to: saveButton.target, from: self, forEvent: nil)
     }
 }
+
+//class MockEchoNestService: EchoNestService {
+//    
+//
+//    let mocker = Mocker()
+//    
+//    override func findSong(#titleSearchTerm: String!, callback: (EchoNestService.SongResult) -> Void) {
+//        mocker.recordCall(findSongMethod, parameters: titleSearchTerm)
+//        let mockedResult = mocker.returnValueForCallTo(findSongMethod)
+//        if let mockedResult = mockedResult as? EchoNestService.SongResult {
+//            callback(mockedResult)
+//        } else {
+//            callback(.Success(Song(title: "unimportant mocked title", artistName: nil, uri: nil)))
+//        }
+//    }
+//}
 
 class MockSpotifyService: SpotifyService {
     

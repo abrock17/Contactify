@@ -5,7 +5,7 @@ public struct Song: Equatable {
     public let artistName: String?
     public let uri: NSURL?
     
-    public init(title: String!, artistName: String?, uri: NSURL?) {
+    public init(title: String!, artistName: String?, uri: NSURL!) {
         self.title = title
         self.artistName = artistName
         self.uri = uri
