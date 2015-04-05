@@ -9,8 +9,21 @@ class CreatePlaylistController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: - Navigation
+
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
+        let playlistTableViewController = segue.destinationViewController as PlaylistTableViewController
+
         addressBookSpike()
+        playlistTableViewController.searchNames = contactNames
     }
     
     func addressBookSpike() {
@@ -24,7 +37,7 @@ class CreatePlaylistController: UIViewController {
         case .NotDetermined:
             ABAddressBookRequestAccessWithCompletion(addressBook) {
                 (granted, error) in
-
+                
                 if granted {
                     self.extractContactNames(addressBook)
                 } else {
@@ -35,28 +48,17 @@ class CreatePlaylistController: UIViewController {
     }
     
     func extractContactNames(addressBook: ABAddressBookRef) {
+        // consider how to keep the contact names fresh
+        // use ABExternalChangeCallback - this only works with Objective-C
+        
         let contacts: Array = ABAddressBookCopyArrayOfAllPeople(addressBook).takeRetainedValue()
         for contactRef: ABRecordRef in contacts {
-            let firstName = ABRecordCopyValue(contactRef, kABPersonFirstNameProperty).takeRetainedValue() as? String
-            let lastName = ABRecordCopyValue(contactRef, kABPersonLastNameProperty).takeRetainedValue() as? String
+            let firstName = ABRecordCopyValue(contactRef, kABPersonFirstNameProperty)?.takeRetainedValue() as? String
+            let lastName = ABRecordCopyValue(contactRef, kABPersonLastNameProperty)?.takeRetainedValue() as? String
             println("contact: \(lastName), \(firstName)")
             if let firstName = firstName {
                 contactNames.append(firstName)
             }
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    // MARK: - Navigation
-
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        let playlistTableViewController = segue.destinationViewController as PlaylistTableViewController
-        playlistTableViewController.searchNames = contactNames
-    }
-    
 }

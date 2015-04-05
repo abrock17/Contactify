@@ -40,6 +40,7 @@ public class EchoNestService {
                         callback(.Success(self.getValidSongFromJSON(json, titleSearchTerm: titleSearchTerm)))
                     } else {
                         callback(.Failure(self.errorForUnexpectedStatusJSON(statusJSON)))
+                        println("error searching for \(titleSearchTerm), error code: \(code)")
                     }
                 } else {
                     callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No status code in the response.")))
@@ -47,6 +48,7 @@ public class EchoNestService {
                 }
             } else {
                 callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No data in the response.")))
+                println("error searching for \(titleSearchTerm), no data")
             }
         }
     }

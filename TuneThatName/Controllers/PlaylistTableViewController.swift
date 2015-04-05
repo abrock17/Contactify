@@ -51,7 +51,8 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         playlist = Playlist(name: "Tune That Name")
         
         var retrievalCompleted = 0
-        for name in searchNames {
+        let randomNames = randomlyChoose(10, names: searchNames)
+        for name in randomlyChoose(10, names: searchNames) {
             echoNestService.findSong(titleSearchTerm: name) {
                 (songResult: EchoNestService.SongResult) in
                 
@@ -66,12 +67,25 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 }
                 
                 retrievalCompleted++
-                if self.searchNames.count == retrievalCompleted {
+                if randomNames.count == retrievalCompleted {
                     self.tableView.reloadData()
                     self.activityIndicator.stopAnimating()
                 }
             }
         }
+    }
+    
+    func randomlyChoose(number: Int, names: [String]) -> [String] {
+        var randomNames = [String]()
+        while randomNames.count < number && randomNames.count < names.count {
+            let randomIndex = Int(arc4random_uniform(UInt32(names.count)))
+            let randomName = names[randomIndex]
+            if !contains(randomNames, randomName) {
+                randomNames.append(randomName)
+            }
+        }
+        
+        return randomNames
     }
     
     override public func didReceiveMemoryWarning() {
