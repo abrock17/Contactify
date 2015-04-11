@@ -38,8 +38,8 @@ public class ContactService {
         let records: Array = addressBook.AddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue()
         for recordRef: ABRecordRef in records {
             let recordID = addressBook.RecordGetRecordID(recordRef)
-            let firstName = addressBook.RecordCopyValue(recordRef, property: kABPersonFirstNameProperty).takeRetainedValue() as? String
-            let lastName = addressBook.RecordCopyValue(recordRef, property: kABPersonLastNameProperty).takeRetainedValue() as? String
+            let firstName = addressBook.RecordCopyValue(recordRef, property: kABPersonFirstNameProperty)?.takeRetainedValue() as? String
+            let lastName = addressBook.RecordCopyValue(recordRef, property: kABPersonLastNameProperty)?.takeRetainedValue() as? String
             contactList.append(Contact(id: recordID, firstName: firstName, lastName: lastName))
         }
         

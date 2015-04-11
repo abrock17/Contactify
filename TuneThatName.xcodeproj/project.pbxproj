@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1626BD4B92B820EDC793B971 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFF842C549D9522FF3D0601 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4164F941306C806DCB698B44 /* Pods_TuneThatNameIntegrationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A47FA193F9049FB6779A49F /* Pods_TuneThatNameIntegrationTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4433E6261ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4433E6251ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift */; };
 		4433E6281AC119A6006CE8B8 /* Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4433E6271AC119A6006CE8B8 /* Playlist.swift */; };
 		443963951A9755FA00E0C385 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963941A9755FA00E0C385 /* AVFoundation.framework */; };
@@ -16,6 +17,9 @@
 		443F9EC81AA4BCFF00705340 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */; };
 		445914751ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt in Resources */ = {isa = PBXBuildFile; fileRef = 445914741ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt */; };
 		445914821ACB6B1D00E9734C /* Mocker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445914811ACB6B1D00E9734C /* Mocker.swift */; };
+		4467307A1AD9B5E60056A840 /* ContactServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446730791AD9B5E60056A840 /* ContactServiceSpec.swift */; };
+		4467307B1AD9B7340056A840 /* SpotifyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE53951AACEA1D0089BFCD /* SpotifyServiceSpec.swift */; };
+		4467307C1AD9B8F70056A840 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44BDFB081ABC4F720060BB25 /* Spotify.framework */; };
 		4484B5291AD1AD1600F33C8F /* ContactServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */; };
 		4484B52B1AD1C7B300F33C8F /* ContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52A1AD1C7B300F33C8F /* ContactService.swift */; };
 		4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52C1AD1C80400F33C8F /* Contact.swift */; };
@@ -42,6 +46,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		446730731AD9B41E0056A840 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44E9D5DE1A952D2F001E4792 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44E9D5E51A952D2F001E4792;
+			remoteInfo = TuneThatName;
+		};
 		44E9D5FC1A952D2F001E4792 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 44E9D5DE1A952D2F001E4792 /* Project object */;
@@ -64,6 +75,9 @@
 		443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
 		445914741ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-one-song-no-foreign_id.txt"; sourceTree = "<group>"; };
 		445914811ACB6B1D00E9734C /* Mocker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocker.swift; sourceTree = "<group>"; };
+		4467306D1AD9B41E0056A840 /* TuneThatNameIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuneThatNameIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		446730701AD9B41E0056A840 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		446730791AD9B5E60056A840 /* ContactServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactServiceSpec.swift; sourceTree = "<group>"; };
 		4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactServiceSpec.swift; sourceTree = "<group>"; };
 		4484B52A1AD1C7B300F33C8F /* ContactService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 		4484B52C1AD1C80400F33C8F /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
@@ -90,16 +104,28 @@
 		44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EchoNestService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		44FDE0C11A9F40040052C6D1 /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		4CFF842C549D9522FF3D0601 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A47FA193F9049FB6779A49F /* Pods_TuneThatNameIntegrationTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TuneThatNameIntegrationTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		7F1FEA9E6D968643657B0B3A /* Pods-TuneThatNameTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatNameTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatNameTests/Pods-TuneThatNameTests.release.xcconfig"; sourceTree = "<group>"; };
 		8B0A10FCB31F7FC575879C59 /* Pods-TuneThatName.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatName.release.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatName/Pods-TuneThatName.release.xcconfig"; sourceTree = "<group>"; };
 		8D9DA7E43ABBFE8437691456 /* Pods-TuneThatName.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatName.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatName/Pods-TuneThatName.debug.xcconfig"; sourceTree = "<group>"; };
 		A2393EA9661264AFAB780F39 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		C9038133D111DE159169DBFD /* Pods_TuneThatNameTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TuneThatNameTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA9ABBC43699FA99115F8466 /* Pods-TuneThatNameIntegrationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatNameIntegrationTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatNameIntegrationTests/Pods-TuneThatNameIntegrationTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E3D4EF98625A9FAB6E22AD59 /* Pods-TuneThatNameTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatNameTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatNameTests/Pods-TuneThatNameTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F192ED219951BB97C649E0FC /* Pods-TuneThatNameIntegrationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TuneThatNameIntegrationTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TuneThatNameIntegrationTests/Pods-TuneThatNameIntegrationTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4467306A1AD9B41E0056A840 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4467307C1AD9B8F70056A840 /* Spotify.framework in Frameworks */,
+				4164F941306C806DCB698B44 /* Pods_TuneThatNameIntegrationTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		44E9D5E31A952D2F001E4792 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -163,7 +189,6 @@
 			isa = PBXGroup;
 			children = (
 				44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */,
-				44BE53951AACEA1D0089BFCD /* SpotifyServiceSpec.swift */,
 				4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */,
 			);
 			path = Services;
@@ -178,11 +203,38 @@
 			path = Mocks;
 			sourceTree = "<group>";
 		};
+		4467306E1AD9B41E0056A840 /* TuneThatNameIntegrationTests */ = {
+			isa = PBXGroup;
+			children = (
+				446730781AD9B45B0056A840 /* Services */,
+				4467306F1AD9B41E0056A840 /* Supporting Files */,
+			);
+			path = TuneThatNameIntegrationTests;
+			sourceTree = "<group>";
+		};
+		4467306F1AD9B41E0056A840 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				446730701AD9B41E0056A840 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		446730781AD9B45B0056A840 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				44BE53951AACEA1D0089BFCD /* SpotifyServiceSpec.swift */,
+				446730791AD9B5E60056A840 /* ContactServiceSpec.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		44E9D5DD1A952D2F001E4792 = {
 			isa = PBXGroup;
 			children = (
 				44E9D5E81A952D2F001E4792 /* TuneThatName */,
 				44E9D5FE1A952D2F001E4792 /* TuneThatNameTests */,
+				4467306E1AD9B41E0056A840 /* TuneThatNameIntegrationTests */,
 				44E9D5E71A952D2F001E4792 /* Products */,
 				BBEFF3283B3521024DBEA91B /* Pods */,
 				5267B1DE1C08D6BCF6EE1253 /* Frameworks */,
@@ -194,6 +246,7 @@
 			children = (
 				44E9D5E61A952D2F001E4792 /* TuneThatName.app */,
 				44E9D5FB1A952D2F001E4792 /* TuneThatNameTests.xctest */,
+				4467306D1AD9B41E0056A840 /* TuneThatNameIntegrationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -268,6 +321,7 @@
 				C9038133D111DE159169DBFD /* Pods_TuneThatNameTests.framework */,
 				2C42088056DB800A75BCFC0F /* Pods_TuneThatName.framework */,
 				4CFF842C549D9522FF3D0601 /* Pods.framework */,
+				5A47FA193F9049FB6779A49F /* Pods_TuneThatNameIntegrationTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -281,6 +335,8 @@
 				8B0A10FCB31F7FC575879C59 /* Pods-TuneThatName.release.xcconfig */,
 				750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */,
 				A2393EA9661264AFAB780F39 /* Pods.release.xcconfig */,
+				DA9ABBC43699FA99115F8466 /* Pods-TuneThatNameIntegrationTests.debug.xcconfig */,
+				F192ED219951BB97C649E0FC /* Pods-TuneThatNameIntegrationTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -288,6 +344,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4467306C1AD9B41E0056A840 /* TuneThatNameIntegrationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 446730771AD9B41E0056A840 /* Build configuration list for PBXNativeTarget "TuneThatNameIntegrationTests" */;
+			buildPhases = (
+				5EFF505BE22E654FE862E173 /* Check Pods Manifest.lock */,
+				446730691AD9B41E0056A840 /* Sources */,
+				4467306A1AD9B41E0056A840 /* Frameworks */,
+				4467306B1AD9B41E0056A840 /* Resources */,
+				D928E915280AE405A660CC7D /* Embed Pods Frameworks */,
+				7424A05A0E90AE3734C262B4 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				446730741AD9B41E0056A840 /* PBXTargetDependency */,
+			);
+			name = TuneThatNameIntegrationTests;
+			productName = TuneThatNameIntegrationTests;
+			productReference = 4467306D1AD9B41E0056A840 /* TuneThatNameIntegrationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		44E9D5E51A952D2F001E4792 /* TuneThatName */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 44E9D6051A952D2F001E4792 /* Build configuration list for PBXNativeTarget "TuneThatName" */;
@@ -338,6 +415,10 @@
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Tony Brock";
 				TargetAttributes = {
+					4467306C1AD9B41E0056A840 = {
+						CreatedOnToolsVersion = 6.2;
+						TestTargetID = 44E9D5E51A952D2F001E4792;
+					};
 					44E9D5E51A952D2F001E4792 = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = 2HTEKY22E7;
@@ -363,11 +444,19 @@
 			targets = (
 				44E9D5E51A952D2F001E4792 /* TuneThatName */,
 				44E9D5FA1A952D2F001E4792 /* TuneThatNameTests */,
+				4467306C1AD9B41E0056A840 /* TuneThatNameIntegrationTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4467306B1AD9B41E0056A840 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		44E9D5E41A952D2F001E4792 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -437,6 +526,36 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		5EFF505BE22E654FE862E173 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7424A05A0E90AE3734C262B4 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TuneThatNameIntegrationTests/Pods-TuneThatNameIntegrationTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		8EAF43C33285473A560D9C6D /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -450,6 +569,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D928E915280AE405A660CC7D /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TuneThatNameIntegrationTests/Pods-TuneThatNameIntegrationTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F2A3C5E45FC33A8E62E28CE9 /* Copy Pods Resources */ = {
@@ -485,6 +619,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		446730691AD9B41E0056A840 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4467307B1AD9B7340056A840 /* SpotifyServiceSpec.swift in Sources */,
+				4467307A1AD9B5E60056A840 /* ContactServiceSpec.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		44E9D5E21A952D2F001E4792 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -522,6 +665,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		446730741AD9B41E0056A840 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44E9D5E51A952D2F001E4792 /* TuneThatName */;
+			targetProxy = 446730731AD9B41E0056A840 /* PBXContainerItemProxy */;
+		};
 		44E9D5FD1A952D2F001E4792 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 44E9D5E51A952D2F001E4792 /* TuneThatName */;
@@ -549,6 +697,52 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		446730751AD9B41E0056A840 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DA9ABBC43699FA99115F8466 /* Pods-TuneThatNameIntegrationTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"/Users/tbrock/dev/Vendor/ios-sdk-beta-7",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = TuneThatNameIntegrationTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/TuneThatName/TuneThatName-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TuneThatName.app/TuneThatName";
+			};
+			name = Debug;
+		};
+		446730761AD9B41E0056A840 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F192ED219951BB97C649E0FC /* Pods-TuneThatNameIntegrationTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"/Users/tbrock/dev/Vendor/ios-sdk-beta-7",
+				);
+				INFOPLIST_FILE = TuneThatNameIntegrationTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/TuneThatName/TuneThatName-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TuneThatName.app/TuneThatName";
+			};
+			name = Release;
+		};
 		44E9D6031A952D2F001E4792 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -718,6 +912,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		446730771AD9B41E0056A840 /* Build configuration list for PBXNativeTarget "TuneThatNameIntegrationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				446730751AD9B41E0056A840 /* Debug */,
+				446730761AD9B41E0056A840 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		44E9D5E11A952D2F001E4792 /* Build configuration list for PBXProject "TuneThatName" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
