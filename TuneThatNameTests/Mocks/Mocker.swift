@@ -6,7 +6,7 @@ class Mocker {
     var mockedReturns = [String: [Any?]]()
     
     // to be used by mocks
-    func mockCallto(methodName: String, parameters: Any?...) -> Any? {
+    func mockCallTo(methodName: String, parameters: Any?...) -> Any? {
         recordCall(methodName, parameters: parameters)
         return returnValueForCallTo(methodName)
     }
@@ -29,7 +29,7 @@ class Mocker {
                 if recordedParamtersSequence.count >= mockedReturnSequence.count {
                     mockedReturnValue = mockedReturnSequence[mockedReturnSequence.count - 1]
                 } else {
-                    mockedReturnValue = mockedReturnSequence[recordedParameters.count - 1]
+                    mockedReturnValue = mockedReturnSequence[recordedParamtersSequence.count - 1]
                 }
             }
         }
