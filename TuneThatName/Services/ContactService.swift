@@ -22,8 +22,13 @@ public class ContactService {
         case .Authorized:
             var contactList = getContactList()
             callback(.Success(contactList))
-        default:
-            println("status : \(authorizationStatus.rawValue)")
+        case .NotDetermined:
+            let addressBookRef: ABAddressBookRef = addressBook.AddressBookCreateWithOptions(nil, error: nil).takeRetainedValue()
+            addressBook.AddressBookRequestAccessWithCompletion(addressBookRef) {
+                (granted, error) in
+                
+                // need to implement
+            }
         }
     }
     

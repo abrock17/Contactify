@@ -7,7 +7,6 @@ import Nimble
 class ContactServiceSpec: QuickSpec {
     
     let expectedNoAccessError = NSError(domain: Constants.Error.Domain, code: Constants.Error.AddressBookNoAccessCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.AddressBookNoAccessMessage])
-    let expectedContactList = [Contact(id: 1, firstName: "billy", lastName: "johnson"), Contact(id: 2, firstName: "johnny", lastName: "billson")]
     
     var callbackContactList: [Contact]?
     var callbackError: NSError?
@@ -60,28 +59,24 @@ class ContactServiceSpec: QuickSpec {
                     it("calls back with a list of expected contacts") {
                         mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.Authorized)
 
-                        let records: [CFTypeRef] = [0, 1]
-                        let recordsPointer = UnsafeMutablePointer<UnsafePointer<Void>>(records)
-                        let recordsCFArray = CFArrayCreate(nil, recordsPointer, records.count, nil)
-                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookCopyArrayOfAllPeople, returnValue: Unmanaged.passRetained(recordsCFArray))
-                        
-                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordGetRecordID, returnValue: self.expectedContactList[0].id)
-                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(self.expectedContactList[0].firstName! as AnyObject))
-                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(self.expectedContactList[0].lastName! as AnyObject))
-                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordGetRecordID, returnValue: self.expectedContactList[1].id)
-                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(self.expectedContactList[1].firstName! as AnyObject))
-                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(self.expectedContactList[1].lastName! as AnyObject))
+                        let expectedContactList = [Contact(id: 1, firstName: "billy", lastName: "johnson"), Contact(id: 2, firstName: "johnny", lastName: "billson")]
+                        self.prepareMockAddressBook(mockAddressBook, withExpectedContactList: expectedContactList)
                         
                         contactService.retrieveAllContacts(self.contactListCallback)
 
-                        expect(self.callbackContactList).toEventually(equal(self.expectedContactList))
+                        expect(self.callbackContactList).toEventually(equal(expectedContactList))
                         expect(self.callbackError).to(beNil())
                     }
                 }
                 
                 context("when the application's access to the address book has not been determined") {
                     it("prompts the user for access") {
+                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.NotDetermined)
                         
+                        contactService.retrieveAllContacts(self.contactListCallback)
+
+                        expect(mockAddressBook.mocker.verifyNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).toNot(beNil())
+                        expect(mockAddressBook.mocker.verifyNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).to(beEmpty())
                     }
                     
                     context("and access is not granted") {
@@ -98,6 +93,24 @@ class ContactServiceSpec: QuickSpec {
                 }
             }
         }
+    }
+    
+    func prepareMockAddressBook(mockAddressBook: MockAddressBookWrapper, withExpectedContactList contactList: [Contact]) {
+        var ids = [AnyObject]()
+        
+        for contact in contactList {
+            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordGetRecordID, returnValue: contact.id)
+            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(contact.firstName! as AnyObject))
+            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(contact.lastName! as AnyObject))
+
+            ids.append(Int(contact.id))
+        }
+        
+        // the contents of records don't matter here - just as long as the size is correct
+        let records: [CFTypeRef] = ids
+        let recordsPointer = UnsafeMutablePointer<UnsafePointer<Void>>(records)
+        let recordsCFArray = CFArrayCreate(nil, recordsPointer, records.count, nil)
+        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookCopyArrayOfAllPeople, returnValue: Unmanaged.passRetained(recordsCFArray))
     }
 }
 
@@ -123,10 +136,10 @@ class MockAddressBookWrapper: AddressBookWrapper {
         return mocker.mockCallTo(Method.AddressBookGetAuthorizationStatus) as ABAuthorizationStatus
     }
     
-//    override func AddressBookRequestAccessWithCompletion(addressBook: ABAddressBook!, completion: ABAddressBookRequestAccessCompletionHandler!) {
-//        mocker.recordCall(Method.AddressBookRequestAccessWithCompletion, parameters: addressBook, completion)
-//        completion(true, nil)
-//    }
+    override func AddressBookRequestAccessWithCompletion(addressBook: ABAddressBook!, completion: ABAddressBookRequestAccessCompletionHandler!) {
+        mocker.recordCall(Method.AddressBookRequestAccessWithCompletion)
+        //completion(true, nil)
+    }
     
     override func AddressBookCopyArrayOfAllPeople(addressBook: ABAddressBook!) -> Unmanaged<CFArray>! {
         return mocker.mockCallTo(Method.AddressBookCopyArrayOfAllPeople) as Unmanaged<CFArray>!
