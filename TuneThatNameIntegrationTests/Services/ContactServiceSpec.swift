@@ -21,11 +21,17 @@ class ContactServiceSpec: QuickSpec {
     override func spec() {
         describe("The Contact Service") {
             var contactService: ContactService!
+            var contact: Contact!
             
             beforeEach() {
                 self.callbackContactList = nil
                 self.callbackError = nil
                 contactService = ContactService()
+                contact = self.saveNewContact(firstName: "Casey", lastName: "Kasem")
+            }
+            
+            afterEach() {
+                self.deleteContact(contact)
             }
             
             describe("retrieve all contacts") {
@@ -33,10 +39,31 @@ class ContactServiceSpec: QuickSpec {
                     
                     contactService.retrieveAllContacts(self.contactListCallback)
                     
-                    expect(self.callbackContactList).toEventually(contain(Contact(id: 3, firstName: "John", lastName: "Appleseed")))
+                    expect(self.callbackContactList).toEventually(contain(contact))
                     expect(self.callbackError).to(beNil())
                 }
             }
         }
+    }
+    
+    func saveNewContact(#firstName: String, lastName: String) -> Contact {
+        let addressBook: ABAddressBookRef! = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
+
+        let record: ABRecordRef! = ABPersonCreate().takeUnretainedValue()
+        ABRecordSetValue(record, kABPersonFirstNameProperty, firstName, nil)
+        ABRecordSetValue(record, kABPersonLastNameProperty, lastName, nil)
+        
+        ABAddressBookAddRecord(addressBook, record, nil)
+        ABAddressBookSave(addressBook, nil)
+
+        return Contact(id: ABRecordGetRecordID(record), firstName: firstName, lastName: lastName)
+    }
+    
+    func deleteContact(contact: Contact) {
+        let addressBook: ABAddressBookRef! = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
+        let record: ABRecordRef! = ABAddressBookGetPersonWithRecordID(addressBook, contact.id)?.takeUnretainedValue()
+        
+        ABAddressBookRemoveRecord(addressBook, record, nil)
+        ABAddressBookSave(addressBook, nil)
     }
 }
