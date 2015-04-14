@@ -18,7 +18,7 @@ public class ContactService {
         let authorizationStatus = addressBook.AddressBookGetAuthorizationStatus()
         switch (authorizationStatus) {
         case .Denied, .Restricted:
-            callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.AddressBookNoAccessCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.AddressBookNoAccessMessage])))
+            callback(.Failure(self.noAccessError()))
         case .Authorized:
             var contactList = getContactList()
             callback(.Success(contactList))
@@ -27,7 +27,11 @@ public class ContactService {
             addressBook.AddressBookRequestAccessWithCompletion(addressBookRef) {
                 (granted, error) in
                 
-                // need to implement
+                if granted {
+                    callback(.Success(self.getContactList()))
+                } else {
+                    callback(.Failure(self.noAccessError()))
+                }
             }
         }
     }
@@ -44,6 +48,13 @@ public class ContactService {
         }
         
         return contactList
+    }
+    
+    func noAccessError() -> NSError {
+        return NSError(
+            domain: Constants.Error.Domain,
+            code: Constants.Error.AddressBookNoAccessCode,
+            userInfo: [NSLocalizedDescriptionKey: Constants.Error.AddressBookNoAccessMessage])
     }
 }
 

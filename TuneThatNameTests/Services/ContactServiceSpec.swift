@@ -34,7 +34,7 @@ class ContactServiceSpec: QuickSpec {
             
             describe("retrieve all contacts") {
                 context("when access to the address book is denied") {
-                    it("calls back with the expected error") {
+                    it("calls back with the no access error") {
                         mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.Denied)
                         
                         contactService.retrieveAllContacts(self.contactListCallback)
@@ -45,7 +45,7 @@ class ContactServiceSpec: QuickSpec {
                 }
                 
                 context("when access to the address book is restricted") {
-                    it("calls back with an error") {
+                    it("calls back with the no access error") {
                         mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.Restricted)
                         
                         contactService.retrieveAllContacts(self.contactListCallback)
@@ -70,24 +70,35 @@ class ContactServiceSpec: QuickSpec {
                 }
                 
                 context("when the application's access to the address book has not been determined") {
-                    it("prompts the user for access") {
+                    beforeEach() {
                         mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.NotDetermined)
-                        
-                        contactService.retrieveAllContacts(self.contactListCallback)
-
-                        expect(mockAddressBook.mocker.verifyNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).toNot(beNil())
-                        expect(mockAddressBook.mocker.verifyNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).to(beEmpty())
                     }
                     
-                    context("and access is not granted") {
-                        it("calls back with an error") {
-                            
+                    it("prompts the user for access") {
+                        let expectedContactList = [Contact(id: 3, firstName: "mikhail", lastName: "gorbachev"), Contact(id: 4, firstName: "ronald", lastName: "reagan")]
+                        self.prepareMockAddressBook(mockAddressBook, withExpectedContactList: expectedContactList)
+                        mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, returnValue: true)
+
+                        contactService.retrieveAllContacts(self.contactListCallback)
+
+                        self.verifyPromptedForAccess(mockAddressBook)
+
+                        context("and access is granted") {
+                            it("calls back with a list of expected contacts") {
+                                expect(self.callbackContactList).toEventually(equal(expectedContactList))
+                                expect(self.callbackError).to(beNil())
+                            }
                         }
                     }
                     
-                    context("and access is granted") {
-                        it("calls back with a list of expected contacts") {
+                    context("and access is not granted") {
+                        it("calls back with the no access error") {
+                            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, returnValue: false)
 
+                            contactService.retrieveAllContacts(self.contactListCallback)
+                            
+                            expect(self.callbackError).toEventually(equal(self.expectedNoAccessError))
+                            expect(self.callbackContactList).to(beNil())
                         }
                     }
                 }
@@ -111,6 +122,11 @@ class ContactServiceSpec: QuickSpec {
         let recordsPointer = UnsafeMutablePointer<UnsafePointer<Void>>(records)
         let recordsCFArray = CFArrayCreate(nil, recordsPointer, records.count, nil)
         mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookCopyArrayOfAllPeople, returnValue: Unmanaged.passRetained(recordsCFArray))
+    }
+    
+    func verifyPromptedForAccess(mockAddressBook: MockAddressBookWrapper) {
+        expect(mockAddressBook.mocker.verifyNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).toNot(beNil())
+        expect(mockAddressBook.mocker.verifyNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).to(beEmpty())
     }
 }
 
@@ -138,7 +154,12 @@ class MockAddressBookWrapper: AddressBookWrapper {
     
     override func AddressBookRequestAccessWithCompletion(addressBook: ABAddressBook!, completion: ABAddressBookRequestAccessCompletionHandler!) {
         mocker.recordCall(Method.AddressBookRequestAccessWithCompletion)
-        //completion(true, nil)
+        let granted = mocker.returnValueForCallTo(Method.AddressBookRequestAccessWithCompletion)
+        if let granted = granted as? Bool {
+            completion(granted, nil)
+        } else {
+            completion(true, nil)
+        }
     }
     
     override func AddressBookCopyArrayOfAllPeople(addressBook: ABAddressBook!) -> Unmanaged<CFArray>! {
