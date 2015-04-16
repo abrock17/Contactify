@@ -38,14 +38,13 @@ class Mocker {
     }
     
     // to be used by tests
-    func prepareForCallTo(methodName: String, returnValue:
-        Any?) {
-            var mockedReturnSequence = mockedReturns[methodName]
-            if mockedReturnSequence == nil {
-                mockedReturnSequence = [Any?]()
-            }
-            mockedReturnSequence!.append(returnValue)
-            mockedReturns.updateValue(mockedReturnSequence!, forKey: methodName)
+    func prepareForCallTo(methodName: String, returnValue: Any?) {
+        var mockedReturnSequence = mockedReturns[methodName]
+        if mockedReturnSequence == nil {
+            mockedReturnSequence = [Any?]()
+        }
+        mockedReturnSequence!.append(returnValue)
+        mockedReturns.updateValue(mockedReturnSequence!, forKey: methodName)
     }
     
     func verifyNthCallTo(methodName: String, n: Int) -> [Any?]? {

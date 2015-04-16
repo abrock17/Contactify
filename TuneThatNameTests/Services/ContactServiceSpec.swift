@@ -101,6 +101,19 @@ class ContactServiceSpec: QuickSpec {
                             expect(self.callbackContactList).to(beNil())
                         }
                     }
+                    
+                    context("and access request completion return an error") {
+                        it("calls back with the same error") {
+                            let expectedError = NSError(domain: "domain", code: 777, userInfo: ["key": "value"])
+                            let mockedError = CFErrorCreate(nil, expectedError.domain, expectedError.code, expectedError.userInfo)
+                            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, returnValue: mockedError)
+                            
+                            contactService.retrieveAllContacts(self.contactListCallback)
+                            
+                            expect(self.callbackError).toEventually(equal(expectedError))
+                            expect(self.callbackContactList).to(beNil())
+                        }
+                    }
                 }
             }
         }
@@ -154,11 +167,13 @@ class MockAddressBookWrapper: AddressBookWrapper {
     
     override func AddressBookRequestAccessWithCompletion(addressBook: ABAddressBook!, completion: ABAddressBookRequestAccessCompletionHandler!) {
         mocker.recordCall(Method.AddressBookRequestAccessWithCompletion)
-        let granted = mocker.returnValueForCallTo(Method.AddressBookRequestAccessWithCompletion)
-        if let granted = granted as? Bool {
+        let preparedResult = mocker.returnValueForCallTo(Method.AddressBookRequestAccessWithCompletion)
+        if let granted = preparedResult as? Bool {
             completion(granted, nil)
+        } else if let error = preparedResult as CFError! {
+            completion(false, error)
         } else {
-            completion(true, nil)
+            completion(false, nil)
         }
     }
     

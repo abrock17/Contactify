@@ -25,9 +25,12 @@ public class ContactService {
         case .NotDetermined:
             let addressBookRef: ABAddressBookRef = addressBook.AddressBookCreateWithOptions(nil, error: nil).takeRetainedValue()
             addressBook.AddressBookRequestAccessWithCompletion(addressBookRef) {
-                (granted, error) in
-                
-                if granted {
+                (granted, cfError) in
+
+                if cfError != nil {
+                    let error = NSError(domain: CFErrorGetDomain(cfError), code: CFErrorGetCode(cfError), userInfo: CFErrorCopyUserInfo(cfError))
+                     callback(.Failure(error))
+                } else if granted {
                     callback(.Success(self.getContactList()))
                 } else {
                     callback(.Failure(self.noAccessError()))
