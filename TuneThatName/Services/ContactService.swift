@@ -14,24 +14,29 @@ public class ContactService {
         self.addressBook = addressBook
     }
     
-    public func retrieveAllContacts(callback: (ContactListResult) -> Void) {
+    public func retrieveAllContacts(callback: ContactListResult -> Void) {
+        handleAuthorization(callback: callback, authorizedHandler: getContactList)
+    }
+    
+    func handleAuthorization(#callback: ContactListResult -> Void,
+        authorizedHandler: (ContactListResult -> Void) -> Void) {
+            
         let authorizationStatus = addressBook.AddressBookGetAuthorizationStatus()
         switch (authorizationStatus) {
         case .Denied, .Restricted:
             callback(.Failure(self.noAccessError()))
         case .Authorized:
-            var contactList = getContactList()
-            callback(.Success(contactList))
+            authorizedHandler(callback)
         case .NotDetermined:
             let addressBookRef: ABAddressBookRef = addressBook.AddressBookCreateWithOptions(nil, error: nil).takeRetainedValue()
             addressBook.AddressBookRequestAccessWithCompletion(addressBookRef) {
                 (granted, cfError) in
-
+                
                 if cfError != nil {
                     let error = NSError(domain: CFErrorGetDomain(cfError), code: CFErrorGetCode(cfError), userInfo: CFErrorCopyUserInfo(cfError))
-                     callback(.Failure(error))
+                    callback(.Failure(error))
                 } else if granted {
-                    callback(.Success(self.getContactList()))
+                    authorizedHandler(callback)
                 } else {
                     callback(.Failure(self.noAccessError()))
                 }
@@ -39,7 +44,7 @@ public class ContactService {
         }
     }
     
-    func getContactList() -> [Contact] {
+    func getContactList(callback: ContactListResult -> Void) {
         var contactList = [Contact]()
         let addressBookRef: ABAddressBookRef = addressBook.AddressBookCreateWithOptions(nil, error: nil).takeRetainedValue()
         let records: Array = addressBook.AddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue()
@@ -50,7 +55,7 @@ public class ContactService {
             contactList.append(Contact(id: recordID, firstName: firstName, lastName: lastName))
         }
         
-        return contactList
+        callback(.Success(contactList))
     }
     
     func noAccessError() -> NSError {
