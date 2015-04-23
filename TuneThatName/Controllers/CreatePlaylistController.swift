@@ -33,19 +33,12 @@ public class CreatePlaylistController: UIViewController {
 
             switch (playlistResult) {
             case .Failure(let error):
-                println("error: \(error)")
-                self.displaySimpleAlertForTitle("Unable to Create Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String)
+                println("Error creating playlist: \(error)")
+                ControllerErrorHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String, onController: self)
             case .Success(let playlist):
                 self.playlist = playlist
                 self.performSegueWithIdentifier("CreatePlaylistSegue", sender: sender)
             }
         }
-    }
-    
-    func displaySimpleAlertForTitle(title: String, andMessage message: String) {
-        let errorAlertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-        let okAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
-        errorAlertViewController.addAction(okAction)
-        self.presentViewController(errorAlertViewController, animated: true, completion: nil)
     }
 }

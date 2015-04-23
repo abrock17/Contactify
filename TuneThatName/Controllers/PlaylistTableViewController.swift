@@ -191,12 +191,11 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
             
             switch (playlistResult) {
             case .Success(let playlist):
-                println("playlist: \(playlist.name), \(playlist.songs.count) songs")
                 self.playlist = playlist
                 self.updateButtonAfterPlaylistSaved()
             case .Failure(let error):
-                println("error: \(error)")
-                self.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String)
+                println("Error saving playlist: \(error)")
+                ControllerErrorHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String, onController: self)
             }
             self.activityIndicator.stopAnimating()
         }
@@ -210,12 +209,5 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     func updateButtonAfterPlaylistSaved() {
         self.saveButton.title = "Playlist Saved"
         self.saveButton.enabled = false
-    }
-    
-    func displaySimpleAlertForTitle(title: String, andMessage message: String) {
-        let errorAlertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-        let okAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
-        errorAlertViewController.addAction(okAction)
-        self.presentViewController(errorAlertViewController, animated: true, completion: nil)
     }
 }

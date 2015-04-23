@@ -26,7 +26,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                 UIApplication.sharedApplication().keyWindow!.rootViewController = playlistTableViewController
             }
 
-            describe("save the playlist to spotify") {
+            describe("press the 'save to spotify' button") {
                 context("when there is no session") {
                     it("prompts the user to log in") {
                         playlistTableViewController.spotifyAuth = self.getFakeSpotifyAuth()

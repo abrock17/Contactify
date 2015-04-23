@@ -23,7 +23,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 createPlaylistController.loadView()
             }
 
-            describe("create the playlist") {
+            describe("press the create playlist button") {
                 context("when the playlist service calls back with an error") {
                     let expectedError = NSError(domain: "domain", code: 435, userInfo: [NSLocalizedDescriptionKey: "an error description"])
                     beforeEach() {
