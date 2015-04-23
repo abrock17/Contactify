@@ -1,5 +1,4 @@
 import TuneThatName
-import Foundation
 import Quick
 import Nimble
 
@@ -9,7 +8,6 @@ let findSongMethod = "findSong"
 class PlaylistTableViewControllerSpec: QuickSpec {
     
     override func spec() {
-        
         describe("PlaylistTableViewController") {
             var playlistTableViewController: PlaylistTableViewController!
             var mockEchoNestService: MockEchoNestService!
@@ -25,9 +23,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                 playlistTableViewController.echoNestService = mockEchoNestService
                 playlistTableViewController.playlist = Playlist(name: "existing playlist to keep view from reloading")
                 
-                let window = UIWindow(frame: UIScreen.mainScreen().bounds)
-                window.rootViewController = playlistTableViewController
-                window.makeKeyAndVisible()
+                UIApplication.sharedApplication().keyWindow!.rootViewController = playlistTableViewController
             }
 
             describe("save the playlist to spotify") {

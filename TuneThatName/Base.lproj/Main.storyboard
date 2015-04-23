@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1066" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ldX-ZI-ufm">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1077" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ldX-ZI-ufm">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -28,7 +28,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="197-cV-9aq" kind="show" id="i6Q-WA-TjV"/>
+                                    <action selector="createPlaylistPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y5J-wG-RA3"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -40,6 +40,10 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="New Playlist" id="FFN-9L-8gU"/>
+                    <connections>
+                        <outlet property="createPlaylistButton" destination="HeA-qY-xM1" id="A3O-oK-qk0"/>
+                        <segue destination="197-cV-9aq" kind="show" identifier="CreatePlaylistSegue" id="RN0-Nu-pK0"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
