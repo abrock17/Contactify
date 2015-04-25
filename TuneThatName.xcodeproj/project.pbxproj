@@ -33,7 +33,6 @@
 		44BE53901AA76A1E0089BFCD /* PlaylistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE538F1AA76A1E0089BFCD /* PlaylistTableViewController.swift */; };
 		44BE53921AA7ED9B0089BFCD /* CreatePlaylistController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE53911AA7ED9A0089BFCD /* CreatePlaylistController.swift */; };
 		44BE53941AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44BE53931AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt */; };
-		44BE53961AACEA1D0089BFCD /* SpotifyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE53951AACEA1D0089BFCD /* SpotifyServiceSpec.swift */; };
 		44BE53981AACEAD50089BFCD /* SpotifyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE53971AACEAD50089BFCD /* SpotifyService.swift */; };
 		44D3C1A51ACF1B2800F51EB9 /* echonest-response-data-timeout-error.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44D3C1A41ACF1B2800F51EB9 /* echonest-response-data-timeout-error.txt */; };
 		44D3C1A91ACF1DDF00F51EB9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D3C1A81ACF1DDF00F51EB9 /* Constants.swift */; };
@@ -41,6 +40,7 @@
 		44E9D5F11A952D2F001E4792 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5EF1A952D2F001E4792 /* Main.storyboard */; };
 		44E9D5F31A952D2F001E4792 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F21A952D2F001E4792 /* Images.xcassets */; };
 		44E9D5F61A952D2F001E4792 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F41A952D2F001E4792 /* LaunchScreen.xib */; };
+		44F696241AEB198F00F2C2F8 /* PlaylistServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F696231AEB198F00F2C2F8 /* PlaylistServiceSpec.swift */; };
 		44FBFE981AC650EE0087C9FF /* SongSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FBFE971AC650EE0087C9FF /* SongSpec.swift */; };
 		44FBFE9A1AC655050087C9FF /* PlaylistSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FBFE991AC655050087C9FF /* PlaylistSpec.swift */; };
 		44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */; };
@@ -106,6 +106,7 @@
 		44E9D5F51A952D2F001E4792 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		44E9D5FB1A952D2F001E4792 /* TuneThatNameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuneThatNameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D6001A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		44F696231AEB198F00F2C2F8 /* PlaylistServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistServiceSpec.swift; sourceTree = "<group>"; };
 		44FBFE971AC650EE0087C9FF /* SongSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongSpec.swift; sourceTree = "<group>"; };
 		44FBFE991AC655050087C9FF /* PlaylistSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistSpec.swift; sourceTree = "<group>"; };
 		44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EchoNestServiceSpec.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -202,6 +203,7 @@
 			children = (
 				44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */,
 				4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */,
+				44F696231AEB198F00F2C2F8 /* PlaylistServiceSpec.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -663,10 +665,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44F696241AEB198F00F2C2F8 /* PlaylistServiceSpec.swift in Sources */,
 				445914821ACB6B1D00E9734C /* Mocker.swift in Sources */,
 				44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */,
 				44FBFE981AC650EE0087C9FF /* SongSpec.swift in Sources */,
-				44BE53961AACEA1D0089BFCD /* SpotifyServiceSpec.swift in Sources */,
 				44B2191C1AEA5C53002EA154 /* ControllerHelperSpec.swift in Sources */,
 				44FBFE9A1AC655050087C9FF /* PlaylistSpec.swift in Sources */,
 				4484B52F1AD36C0C00F33C8F /* ContactSpec.swift in Sources */,

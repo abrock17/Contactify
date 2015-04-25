@@ -70,7 +70,7 @@ public class EchoNestService {
     func getValidMatchingTitle(songJSON: JSON, titleSearchTerm: String!) -> String? {
         var validTitle: String?
         
-        if let title = songJSON["title"].string? {
+        if let title = songJSON["title"].string {
             var valid = true
             let lowercaseTitle = title.lowercaseString
             let lowercaseSearchTerm = titleSearchTerm.lowercaseString

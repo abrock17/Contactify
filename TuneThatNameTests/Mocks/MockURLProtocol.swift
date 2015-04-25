@@ -24,7 +24,7 @@ class MockURLProtocol: NSURLProtocol {
         let client = self.client!
         
         if let data = mockURLProtocolResponseData {
-            let response = NSURLResponse(URL: self.request.URL, MIMEType: "application/json", expectedContentLength: -1, textEncodingName: nil)
+            let response = NSURLResponse(URL: self.request.URL!, MIMEType: "application/json", expectedContentLength: -1, textEncodingName: nil)
             client.URLProtocol(self, didReceiveResponse: response, cacheStoragePolicy: NSURLCacheStoragePolicy.NotAllowed)
             client.URLProtocol(self, didLoadData: data)
             client.URLProtocolDidFinishLoading(self)

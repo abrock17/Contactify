@@ -39,7 +39,7 @@ class SpotifyServiceSpec: QuickSpec {
                         expect(self.callbackPlaylist).toEventuallyNot(beNil(), timeout: 5)
                         expect(self.callbackPlaylist?.uri).to(equal(playlistURI))
                         expect(self.callbackPlaylist?.name).to(equal("Long playlist 5"))
-                        expect(self.callbackPlaylist?.songs.count).to(equal(871))
+                        expect(self.callbackPlaylist?.songs.count).to(equal(1120))
                         expect(self.callbackPlaylist?.songs.first?.title).to(equal("Happy"))
                         expect(self.callbackPlaylist?.songs.first?.artistName).to(equal("Pharrell Williams"))
                         expect(self.callbackPlaylist?.songs.first?.uri?.absoluteString).to(equal("spotify:track:6NPVjNh8Jhru9xOmyQigds"))

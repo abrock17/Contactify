@@ -29,7 +29,7 @@ class SpotifySpikeSpec: QuickSpec {
                 if let items = self.listPage?.items {
                     expect(self.listPage?.items.count).toEventually(beGreaterThan(0))
                     for item in items {
-                        var partialTrack = item as SPTPartialTrack
+                        var partialTrack = item as! SPTPartialTrack
                         println("partialTrack : \(partialTrack)")
                     }
                 }

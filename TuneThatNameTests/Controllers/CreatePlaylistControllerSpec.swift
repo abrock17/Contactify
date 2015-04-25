@@ -13,8 +13,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
             
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                navigationController = storyboard.instantiateInitialViewController() as UINavigationController
-                createPlaylistController = navigationController.childViewControllers.first as CreatePlaylistController
+                navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
+                createPlaylistController = navigationController.childViewControllers.first as! CreatePlaylistController
                 
                 mockPlaylistService = MockPlaylistService()
                 createPlaylistController.playlistService = mockPlaylistService
@@ -39,10 +39,9 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     it("displays the error message in an alert") {
                         expect(createPlaylistController.presentedViewController).toEventuallyNot(beNil())
                         expect(createPlaylistController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
-                        if let alertController = createPlaylistController.presentedViewController as? UIAlertController {
-                            expect(alertController.title).toEventually(equal("Unable to Create Your Playlist"))
-                            expect(alertController.message).toEventually(equal(expectedError.userInfo![NSLocalizedDescriptionKey] as String?))
-                        }
+                        let alertController = createPlaylistController.presentedViewController as! UIAlertController
+                        expect(alertController.title).toEventually(equal("Unable to Create Your Playlist"))
+                        expect(alertController.message).toEventually(equal((expectedError.userInfo![NSLocalizedDescriptionKey] as! String)))
                     }
                 }
                 
@@ -56,7 +55,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     
                     it("segues to the playlist table view passing the playlist") {
                         expect(navigationController.topViewController).toEventually(beAnInstanceOf(PlaylistTableViewController))
-                        let playlistTableViewController = navigationController.topViewController as PlaylistTableViewController
+                        let playlistTableViewController = navigationController.topViewController as! PlaylistTableViewController
                         expect(playlistTableViewController.playlist).to(equal(expectedPlaylist))
                     }
                 }

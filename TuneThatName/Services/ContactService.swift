@@ -33,7 +33,7 @@ public class ContactService {
                 (granted, cfError) in
                 
                 if cfError != nil {
-                    let error = NSError(domain: CFErrorGetDomain(cfError), code: CFErrorGetCode(cfError), userInfo: CFErrorCopyUserInfo(cfError))
+                    let error = NSError(domain: CFErrorGetDomain(cfError) as String, code: CFErrorGetCode(cfError) as Int, userInfo: CFErrorCopyUserInfo(cfError) as Dictionary)
                     callback(.Failure(error))
                 } else if granted {
                     authorizedHandler(callback)
@@ -47,7 +47,7 @@ public class ContactService {
     func getContactList(callback: ContactListResult -> Void) {
         var contactList = [Contact]()
         let addressBookRef: ABAddressBookRef = addressBook.AddressBookCreateWithOptions(nil, error: nil).takeRetainedValue()
-        let records: Array = addressBook.AddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue()
+        let records = addressBook.AddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for recordRef: ABRecordRef in records {
             let recordID = addressBook.RecordGetRecordID(recordRef)
             let firstName = addressBook.RecordCopyValue(recordRef, property: kABPersonFirstNameProperty)?.takeRetainedValue() as? String

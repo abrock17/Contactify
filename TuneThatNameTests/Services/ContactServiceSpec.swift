@@ -162,7 +162,7 @@ class MockAddressBookWrapper: AddressBookWrapper {
     }
     
     override func AddressBookGetAuthorizationStatus() -> ABAuthorizationStatus {
-        return mocker.mockCallTo(Method.AddressBookGetAuthorizationStatus) as ABAuthorizationStatus
+        return mocker.mockCallTo(Method.AddressBookGetAuthorizationStatus) as! ABAuthorizationStatus
     }
     
     override func AddressBookRequestAccessWithCompletion(addressBook: ABAddressBook!, completion: ABAddressBookRequestAccessCompletionHandler!) {
@@ -170,7 +170,7 @@ class MockAddressBookWrapper: AddressBookWrapper {
         let preparedResult = mocker.returnValueForCallTo(Method.AddressBookRequestAccessWithCompletion)
         if let granted = preparedResult as? Bool {
             completion(granted, nil)
-        } else if let error = preparedResult as CFError! {
+        } else if let error = preparedResult as! CFError! {
             completion(false, error)
         } else {
             completion(false, nil)
@@ -178,19 +178,19 @@ class MockAddressBookWrapper: AddressBookWrapper {
     }
     
     override func AddressBookCopyArrayOfAllPeople(addressBook: ABAddressBook!) -> Unmanaged<CFArray>! {
-        return mocker.mockCallTo(Method.AddressBookCopyArrayOfAllPeople) as Unmanaged<CFArray>!
+        return mocker.mockCallTo(Method.AddressBookCopyArrayOfAllPeople) as! Unmanaged<CFArray>!
     }
     
     override func RecordGetRecordID(record: ABRecord!) -> ABRecordID {
         var recordID: ABRecordID = 0
-        let mockedRecordID = mocker.mockCallTo(Method.RecordGetRecordID, parameters: [record])
-        if let mockedRecordID = mockedRecordID {
-            recordID = mockedRecordID as ABRecordID
+        let mockedReturnValue = mocker.mockCallTo(Method.RecordGetRecordID, parameters: [record])
+        if let mockedRecordID = mockedReturnValue as? ABRecordID {
+            recordID = mockedRecordID
         }
         return recordID
     }
     
     override func RecordCopyValue(record: ABRecord!, property: ABPropertyID) -> Unmanaged<AnyObject>! {
-        return mocker.mockCallTo(Method.RecordCopyValue, parameters: property) as Unmanaged<AnyObject>!
+        return mocker.mockCallTo(Method.RecordCopyValue, parameters: property) as! Unmanaged<AnyObject>!
     }
 }

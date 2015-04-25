@@ -15,7 +15,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
             
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                playlistTableViewController = storyboard.instantiateViewControllerWithIdentifier("PlaylistTableViewController") as  PlaylistTableViewController
+                playlistTableViewController = storyboard.instantiateViewControllerWithIdentifier("PlaylistTableViewController") as!  PlaylistTableViewController
 
                 mockSpotifyService = MockSpotifyService()
                 playlistTableViewController.spotifyService = mockSpotifyService
@@ -105,9 +105,9 @@ class PlaylistTableViewControllerSpec: QuickSpec {
 
                             expect(playlistTableViewController.presentedViewController).toEventuallyNot(beNil())
                             expect(playlistTableViewController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
-                            let alertController = playlistTableViewController.presentedViewController as UIAlertController
+                            let alertController = playlistTableViewController.presentedViewController as! UIAlertController
                             expect(alertController.title).toEventually(equal("Unable to Save Your Playlist"))
-                            expect(alertController.message).toEventually(equal(error.userInfo![NSLocalizedDescriptionKey] as String?))
+                            expect(alertController.message).toEventually(equal(error.userInfo![NSLocalizedDescriptionKey] as? String))
                         }
                     }
                 }

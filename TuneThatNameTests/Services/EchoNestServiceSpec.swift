@@ -48,12 +48,12 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                     
                     it("contains the correct title string") {
-                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=Susie"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString).toEventually(contain("title=Susie"))
                     }
                     
                     it("contains the expected bucket parameters") {
-                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("bucket=tracks"))
-                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("bucket=id:spotify"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString).toEventually(contain("bucket=tracks"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString).toEventually(contain("bucket=id:spotify"))
                     }
                 }
                 
@@ -61,7 +61,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("is encoded in the URL request") {
                         echoNestService.findSong(titleSearchTerm: "\"Special, Characters ... (&)\"", callback: self.findSongCallback)
                         
-                        expect(MockURLProtocol.getCapturedRequest()?.URL.absoluteString).toEventually(contain("title=%22Special%2C%20Characters%20...%20%28%26%29%22"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString).toEventually(contain("title=%22Special%2C%20Characters%20...%20%28%26%29%22"))
                     }
                 }
                 

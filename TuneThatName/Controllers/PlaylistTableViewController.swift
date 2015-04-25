@@ -89,7 +89,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
 
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("PlaylistTableCell", forIndexPath: indexPath) as UITableViewCell
+        var cell = tableView.dequeueReusableCellWithIdentifier("PlaylistTableCell", forIndexPath: indexPath) as! UITableViewCell
 
         let song = playlist.songs[indexPath.row]
         cell.textLabel?.text = song.title
@@ -181,18 +181,20 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         let session = spotifyAuth.session
         println("access token: \(session?.accessToken)")
-        spotifyService.savePlaylist(playlist, session: session) {
-            playlistResult in
-            
-            switch (playlistResult) {
-            case .Success(let playlist):
-                self.playlist = playlist
-                self.updateButtonAfterPlaylistSaved()
-            case .Failure(let error):
-                println("Error saving playlist: \(error)")
-                ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String, onController: self)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.spotifyService.savePlaylist(self.playlist, session: session) {
+                playlistResult in
+                
+                switch (playlistResult) {
+                case .Success(let playlist):
+                    self.playlist = playlist
+                    self.updateButtonAfterPlaylistSaved()
+                case .Failure(let error):
+                    println("Error saving playlist: \(error)")
+                    ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
+                }
+                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
-            ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
         }
     }
     

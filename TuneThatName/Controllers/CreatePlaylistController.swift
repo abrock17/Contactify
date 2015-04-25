@@ -24,8 +24,7 @@ public class CreatePlaylistController: UIViewController {
     // MARK: - Navigation
 
     override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        let playlistTableViewController = segue.destinationViewController as PlaylistTableViewController
+        let playlistTableViewController = segue.destinationViewController as! PlaylistTableViewController
         playlistTableViewController.playlist = self.playlist
     }
     
@@ -38,7 +37,7 @@ public class CreatePlaylistController: UIViewController {
                 switch (playlistResult) {
                 case .Failure(let error):
                     println("Error creating playlist: \(error)")
-                    ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String, onController: self)
+                    ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
                 case .Success(let playlist):
                     self.playlist = playlist
                     self.performSegueWithIdentifier("CreatePlaylistSegue", sender: sender)
