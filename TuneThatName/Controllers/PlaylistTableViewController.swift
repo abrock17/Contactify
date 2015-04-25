@@ -10,13 +10,8 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
 
     var authViewController: SPTAuthViewController!
     
-    lazy var activityIndicator: UIActivityIndicatorView = {
-        let inidicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-        self.tableView.addSubview(inidicator)
-        inidicator.center = self.tableView.center
-        return inidicator
-    }()
-
+    lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.tableView)
+    
     @IBOutlet public weak var saveButton: UIBarButtonItem!
     
     override public func viewDidLoad() {
@@ -183,7 +178,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     func savePlaylist() {
-        activityIndicator.startAnimating()
+        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         let session = spotifyAuth.session
         println("access token: \(session?.accessToken)")
         spotifyService.savePlaylist(playlist, session: session) {
@@ -195,9 +190,9 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 self.updateButtonAfterPlaylistSaved()
             case .Failure(let error):
                 println("Error saving playlist: \(error)")
-                ControllerErrorHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String, onController: self)
+                ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String, onController: self)
             }
-            self.activityIndicator.stopAnimating()
+            ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
         }
     }
     

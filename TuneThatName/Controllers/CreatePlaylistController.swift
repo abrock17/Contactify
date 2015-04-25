@@ -2,10 +2,12 @@ import UIKit
 
 public class CreatePlaylistController: UIViewController {
     
-    public var playlistService = PlaylistService()
-    
     var playlist: Playlist?
     
+    public var playlistService = PlaylistService()
+    
+    lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.view)
+
     @IBOutlet public weak var createPlaylistButton: UIButton!
 
     override public func viewDidLoad() {
@@ -28,16 +30,20 @@ public class CreatePlaylistController: UIViewController {
     }
     
     @IBAction public func createPlaylistPressed(sender: AnyObject) {
-        playlistService.createPlaylist() {
-            playlistResult in
-
-            switch (playlistResult) {
-            case .Failure(let error):
-                println("Error creating playlist: \(error)")
-                ControllerErrorHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String, onController: self)
-            case .Success(let playlist):
-                self.playlist = playlist
-                self.performSegueWithIdentifier("CreatePlaylistSegue", sender: sender)
+        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.playlistService.createPlaylist() {
+                playlistResult in
+                
+                switch (playlistResult) {
+                case .Failure(let error):
+                    println("Error creating playlist: \(error)")
+                    ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as String, onController: self)
+                case .Success(let playlist):
+                    self.playlist = playlist
+                    self.performSegueWithIdentifier("CreatePlaylistSegue", sender: sender)
+                }
+                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
         }
     }
