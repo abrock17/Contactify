@@ -33,12 +33,17 @@ public class PlaylistService {
     }
     
     func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, callback: PlaylistResult -> Void) {
+        let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.isEmpty})
         var contactsSearched = [Contact]()
-        var contactsNotYetSearched = contactList
+        var contactsToBeSearched = searchableContacts
         
         while contactsSearched.count < numberOfSongs {
-            let randomIndex = Int(arc4random_uniform(UInt32(contactsNotYetSearched.count)))
-            let searchContact = contactsNotYetSearched.removeAtIndex(randomIndex)
+            if contactsToBeSearched.isEmpty {
+                contactsToBeSearched = searchableContacts
+            }
+            
+            let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
+            let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
             contactsSearched.append(searchContact)
             self.echoNestService.findSong(titleSearchTerm: searchContact.firstName!) {
                 songResult in
