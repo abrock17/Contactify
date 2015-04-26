@@ -40,5 +40,17 @@ class ContactSpec: QuickSpec {
                         Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)))
             }
         }
+        
+        describe("hash value") {
+            it("is does not have a consistent hash value when all properties are not the same") {
+                expect(Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1).hashValue)
+                    .toNot(equal(Contact(id: self.id2, firstName: self.firstName1, lastName: self.lastName1).hashValue))
+            }
+
+            it("is has a consistent hash value when ID, first and last names match") {
+                expect(Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1).hashValue)
+                    .to(equal(Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1).hashValue))
+            }
+        }
     }
 }

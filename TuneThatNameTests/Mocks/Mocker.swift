@@ -37,6 +37,10 @@ class Mocker {
         return mockedReturnValue
     }
     
+    func clearRecordedParameters() {
+        recordedParameters.removeAll(keepCapacity: false)
+    }
+    
     // to be used by tests
     func prepareForCallTo(methodName: String, returnValue: Any?) {
         var mockedReturnSequence = mockedReturns[methodName]
@@ -47,7 +51,7 @@ class Mocker {
         mockedReturns.updateValue(mockedReturnSequence!, forKey: methodName)
     }
     
-    func verifyNthCallTo(methodName: String, n: Int) -> [Any?]? {
+    func getNthCallTo(methodName: String, n: Int) -> [Any?]? {
         var nthCallParameters: [Any?]?
         if let recordedParametersSequence = recordedParameters[methodName] {
             if n < recordedParametersSequence.count {

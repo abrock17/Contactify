@@ -7,5 +7,8 @@ public struct Constants {
         
         public static let AddressBookNoAccessCode = 10
         public static let AddressBookNoAccessMessage = "This application is not allowed to access Contacts."
+        
+        public static let NoContactsCode = 15
+        public static let NoContactsMessage = "You currently have no contacts."
     }
 }

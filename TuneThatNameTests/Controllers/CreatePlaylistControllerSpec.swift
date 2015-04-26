@@ -72,8 +72,8 @@ class MockPlaylistService: PlaylistService {
         static let createPlaylist = "createPlaylist"
     }
     
-    override func createPlaylist(callback: PlaylistService.PlaylistResult -> Void) {
-        mocker.recordCall(Method.createPlaylist)
+    override func createPlaylist(#numberOfSongs: Int, callback: PlaylistService.PlaylistResult -> Void) {
+        mocker.recordCall(Method.createPlaylist, parameters: numberOfSongs)
         let mockedResult = mocker.returnValueForCallTo(Method.createPlaylist)
         if let mockedResult = mockedResult as? PlaylistService.PlaylistResult {
             callback(mockedResult)

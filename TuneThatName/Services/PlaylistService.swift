@@ -15,14 +15,36 @@ public class PlaylistService {
         self.echoNestService = echoNestService
     }
     
-    public func createPlaylist(callback: PlaylistResult -> Void) {
-        // retrieve contacts
-        // for each contact
-            // get song
-            // add to playlist
+    public func createPlaylist(#numberOfSongs: Int, callback: PlaylistResult -> Void) {
+        contactService.retrieveAllContacts() {
+            contactListResult in
+            
+            switch (contactListResult) {
+            case .Success(var contactList):
+                if contactList.isEmpty {
+                    callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.NoContactsCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.NoContactsMessage])))
+                } else {
+                    self.createPlaylistForContactList(contactList, numberOfSongs: numberOfSongs, callback: callback)
+                }
+            case .Failure(let error):
+                callback(.Failure(error))
+            }
+        }
+    }
+    
+    func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, callback: PlaylistResult -> Void) {
+        var contactsSearched = [Contact]()
+        var contactsNotYetSearched = contactList
         
-        sleep(3)
-        callback(.Success(Playlist(name: "name", uri: nil, songs: [Song(title: "title", artistName: "artistName", uri: NSURL(string: "uri"))])))
-//        callback(.Failure(NSError(domain: Constants.Error.Domain, code: 999, userInfo: [NSLocalizedDescriptionKey: "something went horribly wrong"])))
+        while contactsSearched.count < numberOfSongs {
+            let randomIndex = Int(arc4random_uniform(UInt32(contactsNotYetSearched.count)))
+            let searchContact = contactsNotYetSearched.removeAtIndex(randomIndex)
+            contactsSearched.append(searchContact)
+            self.echoNestService.findSong(titleSearchTerm: searchContact.firstName!) {
+                songResult in
+                
+                // add to playlist
+            }
+        }
     }
 }

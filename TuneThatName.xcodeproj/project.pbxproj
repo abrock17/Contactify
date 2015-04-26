@@ -26,6 +26,7 @@
 		4484B52B1AD1C7B300F33C8F /* ContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52A1AD1C7B300F33C8F /* ContactService.swift */; };
 		4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52C1AD1C80400F33C8F /* Contact.swift */; };
 		4484B52F1AD36C0C00F33C8F /* ContactSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52E1AD36C0C00F33C8F /* ContactSpec.swift */; };
+		44A0A8D51AEC57F900E7A2A1 /* MockEchoNestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */; };
 		44AEBC981AE89DFF00D96CD1 /* ControllerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */; };
 		44B2191C1AEA5C53002EA154 /* ControllerHelperSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B2191B1AEA5C53002EA154 /* ControllerHelperSpec.swift */; };
 		44BDFB091ABC4F720060BB25 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44BDFB081ABC4F720060BB25 /* Spotify.framework */; };
@@ -88,6 +89,7 @@
 		4484B52A1AD1C7B300F33C8F /* ContactService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 		4484B52C1AD1C80400F33C8F /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		4484B52E1AD36C0C00F33C8F /* ContactSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactSpec.swift; sourceTree = "<group>"; };
+		44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockEchoNestService.swift; sourceTree = "<group>"; };
 		44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerHelper.swift; sourceTree = "<group>"; };
 		44B2191B1AEA5C53002EA154 /* ControllerHelperSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerHelperSpec.swift; sourceTree = "<group>"; };
 		44BDFB081ABC4F720060BB25 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = "../Vendor/ios-sdk-beta-7/Spotify.framework"; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 			children = (
 				443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */,
 				445914811ACB6B1D00E9734C /* Mocker.swift */,
+				44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -677,6 +680,7 @@
 				4439639D1A97B0DE00E0C385 /* SpotifySpike.swift in Sources */,
 				4433E6261ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift in Sources */,
 				443F9EC81AA4BCFF00705340 /* MockURLProtocol.swift in Sources */,
+				44A0A8D51AEC57F900E7A2A1 /* MockEchoNestService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

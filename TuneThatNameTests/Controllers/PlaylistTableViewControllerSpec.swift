@@ -2,9 +2,6 @@ import TuneThatName
 import Quick
 import Nimble
 
-let savePlaylistMethod = "savePlaylist"
-let findSongMethod = "findSong"
-
 class PlaylistTableViewControllerSpec: QuickSpec {
     
     override func spec() {
@@ -68,15 +65,15 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                     it("calls the service to save the playlist") {
                         self.pressSaveButton(playlistTableViewController)
                         
-                        expect(mockSpotifyService.mocker.verifyNthCallTo(savePlaylistMethod, n: 0)).toEventuallyNot(beEmpty())
-                        var playlistParameter = mockSpotifyService.mocker.verifyNthCallTo(savePlaylistMethod, n: 0)?.first as? Playlist
+                        expect(mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)).toEventuallyNot(beEmpty())
+                        var playlistParameter = mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)?.first as? Playlist
                         expect(playlistParameter).to(equal(playlistToBeSaved))
                     }
                     
                     context("upon saving the playlist successfully") {
                         let savedPlaylist = Playlist(name: "saved playlist", uri: NSURL(string: "uri"))
                         beforeEach() {
-                            mockSpotifyService.mocker.prepareForCallTo(savePlaylistMethod, returnValue: SpotifyService.PlaylistResult.Success(savedPlaylist))
+                            mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Success(savedPlaylist))
                             
                             self.pressSaveButton(playlistTableViewController)
                         }
@@ -99,7 +96,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                         let error = NSError(domain: "com.spotify.ios", code: 777, userInfo: [NSLocalizedDescriptionKey: "error description"])
                         
                         it("displays the error message in an alert") {
-                            mockSpotifyService.mocker.prepareForCallTo(savePlaylistMethod, returnValue: SpotifyService.PlaylistResult.Failure(error))
+                            mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Failure(error))
                             
                             self.pressSaveButton(playlistTableViewController)
 
@@ -122,12 +119,12 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                         playlistTableViewController.spotifyAuth = spotifyAuth
                         
                         playlistTableViewController.playlist = playlistToBeSaved
-                        mockSpotifyService.mocker.prepareForCallTo(savePlaylistMethod, returnValue: SpotifyService.PlaylistResult.Success(playlistToBeSaved))
+                        mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Success(playlistToBeSaved))
 
                         playlistTableViewController.authenticationViewController(SPTAuthViewController(), didLoginWithSession: spotifyAuth.session)
                         
-                        expect(mockSpotifyService.mocker.verifyNthCallTo(savePlaylistMethod, n: 0)).toEventuallyNot(beEmpty())
-                        var playlistParameter = mockSpotifyService.mocker.verifyNthCallTo(savePlaylistMethod, n: 0)?.first as? Playlist
+                        expect(mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)).toEventuallyNot(beEmpty())
+                        var playlistParameter = mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)?.first as? Playlist
                         expect(playlistParameter).to(equal(playlistToBeSaved))
                     }
                 }
@@ -157,28 +154,17 @@ class PlaylistTableViewControllerSpec: QuickSpec {
     }
 }
 
-class MockEchoNestService: EchoNestService {
-
-    let mocker = Mocker()
-    
-    override func findSong(#titleSearchTerm: String!, callback: (EchoNestService.SongResult) -> Void) {
-        mocker.recordCall(findSongMethod, parameters: titleSearchTerm)
-        let mockedResult = mocker.returnValueForCallTo(findSongMethod)
-        if let mockedResult = mockedResult as? EchoNestService.SongResult {
-            callback(mockedResult)
-        } else {
-            callback(.Success(Song(title: "unimportant mocked song", artistName: nil, uri: nil)))
-        }
-    }
-}
-
 class MockSpotifyService: SpotifyService {
     
     let mocker = Mocker()
     
+    struct Method {
+        static let savePlaylist = "savePlaylist"
+    }
+    
     override func savePlaylist(playlist: Playlist!, session: SPTSession!, callback: (SpotifyService.PlaylistResult) -> Void) {
-        mocker.recordCall(savePlaylistMethod, parameters: playlist, session)
-        let mockedResult = mocker.returnValueForCallTo(savePlaylistMethod)
+        mocker.recordCall(Method.savePlaylist, parameters: playlist, session)
+        let mockedResult = mocker.returnValueForCallTo(Method.savePlaylist)
         if let mockedResult = mockedResult as? SpotifyService.PlaylistResult {
             callback(mockedResult)
         } else {

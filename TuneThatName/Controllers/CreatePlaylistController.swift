@@ -31,7 +31,7 @@ public class CreatePlaylistController: UIViewController {
     @IBAction public func createPlaylistPressed(sender: AnyObject) {
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         dispatch_async(dispatch_get_main_queue()) {
-            self.playlistService.createPlaylist() {
+            self.playlistService.createPlaylist(numberOfSongs: 10) {
                 playlistResult in
                 
                 switch (playlistResult) {

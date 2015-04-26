@@ -1,15 +1,19 @@
 import Foundation
 
-public struct Contact: Equatable, Printable {
+public struct Contact: Equatable, Hashable, Printable {
     
-    public let id: Int32!
+    public let id: Int32
     public let firstName: String?
     public let lastName: String?
     public var description: String {
         return "Contact:[id:\(id), firstName:\(firstName), lastName:\(lastName)]"
     }
     
-    public init(id: Int32!, firstName: String?, lastName: String?) {
+    public var hashValue: Int {
+        return "\(id)\(firstName)\(lastName)".hashValue
+    }
+    
+    public init(id: Int32, firstName: String?, lastName: String?) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName

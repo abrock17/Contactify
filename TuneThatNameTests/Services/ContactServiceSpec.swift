@@ -138,8 +138,8 @@ class ContactServiceSpec: QuickSpec {
     }
     
     func verifyPromptedForAccess(mockAddressBook: MockAddressBookWrapper) {
-        expect(mockAddressBook.mocker.verifyNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).toNot(beNil())
-        expect(mockAddressBook.mocker.verifyNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).to(beEmpty())
+        expect(mockAddressBook.mocker.getNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).toNot(beNil())
+        expect(mockAddressBook.mocker.getNthCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, n: 0)).to(beEmpty())
     }
 }
 
