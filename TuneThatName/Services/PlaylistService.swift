@@ -33,6 +33,7 @@ public class PlaylistService {
     }
     
     func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, callback: PlaylistResult -> Void) {
+        var songList = [Song]()
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.isEmpty})
         var contactsSearched = [Contact]()
         var contactsToBeSearched = searchableContacts
@@ -48,7 +49,19 @@ public class PlaylistService {
             self.echoNestService.findSong(titleSearchTerm: searchContact.firstName!) {
                 songResult in
                 
-                // add to playlist
+                switch (songResult) {
+                case .Success(let song):
+                    if let song = song {
+                        songList.append(song)
+                    }
+                    
+                    // better / more functional way to do this?
+                    if (songList.count == numberOfSongs) {
+                        callback(.Success(Playlist(name: "Tune That Name", uri: nil, songs: songList)))
+                    }
+                case .Failure(let error):
+                    println("Error finding song: \(error)")
+                }
             }
         }
     }
