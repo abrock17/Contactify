@@ -23,10 +23,6 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
-        if playlist == nil {
-            loadDummyPlaylist()
-        }
-        
         updateButtonForUnsavedPlaylist()
     }
     
@@ -38,35 +34,6 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     override public func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setToolbarHidden(true, animated: animated)
-    }
-    
-    func loadDummyPlaylist() {
-        activityIndicator.startAnimating()
-        playlist = Playlist(name: "Tune That Name")
-        
-        let names = ["John", "Paul", "George", "Ringo"]
-        var retrievalCompleted = 0
-        for name in names {
-            echoNestService.findSong(titleSearchTerm: name) {
-                (songResult: EchoNestService.SongResult) in
-                
-                switch (songResult) {
-                case .Success(let song):
-                    if let song = song {
-                        self.playlist.songs.append(song)
-                    }
-                    println("song title: \(song?.title)")
-                case .Failure(let error):
-                    println("error: \(error)")
-                }
-                
-                retrievalCompleted++
-                if names.count == retrievalCompleted {
-                    self.tableView.reloadData()
-                    self.activityIndicator.stopAnimating()
-                }
-            }
-        }
     }
     
     override public func didReceiveMemoryWarning() {
