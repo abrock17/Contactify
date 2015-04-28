@@ -37,6 +37,7 @@ public class PlaylistService {
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.isEmpty})
         var contactsSearched = [Contact]()
         var contactsToBeSearched = searchableContacts
+        var responseCount = 0
         
         while contactsSearched.count < numberOfSongs {
             if contactsToBeSearched.isEmpty {
@@ -49,18 +50,20 @@ public class PlaylistService {
             self.echoNestService.findSong(titleSearchTerm: searchContact.firstName!) {
                 songResult in
                 
+                responseCount++
                 switch (songResult) {
                 case .Success(let song):
                     if let song = song {
                         songList.append(song)
                     }
                     
-                    // better / more functional way to do this?
-                    if (songList.count == numberOfSongs) {
-                        callback(.Success(Playlist(name: "Tune That Name", uri: nil, songs: songList)))
-                    }
                 case .Failure(let error):
                     println("Error finding song: \(error)")
+                }
+
+                // better / more functional way to do this?
+                if (responseCount == numberOfSongs) {
+                    callback(.Success(Playlist(name: "Tune That Name", uri: nil, songs: songList)))
                 }
             }
         }

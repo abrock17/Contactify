@@ -28,6 +28,8 @@ public class EchoNestService {
         
         alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
             (request, response, data, error) in
+            println("request url : \(request.URL)")
+            println("response status code : \(response?.statusCode), headers : \(response?.allHeaderFields)")
             
             if let error = error {
                 callback(.Failure(error))
