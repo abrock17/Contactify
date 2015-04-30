@@ -33,13 +33,15 @@ public class PlaylistService {
     }
     
     func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, callback: PlaylistResult -> Void) {
-        var songList = [Song]()
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.isEmpty})
         var contactsSearched = [Contact]()
-        var contactsToBeSearched = searchableContacts
-        var responseCount = 0
+        var contactsToBeSearched = [Contact]()
+        var songResultList = [Song]()
+        var errorResultList = [NSError]()
+        var calledBack = false
         
-        while contactsSearched.count < numberOfSongs {
+        var findSongForRandomName: (() -> ())!
+        findSongForRandomName = { () -> () in
             if contactsToBeSearched.isEmpty {
                 contactsToBeSearched = searchableContacts
             }
@@ -50,22 +52,36 @@ public class PlaylistService {
             self.echoNestService.findSong(titleSearchTerm: searchContact.firstName!) {
                 songResult in
                 
-                responseCount++
                 switch (songResult) {
                 case .Success(let song):
                     if let song = song {
-                        songList.append(song)
+                        songResultList.append(song)
+                    } else {
+                        findSongForRandomName()
                     }
                     
+                    if numberOfSongs == songResultList.count {
+                        calledBack = true
+                        callback(.Success(Playlist(name: "Tune That Name", uri: nil, songs: songResultList)))
+                    }
                 case .Failure(let error):
-                    println("Error finding song: \(error)")
-                }
-
-                // better / more functional way to do this?
-                if (responseCount == numberOfSongs) {
-                    callback(.Success(Playlist(name: "Tune That Name", uri: nil, songs: songList)))
+                    errorResultList.append(error)
+                    println("Error \(errorResultList.count) finding song: \(error)")
+                    
+                    if  errorResultList.count >= 3 && errorResultList.count > (numberOfSongs / 5) {
+                        if !calledBack {
+                            calledBack = true
+                            callback(.Failure(error))
+                        }
+                    } else {
+                        findSongForRandomName()
+                    }
                 }
             }
+        }
+        
+        while contactsSearched.count < numberOfSongs {
+            findSongForRandomName()
         }
     }
 }
