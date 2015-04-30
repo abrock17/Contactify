@@ -27,6 +27,8 @@
 		4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52C1AD1C80400F33C8F /* Contact.swift */; };
 		4484B52F1AD36C0C00F33C8F /* ContactSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52E1AD36C0C00F33C8F /* ContactSpec.swift */; };
 		44A0A8D51AEC57F900E7A2A1 /* MockEchoNestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */; };
+		44A0A8DB1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44A0A8DA1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt */; };
+		44A0A8DD1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44A0A8DC1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt */; };
 		44AEBC981AE89DFF00D96CD1 /* ControllerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */; };
 		44B2191C1AEA5C53002EA154 /* ControllerHelperSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B2191B1AEA5C53002EA154 /* ControllerHelperSpec.swift */; };
 		44BDFB091ABC4F720060BB25 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44BDFB081ABC4F720060BB25 /* Spotify.framework */; };
@@ -90,6 +92,8 @@
 		4484B52C1AD1C80400F33C8F /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		4484B52E1AD36C0C00F33C8F /* ContactSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactSpec.swift; sourceTree = "<group>"; };
 		44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockEchoNestService.swift; sourceTree = "<group>"; };
+		44A0A8DA1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-multiple-songs.txt"; sourceTree = "<group>"; };
+		44A0A8DC1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-no-songs.txt"; sourceTree = "<group>"; };
 		44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerHelper.swift; sourceTree = "<group>"; };
 		44B2191B1AEA5C53002EA154 /* ControllerHelperSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerHelperSpec.swift; sourceTree = "<group>"; };
 		44BDFB081ABC4F720060BB25 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = "../Vendor/ios-sdk-beta-7/Spotify.framework"; sourceTree = "<group>"; };
@@ -314,6 +318,8 @@
 				445914741ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt */,
 				44BE53931AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt */,
 				44E9D6001A952D2F001E4792 /* Info.plist */,
+				44A0A8DA1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt */,
+				44A0A8DC1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -490,7 +496,9 @@
 			files = (
 				44BE53941AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt in Resources */,
 				443F9EC11AA39CAE00705340 /* echonest-response-data-one-song.txt in Resources */,
+				44A0A8DB1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt in Resources */,
 				44D3C1A51ACF1B2800F51EB9 /* echonest-response-data-timeout-error.txt in Resources */,
+				44A0A8DD1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt in Resources */,
 				445914751ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
