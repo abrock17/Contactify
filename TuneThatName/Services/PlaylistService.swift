@@ -49,13 +49,13 @@ public class PlaylistService {
             let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
             let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
             contactsSearched.append(searchContact)
-            self.echoNestService.findSong(titleSearchTerm: searchContact.firstName!) {
-                songResult in
+            self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, number: 1) {
+                songsResult in
                 
-                switch (songResult) {
-                case .Success(let song):
-                    if let song = song {
-                        songResultList.append(song)
+                switch (songsResult) {
+                case .Success(let songs):
+                    if !songs.isEmpty {
+                        songResultList.append(songs[0])
                     } else {
                         findSongForRandomName()
                     }

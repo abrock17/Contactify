@@ -5,16 +5,16 @@ class MockEchoNestService: EchoNestService {
     let mocker = Mocker()
     
     struct Method {
-        static let findSong = "findSong"
+        static let findSongs = "findSongs"
     }
     
-    override func findSong(#titleSearchTerm: String!, callback: (EchoNestService.SongResult) -> Void) {
-        mocker.recordCall(Method.findSong, parameters: titleSearchTerm)
-        let mockedResult = mocker.returnValueForCallTo(Method.findSong)
-        if let mockedResult = mockedResult as? EchoNestService.SongResult {
+    override func findSongs(#titleSearchTerm: String, number: Int, callback: (EchoNestService.SongsResult) -> Void) {
+        mocker.recordCall(Method.findSongs, parameters: titleSearchTerm, number)
+        let mockedResult = mocker.returnValueForCallTo(Method.findSongs)
+        if let mockedResult = mockedResult as? EchoNestService.SongsResult {
             callback(mockedResult)
         } else {
-            callback(.Success(Song(title: "unimportant mocked song", artistName: nil, uri: nil)))
+            callback(.Success([Song(title: "unimportant mocked song", artistName: nil, uri: nil)]))
         }
     }
 }

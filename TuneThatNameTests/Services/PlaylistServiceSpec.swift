@@ -111,7 +111,7 @@ class PlaylistServiceSpec: QuickSpec {
                         
                         it("calls back with a playlist containing the songs") {
                             for song in expectedSongs {
-                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSong, returnValue: MockEchoNestService.SongResult.Success(song))
+                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: MockEchoNestService.SongsResult.Success([song]))
                             }
 
                             playlistService.createPlaylist(numberOfSongs: numberOfSongs, callback: self.playlistCallback)
@@ -123,14 +123,14 @@ class PlaylistServiceSpec: QuickSpec {
                     
                     context("and the echo nest service calls back with an error for one of the names") {
                         let numberOfSongs = contactList.count - 1
-                        let echoNestResults: [EchoNestService.SongResult] = [
-                            .Success(Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))),
+                        let echoNestResults: [EchoNestService.SongsResult] = [
+                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))]),
                             .Failure(NSError(domain: "d0m41n", code: 42, userInfo: nil)),
-                            .Success(Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2")))]
+                            .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2"))])]
                         
                         it("retries with a different name") {
                             for result in echoNestResults {
-                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSong, returnValue: result)
+                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                             }
 
                             playlistService.createPlaylist(numberOfSongs: numberOfSongs, callback: self.playlistCallback)
@@ -144,14 +144,14 @@ class PlaylistServiceSpec: QuickSpec {
                     
                     context("and the echo nest service calls back with a nil song result for one of the names") {
                         let numberOfSongs = contactList.count - 1
-                        let echoNestResults: [EchoNestService.SongResult] = [
-                            .Success(Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))),
-                            .Success(nil),
-                            .Success(Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2")))]
+                        let echoNestResults: [EchoNestService.SongsResult] = [
+                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))]),
+                            .Success([Song]()),
+                            .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2"))])]
                         
                         it("retries with a different name") {
                             for result in echoNestResults {
-                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSong, returnValue: result)
+                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                             }
                             
                             playlistService.createPlaylist(numberOfSongs: numberOfSongs, callback: self.playlistCallback)
@@ -166,14 +166,14 @@ class PlaylistServiceSpec: QuickSpec {
                     context("and the echo nest service calls back with three errors") {
                         let numberOfSongs = contactList.count
                         let lastError = NSError(domain: "89", code: 89, userInfo: nil)
-                        let echoNestResults: [EchoNestService.SongResult] = [
+                        let echoNestResults: [EchoNestService.SongsResult] = [
                             .Failure(NSError(domain: "87", code: 87, userInfo: nil)),
                             .Failure(NSError(domain: "88", code: 88, userInfo: nil)),
                             .Failure(lastError)]
                         
                         it("calls back with the last error of the three") {
                             for result in echoNestResults {
-                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSong, returnValue: result)
+                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                             }
                             
                             playlistService.createPlaylist(numberOfSongs: numberOfSongs, callback: self.playlistCallback)
@@ -195,8 +195,8 @@ class PlaylistServiceSpec: QuickSpec {
                     context("and the echo nest service calls back with errors for at least 20% calls to find songs") {
                         let numberOfSongs = contactList.count
                         let lastError = NSError(domain: "89", code: 89, userInfo: nil)
-                        let echoNestResults: [EchoNestService.SongResult] = [
-                            .Success(Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))),
+                        let echoNestResults: [EchoNestService.SongsResult] = [
+                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))]),
                             .Failure(NSError(domain: "85", code: 87, userInfo: nil)),
                             .Failure(NSError(domain: "86", code: 88, userInfo: nil)),
                             .Failure(NSError(domain: "87", code: 87, userInfo: nil)),
@@ -205,7 +205,7 @@ class PlaylistServiceSpec: QuickSpec {
                         
                         it("calls back only with the first error over 20%") {
                             for result in echoNestResults {
-                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSong, returnValue: result)
+                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                             }
                             
                             playlistService.createPlaylist(numberOfSongs: numberOfSongs, callback: self.playlistCallback)
@@ -255,12 +255,12 @@ class PlaylistServiceSpec: QuickSpec {
     }
     
     func numberOfTimesFindSongWasCalled(mockEchoNestService: MockEchoNestService) -> Int {
-        return mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSong]?.count ?? 0
+        return mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSongs]?.count ?? 0
     }
     
     func numberOfTimesFindSongWasCalledForName(name: String, mockEchoNestService: MockEchoNestService) -> Int {
         var numberOfCalls = 0
-        if let findSongParameters = mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSong] {
+        if let findSongParameters = mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSongs] {
             
             for parameters in findSongParameters {
                 if let titleSearchTerm = parameters[0] as? String where titleSearchTerm == name {

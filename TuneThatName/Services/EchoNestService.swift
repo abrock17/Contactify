@@ -4,12 +4,7 @@ import SwiftyJSON
 
 public class EchoNestService {
     
-    public enum SongResult {
-        case Success(Song?)
-        case Failure(NSError)
-    }
-    
-    public enum MultiSongResult {
+    public enum SongsResult {
         case Success([Song])
         case Failure(NSError)
     }
@@ -26,39 +21,7 @@ public class EchoNestService {
         self.alamoFireManager = alamoFireManager
     }
     
-    public func findSong(#titleSearchTerm: String, callback: (SongResult) -> Void) {
-
-        let urlString = buildSongSearchEndpointStringWithBucketParameters() as URLStringConvertible
-        let parameters = getParameters(titleSearchTerm: titleSearchTerm)
-        
-        alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
-            (request, response, data, error) in
-            println("request url : \(request.URL)")
-            println("response status code : \(response?.statusCode), headers : \(response?.allHeaderFields)")
-            
-            if let error = error {
-                callback(.Failure(error))
-            } else if let data: AnyObject = data {
-                let json = JSON(data)
-                
-                let statusJSON = json["response"]["status"]
-                if let code = statusJSON["code"].int {
-                    if code == 0 {
-                        callback(.Success(self.getValidSongFromJSON(json, titleSearchTerm: titleSearchTerm)))
-                    } else {
-                        callback(.Failure(self.errorForUnexpectedStatusJSON(statusJSON)))
-                    }
-                } else {
-                    callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No status code in the response.")))
-                    println("json : \(json.rawString())")
-                }
-            } else {
-                callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No data in the response.")))
-            }
-        }
-    }
-    
-    public func findSongs(#titleSearchTerm: String, number: Int, callback: (MultiSongResult) -> Void) {
+    public func findSongs(#titleSearchTerm: String, number: Int, callback: (SongsResult) -> Void) {
         
         let urlString = buildSongSearchEndpointStringWithBucketParameters() as URLStringConvertible
         let parameters = getParameters(titleSearchTerm: titleSearchTerm)
@@ -88,22 +51,6 @@ public class EchoNestService {
                 callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No data in the response.")))
             }
         }
-    }
-    
-    func getValidSongFromJSON(json: JSON, titleSearchTerm: String) -> Song? {
-        var song: Song?
-        
-        let jsonSongs = json["response"]["songs"]
-        for (index, songJSON: JSON) in jsonSongs {
-            if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
-                if let uri = self.getValidURI(songJSON) {
-                    song = Song(title: title, artistName: songJSON["artist_name"].string, uri: uri)
-                    break
-                }
-            }
-        }
-
-        return song
     }
     
     func getValidSongsFromJSON(json: JSON, titleSearchTerm: String, number: Int) -> [Song] {
