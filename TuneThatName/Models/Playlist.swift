@@ -1,10 +1,13 @@
 import Foundation
 
-public struct Playlist: Equatable {
+public struct Playlist: Equatable, Printable {
     
     public let name: String!
     public var uri: NSURL?
     public var songs = [Song]()
+    public var description: String {
+        return "Song:[name:\(name), uri:\(uri), number of songs:\(songs.count)]"
+    }
     
     public init(name: String!) {
         self.name = name

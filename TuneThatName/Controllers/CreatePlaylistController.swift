@@ -39,6 +39,7 @@ public class CreatePlaylistController: UIViewController {
                     println("Error creating playlist: \(error)")
                     ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
                 case .Success(let playlist):
+                    println("Playlist: \(playlist)")
                     self.playlist = playlist
                     self.performSegueWithIdentifier("CreatePlaylistSegue", sender: sender)
                 }

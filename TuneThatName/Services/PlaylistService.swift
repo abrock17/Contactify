@@ -2,6 +2,8 @@ import Foundation
 
 public class PlaylistService {
     
+    let defaultSearchNumber = 20
+    
     public enum PlaylistResult {
         case Success(Playlist)
         case Failure(NSError)
@@ -34,54 +36,79 @@ public class PlaylistService {
     
     func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, callback: PlaylistResult -> Void) {
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.isEmpty})
+        var contactsToBeSearched = searchableContacts
         var contactsSearched = [Contact]()
-        var contactsToBeSearched = [Contact]()
-        var songResultList = [Song]()
-        var errorResultList = [NSError]()
+        var contactSongsResultMap = [Contact: [Song]]()
+        var contactErrorResultMap = [Contact: NSError]()
         var calledBack = false
         
-        var findSongForRandomName: (() -> ())!
-        findSongForRandomName = { () -> () in
-            if contactsToBeSearched.isEmpty {
-                contactsToBeSearched = searchableContacts
-            }
+        var findSongsForRandomName: (() -> ())!
+        findSongsForRandomName = { () -> () in
             
             let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
             let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
             contactsSearched.append(searchContact)
-            self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, number: 1) {
+            self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, number: self.defaultSearchNumber) {
                 songsResult in
                 
                 switch (songsResult) {
                 case .Success(let songs):
                     if !songs.isEmpty {
-                        songResultList.append(songs[0])
+                        contactSongsResultMap[searchContact] = songs
                     } else {
-                        findSongForRandomName()
+                        findSongsForRandomName()
                     }
                     
-                    if numberOfSongs == songResultList.count {
+                    if contactSongsResultMap.count == numberOfSongs
+                        || contactSongsResultMap.count == searchableContacts.count {
                         calledBack = true
-                        callback(.Success(Playlist(name: "Tune That Name", uri: nil, songs: songResultList)))
+                            callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: "Tune That Name", numberOfSongs: numberOfSongs)))
                     }
                 case .Failure(let error):
-                    errorResultList.append(error)
-                    println("Error \(errorResultList.count) finding song: \(error)")
+                    contactErrorResultMap[searchContact] = error
+                    println("Error finding songs for \(searchContact): \(error)")
                     
-                    if  errorResultList.count >= 3 && errorResultList.count > (numberOfSongs / 5) {
+                    if  contactErrorResultMap.count >= 3 && contactErrorResultMap.count > (numberOfSongs / 5) {
                         if !calledBack {
                             calledBack = true
                             callback(.Failure(error))
                         }
                     } else {
-                        findSongForRandomName()
+                        findSongsForRandomName()
                     }
                 }
             }
         }
         
-        while contactsSearched.count < numberOfSongs {
-            findSongForRandomName()
+        while contactsSearched.count < numberOfSongs && contactsSearched.count < searchableContacts.count {
+            findSongsForRandomName()
         }
+    }
+    
+    func buildPlaylistFromContactSongsResultMap(contactSongsResultMap: [Contact: [Song]], withName name: String, numberOfSongs: Int) -> Playlist {
+        var playlistSongs = [Song]()
+        var exhaustedContacts = [Contact]()
+        while playlistSongs.count < numberOfSongs && exhaustedContacts.count < contactSongsResultMap.count {
+            for contact in contactSongsResultMap.keys {
+                if !contains(exhaustedContacts, contact) {
+                    var songAdded = false
+                    for contactSong in contactSongsResultMap[contact]! {
+                        if !contains(playlistSongs, contactSong) {
+                            playlistSongs.append(contactSong)
+                            songAdded = true
+                            break
+                        }
+                    }
+                    if !songAdded {
+                        exhaustedContacts.append(contact)
+                    }
+                }
+                if playlistSongs.count == numberOfSongs {
+                    break
+                }
+            }
+        }
+    
+        return Playlist(name: name, uri: nil, songs: playlistSongs)
     }
 }
