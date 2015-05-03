@@ -2,12 +2,12 @@ import Foundation
 
 public class PlaylistService {
     
-    let defaultSearchNumber = 20
-    
     public enum PlaylistResult {
         case Success(Playlist)
         case Failure(NSError)
     }
+    
+    let defaultSearchNumber = 20
     
     let contactService: ContactService
     let echoNestService: EchoNestService
