@@ -22,7 +22,7 @@ public class PlaylistService {
             contactListResult in
             
             switch (contactListResult) {
-            case .Success(var contactList):
+            case .Success(let contactList):
                 if contactList.isEmpty {
                     callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.NoContactsCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.NoContactsMessage])))
                 } else {
@@ -35,6 +35,7 @@ public class PlaylistService {
     }
     
     func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, callback: PlaylistResult -> Void) {
+        let defaultName = "Tune That Name"
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).isEmpty})
         let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: numberOfSongs, numberOfContacts: searchableContacts.count)
         var contactsToBeSearched = searchableContacts
@@ -61,7 +62,7 @@ public class PlaylistService {
                     
                     if contactSongsResultMap.count == numberOfSongs {
                             calledBack = true
-                            callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: "Tune That Name", numberOfSongs: numberOfSongs)))
+                            callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
                     }
                 case .Failure(let error):
                     searchErrorCount++
@@ -80,7 +81,7 @@ public class PlaylistService {
                 searchCallbackCount++
                 if !calledBack && searchCallbackCount == searchableContacts.count {
                     calledBack = true
-                    callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: "Tune That Name", numberOfSongs: numberOfSongs)))
+                    callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
                 }
             }
         }
@@ -105,6 +106,7 @@ public class PlaylistService {
     func buildPlaylistFromContactSongsResultMap(contactSongsResultMap: [Contact: [Song]], withName name: String, numberOfSongs: Int) -> Playlist {
         var playlistSongs = [Song]()
         var exhaustedContacts = [Contact]()
+        
         while playlistSongs.count < numberOfSongs && exhaustedContacts.count < contactSongsResultMap.count {
             for contact in contactSongsResultMap.keys {
                 if !contains(exhaustedContacts, contact) {
