@@ -35,20 +35,20 @@ public class PlaylistService {
     }
     
     func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, callback: PlaylistResult -> Void) {
-        let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.isEmpty})
+        let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).isEmpty})
+        let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: numberOfSongs, numberOfContacts: searchableContacts.count)
         var contactsToBeSearched = searchableContacts
         var contactsSearched = [Contact]()
         var contactSongsResultMap = [Contact: [Song]]()
-        var contactErrorResultMap = [Contact: NSError]()
+        var searchCallbackCount = 0, searchErrorCount = 0
         var calledBack = false
         
         var findSongsForRandomName: (() -> ())!
         findSongsForRandomName = { () -> () in
-            
             let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
             let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
             contactsSearched.append(searchContact)
-            self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, number: self.defaultSearchNumber) {
+            self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, desiredNumberOfSongs: searchNumber) {
                 songsResult in
                 
                 switch (songsResult) {
@@ -59,16 +59,15 @@ public class PlaylistService {
                         findSongsForRandomName()
                     }
                     
-                    if contactSongsResultMap.count == numberOfSongs
-                        || contactSongsResultMap.count == searchableContacts.count {
-                        calledBack = true
+                    if contactSongsResultMap.count == numberOfSongs {
+                            calledBack = true
                             callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: "Tune That Name", numberOfSongs: numberOfSongs)))
                     }
                 case .Failure(let error):
-                    contactErrorResultMap[searchContact] = error
+                    searchErrorCount++
                     println("Error finding songs for \(searchContact): \(error)")
                     
-                    if  contactErrorResultMap.count >= 3 && contactErrorResultMap.count > (numberOfSongs / 5) {
+                    if  searchErrorCount >= 3 && searchErrorCount > (numberOfSongs / 5) {
                         if !calledBack {
                             calledBack = true
                             callback(.Failure(error))
@@ -77,12 +76,30 @@ public class PlaylistService {
                         findSongsForRandomName()
                     }
                 }
+                
+                searchCallbackCount++
+                if !calledBack && searchCallbackCount == searchableContacts.count {
+                    calledBack = true
+                    callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: "Tune That Name", numberOfSongs: numberOfSongs)))
+                }
             }
         }
         
-        while contactsSearched.count < numberOfSongs && contactsSearched.count < searchableContacts.count {
+        while contactsSearched.count < numberOfSongs && contactsToBeSearched.count > 0 {
             findSongsForRandomName()
         }
+    }
+    
+    func getEchoNestSearchNumberFor(totalRequestedNumberOfSongs numberOfSongs: Int, numberOfContacts: Int) -> Int {
+        let searchNumber: Int
+        let minimumSearchNumber = Float(numberOfSongs) / Float(numberOfContacts)
+        if minimumSearchNumber >= Float(defaultSearchNumber) / 2 {
+            searchNumber = Int(round(minimumSearchNumber)) * 2
+        } else {
+            searchNumber = defaultSearchNumber
+        }
+        
+        return searchNumber
     }
     
     func buildPlaylistFromContactSongsResultMap(contactSongsResultMap: [Contact: [Song]], withName name: String, numberOfSongs: Int) -> Playlist {

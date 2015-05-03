@@ -62,6 +62,20 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                         expect(playlistTableViewController.presentedViewController).to(beNil())
                     }
                 
+                    it("updates the save button text") {
+                        self.pressSaveButton(playlistTableViewController)
+
+                        expect(playlistTableViewController.saveButton.title).to(equal("Saving Playlist"))
+                    }
+                    
+                    it("disables the save button") {
+                        playlistTableViewController.saveButton.enabled = true
+                        
+                        self.pressSaveButton(playlistTableViewController)
+
+                        expect(playlistTableViewController.saveButton.enabled).toNot(beTrue())
+                    }
+                    
                     it("calls the service to save the playlist") {
                         self.pressSaveButton(playlistTableViewController)
                         

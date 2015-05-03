@@ -145,6 +145,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     func savePlaylist() {
+        updateButtonForPlaylistSaveInProgress()
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         let session = spotifyAuth.session
         println("access token: \(session?.accessToken)")
@@ -168,6 +169,11 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     func updateButtonForUnsavedPlaylist() {
         self.saveButton.title = "Save to Spotify"
         self.saveButton.enabled = true
+    }
+    
+    func updateButtonForPlaylistSaveInProgress() {
+        self.saveButton.title = "Saving Playlist"
+        self.saveButton.enabled = false
     }
     
     func updateButtonAfterPlaylistSaved() {

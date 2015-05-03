@@ -9,6 +9,8 @@ public class EchoNestService {
         case Failure(NSError)
     }
     
+    let defaultSearchNumber = 50
+    let maxResultNumber = 100
     let apiKey = "GVZ7FFJUMMXBG58VQ"
     let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
     let songSearchBuckets = ["tracks", "id:spotify-US"]
@@ -21,10 +23,10 @@ public class EchoNestService {
         self.alamoFireManager = alamoFireManager
     }
     
-    public func findSongs(#titleSearchTerm: String, number: Int, callback: (SongsResult) -> Void) {
+    public func findSongs(#titleSearchTerm: String, desiredNumberOfSongs: Int, callback: (SongsResult) -> Void) {
         
         let urlString = buildSongSearchEndpointStringWithBucketParameters() as URLStringConvertible
-        let parameters = getParameters(titleSearchTerm: titleSearchTerm)
+        let parameters = getParameters(titleSearchTerm: titleSearchTerm, desiredNumberOfSongs: desiredNumberOfSongs)
         
         alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
             (request, response, data, error) in
@@ -39,7 +41,7 @@ public class EchoNestService {
                 let statusJSON = json["response"]["status"]
                 if let code = statusJSON["code"].int {
                     if code == 0 {
-                        callback(.Success(self.getValidSongsFromJSON(json, titleSearchTerm: titleSearchTerm, number: number)))
+                        callback(.Success(self.getValidSongsFromJSON(json, titleSearchTerm: titleSearchTerm, desiredNumberOfSongs: desiredNumberOfSongs)))
                     } else {
                         callback(.Failure(self.errorForUnexpectedStatusJSON(statusJSON)))
                     }
@@ -53,7 +55,7 @@ public class EchoNestService {
         }
     }
     
-    func getValidSongsFromJSON(json: JSON, titleSearchTerm: String, number: Int) -> [Song] {
+    func getValidSongsFromJSON(json: JSON, titleSearchTerm: String, desiredNumberOfSongs: Int) -> [Song] {
         var songs = [Song]()
         
         let jsonSongs = json["response"]["songs"]
@@ -61,7 +63,7 @@ public class EchoNestService {
             if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
                 if let uri = self.getValidURI(songJSON) {
                     songs.append(Song(title: title, artistName: songJSON["artist_name"].string, uri: uri))
-                    if (songs.count == number) {
+                    if (songs.count == desiredNumberOfSongs) {
                         break
                     }
                 }
@@ -122,14 +124,29 @@ public class EchoNestService {
         return NSError(domain: Constants.Error.Domain, code: 0, userInfo: [NSLocalizedDescriptionKey: message, NSLocalizedFailureReasonErrorKey: reason])
     }
     
-    func getParameters(#titleSearchTerm: String) -> [String : AnyObject] {
+    func getParameters(#titleSearchTerm: String, desiredNumberOfSongs: Int) -> [String : AnyObject] {
         return [
             "api_key": apiKey,
             "format": "json",
-            "results": 50,
+            "results": getResultParameter(desiredNumberOfSongs: desiredNumberOfSongs),
             "limit": "true",
             "title": titleSearchTerm
         ]
+    }
+    
+    func getResultParameter(#desiredNumberOfSongs: Int) -> Int {
+        let resultNumber: Int
+        if desiredNumberOfSongs > defaultSearchNumber / 2 {
+            if maxResultNumber < desiredNumberOfSongs * 2 {
+                resultNumber = maxResultNumber
+            } else {
+                resultNumber = desiredNumberOfSongs * 2
+            }
+        } else {
+            resultNumber = defaultSearchNumber
+        }
+        
+        return resultNumber
     }
     
     func buildSongSearchEndpointStringWithBucketParameters() -> String! {

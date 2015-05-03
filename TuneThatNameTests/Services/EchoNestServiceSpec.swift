@@ -44,7 +44,7 @@ class EchoNestServiceSpec: QuickSpec {
             describe("find songs for title search term") {
                 context("when performing a search") {
                     beforeEach() {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                     }
                     
                     it("creates a request that contains the correct title string") {
@@ -58,11 +58,34 @@ class EchoNestServiceSpec: QuickSpec {
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
                             .toEventually(contain("bucket=id:spotify"))
                     }
+                    
+                    it("creates a request that contains the default 'results' parameter") {
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
+                            .toEventually(contain("results=50"))
+                    }
+                }
+                
+                context("when the desired number of songs is greater than half the default search number") {
+                    it("creates a request that contains a 'results' parameter double the necessary minimum") {
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 26, callback: self.findSongsCallback)
+                        
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
+                            .toEventually(contain("results=52"))
+                    }
+                }
+                
+                context("when the desired number of songs is greater than half the max results number") {
+                    it("creates a request that contains the max 'results' parameter") {
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 51, callback: self.findSongsCallback)
+                        
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
+                            .toEventually(contain("results=100"))
+                    }
                 }
                 
                 context("when the search term has special characters") {
                     it("encodeds them propery in the URL request") {
-                        echoNestService.findSongs(titleSearchTerm: "\"Special, Characters ... (&)\"", number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: "\"Special, Characters ... (&)\"", desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
                             .toEventually(contain("title=%22Special%2C%20Characters%20...%20%28%26%29%22"))
@@ -73,7 +96,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with a generic error message") {
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
                         expect(self.callbackError?.userInfo?[NSLocalizedDescriptionKey] as? String).toEventually(equal("Unexpected response from the Echo Nest."))
@@ -86,7 +109,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("passes back the same error") {
                         MockURLProtocol.setMockError(expectedError)
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackError?.domain).toEventually(equal(expectedError.domain))
                         expect(self.callbackError?.code).toEventually(equal(expectedError.code))
@@ -100,7 +123,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with an error with the status message") {
                         MockURLProtocol.setMockResponseData(data)
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
                         expect(self.callbackError?.userInfo?[NSLocalizedDescriptionKey] as? String).toEventually(equal("Non-zero status code from the Echo Nest."))
@@ -119,7 +142,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with an empty song array") {
                         self.callbackSongs.append(Song(title: "non-empty song list so we can check for empty later", artistName: nil, uri: nil))
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackSongs).toEventually(beEmpty())
                     }
@@ -131,7 +154,7 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     beforeEach() {
                         MockURLProtocol.setMockResponseData(data)
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                     }
                     
                     it("calls back with a song") {
@@ -162,7 +185,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with nil Song") {
                         MockURLProtocol.setMockResponseData(data)
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackSongs).toEventually(beEmpty())
                     }
@@ -175,7 +198,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with the expected song") {
                         MockURLProtocol.setMockResponseData(data)
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackSongs.count).toEventually(equal(1))
                         expect(self.callbackSongs[0].title).toEventually(equal("Susie Q"))
@@ -192,7 +215,7 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     it("calls back with the requested number of songs") {
                         let numberOfSongs = 3
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, number: numberOfSongs, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
                         
                         expect(self.callbackSongs.count).toEventually(equal(numberOfSongs))
                         expect(self.callbackError).to(beNil())

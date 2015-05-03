@@ -6,7 +6,7 @@ public struct Playlist: Equatable, Printable {
     public var uri: NSURL?
     public var songs = [Song]()
     public var description: String {
-        return "Song:[name:\(name), uri:\(uri), number of songs:\(songs.count)]"
+        return "Playlist:[name:\(name), uri:\(uri), number of songs:\(songs.count)]"
     }
     
     public init(name: String!) {
