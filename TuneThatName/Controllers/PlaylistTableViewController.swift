@@ -2,15 +2,21 @@ import UIKit
 
 public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     
+    enum SpotifyPostLoginAction {
+        case PlaySong(Song)
+        case SavePlaylist
+    }
+    
     public var playlist: Playlist!
+    var spotifyPostLoginAction: SpotifyPostLoginAction! = SpotifyPostLoginAction.SavePlaylist
+    
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
-    public var spotifyAudioController: SPTAudioStreamingController!
+    var spotifyAuthController: SPTAuthViewController!
+    var spotifyAudioController: SPTAudioStreamingController!
     
     public var echoNestService = EchoNestService()
     public var spotifyService = SpotifyService()
 
-    var authViewController: SPTAuthViewController!
-    
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.tableView)
     
     @IBOutlet public weak var saveButton: UIBarButtonItem!
@@ -74,6 +80,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         let song = playlist.songs[indexPath.row]
         
         if spotifyAuth.session == nil || !spotifyAuth.session.isValid() {
+            spotifyPostLoginAction = SpotifyPostLoginAction.PlaySong(song)
             openLogin()
         } else {
             playSong(song)
@@ -146,6 +153,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     @IBAction public func savePlaylistPressed(sender: AnyObject) {
         if spotifyAuth.session == nil || !spotifyAuth.session.isValid() {
+            spotifyPostLoginAction = SpotifyPostLoginAction.SavePlaylist
             openLogin()
         } else {
             savePlaylist()
@@ -153,15 +161,15 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     func openLogin() {
-        authViewController = SPTAuthViewController.authenticationViewControllerWithAuth(spotifyAuth)
-        authViewController.delegate = self
-        authViewController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
-        authViewController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
+        spotifyAuthController = SPTAuthViewController.authenticationViewControllerWithAuth(spotifyAuth)
+        spotifyAuthController.delegate = self
+        spotifyAuthController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
+        spotifyAuthController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
         
         self.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
         self.definesPresentationContext = true
         
-        presentViewController(self.authViewController, animated: false, completion: nil)
+        presentViewController(self.spotifyAuthController, animated: false, completion: nil)
     }
     
     public func authenticationViewController(viewController: SPTAuthViewController, didFailToLogin error: NSError) {
@@ -170,7 +178,12 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
         println("Login succeeded... session: \(session)")
-        savePlaylist()
+        switch (spotifyPostLoginAction!) {
+        case .PlaySong(let song):
+            playSong(song)
+        case .SavePlaylist:
+            savePlaylist()
+        }
     }
     
     public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
