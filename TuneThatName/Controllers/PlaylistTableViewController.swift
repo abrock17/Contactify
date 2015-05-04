@@ -4,6 +4,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     public var playlist: Playlist!
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
+    public var spotifyAudioController: SPTAudioStreamingController!
     
     public var echoNestService = EchoNestService()
     public var spotifyService = SpotifyService()
@@ -17,6 +18,10 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        if spotifyAudioController == nil {
+            spotifyAudioController = SPTAudioStreamingController(clientId: SpotifyService.clientID)
+        }
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -63,6 +68,34 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         cell.detailTextLabel?.text = song.artistName
 
         return cell
+    }
+    
+    override public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let song = playlist.songs[indexPath.row]
+        
+        if spotifyAuth.session == nil || !spotifyAuth.session.isValid() {
+            openLogin()
+        } else {
+            playSong(song)
+        }
+    }
+    
+    func playSong(song: Song) {
+        spotifyAudioController.loginWithSession(spotifyAuth.session) {
+            error in
+            
+            if error != nil {
+                ControllerHelper.displaySimpleAlertForTitle("Unable to play song", andMessage: error.description, onController: self)
+            } else {
+                self.spotifyAudioController.playURIs([song.uri!], fromIndex: 0) {
+                    error in
+                    
+                    if error != nil {
+                        ControllerHelper.displaySimpleAlertForTitle("Unable to play song", andMessage: error.description, onController: self)
+                    }
+                }
+            }
+        }
     }
 
     /*

@@ -2,19 +2,20 @@ import Foundation
 
 public class SpotifyService {
     
-    let trackMaxBatchSize = 100
-    
     public enum PlaylistResult {
         case Success(Playlist)
         case Failure(NSError)
     }
+    
+    static let clientID = "02b72a9ba42742acbebb0d3277c9996f"
+    let trackMaxBatchSize = 100
     
     public init() {
     }
     
     public class func initializeDefaultSPTAuth() {
         let auth = SPTAuth.defaultInstance()
-        auth.clientID = "02b72a9ba42742acbebb0d3277c9996f"
+        auth.clientID = self.clientID
         auth.requestedScopes = [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope]
         auth.redirectURL = NSURL(string: "name-playlist-creator-login://return")
         auth.tokenSwapURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/swap")
