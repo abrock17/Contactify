@@ -21,6 +21,8 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     @IBOutlet public weak var saveButton: UIBarButtonItem!
     
+    @IBOutlet public weak var playPauseButton: UIBarButtonItem!
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
 
@@ -34,7 +36,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
-        updateButtonForUnsavedPlaylist()
+        updateSaveButtonForUnsavedPlaylist()
     }
     
     override public func viewWillAppear(animated: Bool) {
@@ -88,18 +90,23 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     func playSong(song: Song) {
+        let errorTitle = "Unable to play song"
+        
+        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         spotifyAudioController.loginWithSession(spotifyAuth.session) {
             error in
             
             if error != nil {
-                ControllerHelper.displaySimpleAlertForTitle("Unable to play song", andMessage: error.description, onController: self)
+                ControllerHelper.displaySimpleAlertForTitle(errorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
             } else {
                 self.spotifyAudioController.playURIs([song.uri!], fromIndex: 0) {
                     error in
                     
                     if error != nil {
-                        ControllerHelper.displaySimpleAlertForTitle("Unable to play song", andMessage: error.description, onController: self)
+                        ControllerHelper.displaySimpleAlertForTitle(errorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
                     }
+                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                    self.updatePlayPauseButton()
                 }
             }
         }
@@ -191,7 +198,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     func savePlaylist() {
-        updateButtonForPlaylistSaveInProgress()
+        updateSaveButtonForPlaylistSaveInProgress()
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         let session = spotifyAuth.session
         println("access token: \(session?.accessToken)")
@@ -202,7 +209,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 switch (playlistResult) {
                 case .Success(let playlist):
                     self.playlist = playlist
-                    self.updateButtonAfterPlaylistSaved()
+                    self.updateSaveButtonAfterPlaylistSaved()
                 case .Failure(let error):
                     println("Error saving playlist: \(error)")
                     ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
@@ -212,18 +219,33 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         }
     }
     
-    func updateButtonForUnsavedPlaylist() {
+    func updateSaveButtonForUnsavedPlaylist() {
         self.saveButton.title = "Save to Spotify"
         self.saveButton.enabled = true
     }
     
-    func updateButtonForPlaylistSaveInProgress() {
+    func updateSaveButtonForPlaylistSaveInProgress() {
         self.saveButton.title = "Saving Playlist"
         self.saveButton.enabled = false
     }
     
-    func updateButtonAfterPlaylistSaved() {
+    func updateSaveButtonAfterPlaylistSaved() {
         self.saveButton.title = "Playlist Saved"
         self.saveButton.enabled = false
+    }
+    
+    @IBAction func playPausePressed(sender: UIBarButtonItem) {
+        spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying) {
+            error in
+            
+            self.updatePlayPauseButton()
+        }
+    }
+    
+    func updatePlayPauseButton() {
+        let buttonSystemItem = spotifyAudioController.isPlaying ? UIBarButtonSystemItem.Pause : UIBarButtonSystemItem.Play
+        let updatedButton = UIBarButtonItem(barButtonSystemItem: buttonSystemItem, target: self, action: "playPausePressed:")
+        self.navigationController?.toolbar.items?.removeLast()
+        self.navigationController?.toolbar.items?.append(updatedButton)
     }
 }

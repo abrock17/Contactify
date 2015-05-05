@@ -51,6 +51,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         mockPlaylistService.mocker.prepareForCallTo(MockPlaylistService.Method.createPlaylist, returnValue: PlaylistService.PlaylistResult.Success(expectedPlaylist))
                         
                         createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        NSRunLoop.mainRunLoop().runUntilDate(NSDate())
                     }
                     
                     it("segues to the playlist table view passing the playlist") {
