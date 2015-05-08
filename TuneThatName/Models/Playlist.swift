@@ -5,6 +5,9 @@ public struct Playlist: Equatable, Printable {
     public let name: String!
     public var uri: NSURL?
     public var songs = [Song]()
+    public var songURIs: [NSURL] {
+        return self.songs.map({$0.uri})
+    }
     public var description: String {
         return "Playlist:[name:\(name), uri:\(uri), number of songs:\(songs.count)]"
     }

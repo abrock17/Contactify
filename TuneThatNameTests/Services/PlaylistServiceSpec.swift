@@ -104,12 +104,12 @@ class PlaylistServiceSpec: QuickSpec {
                         
                         context("and the echo nest service calls back with multiple songs for each name") {
                             let echoNestSongLists = [
-                                [Song(title: "Johnny's Song", artistName: "artist 1", uri: NSURL(string: "uri1")),
-                                    Song(title: "Johnny's Song 2", artistName: "artist 4", uri: NSURL(string: "uri4"))],
-                                [Song(title: "Billy's Song", artistName: "artist 2", uri: NSURL(string: "uri2")),
-                                    Song(title: "Billy's Song 2", artistName: "artist 5", uri: NSURL(string: "uri5"))],
-                                [Song(title: "Frankie's Song", artistName: "artist 3", uri: NSURL(string: "uri3")),
-                                    Song(title: "Frankie's Song 2", artistName: "artist 6", uri: NSURL(string: "uri6"))]]
+                                [Song(title: "Johnny's Song", artistName: "artist 1", uri: NSURL(string: "uri1")!),
+                                    Song(title: "Johnny's Song 2", artistName: "artist 4", uri: NSURL(string: "uri4")!)],
+                                [Song(title: "Billy's Song", artistName: "artist 2", uri: NSURL(string: "uri2")!),
+                                    Song(title: "Billy's Song 2", artistName: "artist 5", uri: NSURL(string: "uri5")!)],
+                                [Song(title: "Frankie's Song", artistName: "artist 3", uri: NSURL(string: "uri3")!),
+                                    Song(title: "Frankie's Song 2", artistName: "artist 6", uri: NSURL(string: "uri6")!)]]
                             
                             beforeEach() {
                                 for songList in echoNestSongLists {
@@ -141,9 +141,9 @@ class PlaylistServiceSpec: QuickSpec {
                     context("and the echo nest service calls back with a song for each contact name") {
                         let numberOfSongs = contactList.count
                         let expectedSongs = [
-                            Song(title: "Johnny's Song", artistName: "artist 1", uri: NSURL(string: "uri1")),
-                            Song(title: "Billy's Song", artistName: "artist 2", uri: NSURL(string: "uri2")),
-                            Song(title: "Frankie's Song", artistName: "artist 3", uri: NSURL(string: "uri3"))]
+                            Song(title: "Johnny's Song", artistName: "artist 1", uri: NSURL(string: "uri1")!),
+                            Song(title: "Billy's Song", artistName: "artist 2", uri: NSURL(string: "uri2")!),
+                            Song(title: "Frankie's Song", artistName: "artist 3", uri: NSURL(string: "uri3")!)]
                         
                         it("calls back with a playlist containing the songs") {
                             for song in expectedSongs {
@@ -163,9 +163,9 @@ class PlaylistServiceSpec: QuickSpec {
                     context("and the echo nest service calls back with an error for one of the names") {
                         let numberOfSongs = contactList.count - 1
                         let echoNestResults: [EchoNestService.SongsResult] = [
-                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))]),
+                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1")!)]),
                             .Failure(NSError(domain: "d0m41n", code: 42, userInfo: nil)),
-                            .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2"))])]
+                            .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2")!)])]
                         
                         it("retries with a different name") {
                             for result in echoNestResults {
@@ -184,9 +184,9 @@ class PlaylistServiceSpec: QuickSpec {
                     context("and the echo nest service calls back with an empty song result for one of the names") {
                         let numberOfSongs = contactList.count - 1
                         let echoNestResults: [EchoNestService.SongsResult] = [
-                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))]),
+                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1")!)]),
                             .Success([Song]()),
-                            .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2"))])]
+                            .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2")!)])]
                         
                         it("retries with a different name") {
                             for result in echoNestResults {
@@ -227,12 +227,12 @@ class PlaylistServiceSpec: QuickSpec {
                     context("and the echo nest service calls back with some duplicate songs") {
                         let numberOfSongs = contactList.count
                         let echoNestSongLists = [
-                            [Song(title: "Johnny's Song", artistName: "artist 1", uri: NSURL(string: "uri1")),
-                                Song(title: "Johnny's Song 2", artistName: "artist 4", uri: NSURL(string: "uri4"))],
-                            [Song(title: "Billy's Song", artistName: "artist 2", uri: NSURL(string: "uri2")),
-                                Song(title: "Billy's Song 2", artistName: "artist 5", uri: NSURL(string: "uri5"))],
-                            [Song(title: "Johnny's Song", artistName: "artist 1", uri: NSURL(string: "uri1")),
-                                Song(title: "Johnny's Song 2", artistName: "artist 4", uri: NSURL(string: "uri4"))]]
+                            [Song(title: "Johnny's Song", artistName: "artist 1", uri: NSURL(string: "uri1")!),
+                                Song(title: "Johnny's Song 2", artistName: "artist 4", uri: NSURL(string: "uri4")!)],
+                            [Song(title: "Billy's Song", artistName: "artist 2", uri: NSURL(string: "uri2")!),
+                                Song(title: "Billy's Song 2", artistName: "artist 5", uri: NSURL(string: "uri5")!)],
+                            [Song(title: "Johnny's Song", artistName: "artist 1", uri: NSURL(string: "uri1")!),
+                                Song(title: "Johnny's Song 2", artistName: "artist 4", uri: NSURL(string: "uri4")!)]]
                         
                         beforeEach() {
                             for songList in echoNestSongLists {
@@ -280,7 +280,7 @@ class PlaylistServiceSpec: QuickSpec {
                         let numberOfSongs = contactList.count
                         let lastError = NSError(domain: "89", code: 89, userInfo: nil)
                         let echoNestResults: [EchoNestService.SongsResult] = [
-                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1"))]),
+                            .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1")!)]),
                             .Failure(NSError(domain: "85", code: 87, userInfo: nil)),
                             .Failure(NSError(domain: "86", code: 88, userInfo: nil)),
                             .Failure(NSError(domain: "87", code: 87, userInfo: nil)),

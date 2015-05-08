@@ -47,6 +47,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     override public func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setToolbarHidden(true, animated: animated)
+        spotifyAudioController.stop(nil)
     }
     
     override public func didReceiveMemoryWarning() {
@@ -90,23 +91,34 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     func playSong(song: Song) {
-        let errorTitle = "Unable to play song"
-        
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
+        self.spotifyAudioController.setIsPlaying(false, callback: nil)
+        let errorTitle = "Unable to play song"
         spotifyAudioController.loginWithSession(spotifyAuth.session) {
             error in
             
             if error != nil {
                 ControllerHelper.displaySimpleAlertForTitle(errorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
             } else {
-                self.spotifyAudioController.playURIs([song.uri!], fromIndex: 0) {
+                let songURIs = self.playlist.songURIs
+                let index: Int
+                if let uriIndex = find(songURIs, song.uri) {
+                    index = uriIndex
+                } else {
+                    index = 0
+                }
+                self.spotifyAudioController.setIsPlaying(true) {
                     error in
                     
-                    if error != nil {
-                        ControllerHelper.displaySimpleAlertForTitle(errorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
+                    self.spotifyAudioController.playURIs(songURIs, fromIndex: Int32(index)) {
+                        error in
+                        
+                        if error != nil {
+                            ControllerHelper.displaySimpleAlertForTitle(errorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
+                        }
+                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                        self.updatePlayPauseButton()
                     }
-                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
-                    self.updatePlayPauseButton()
                 }
             }
         }
@@ -235,10 +247,14 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     @IBAction func playPausePressed(sender: UIBarButtonItem) {
-        spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying) {
-            error in
-            
-            self.updatePlayPauseButton()
+        if spotifyAudioController.currentTrackURI == nil {
+            tableView(self.tableView, didSelectRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 0))
+        } else {
+            spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying) {
+                error in
+                
+                self.updatePlayPauseButton()
+            }
         }
     }
     

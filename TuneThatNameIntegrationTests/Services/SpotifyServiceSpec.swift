@@ -42,7 +42,7 @@ class SpotifyServiceSpec: QuickSpec {
                         expect(self.callbackPlaylist?.songs.count).to(equal(1120))
                         expect(self.callbackPlaylist?.songs.first?.title).to(equal("Happy"))
                         expect(self.callbackPlaylist?.songs.first?.artistName).to(equal("Pharrell Williams"))
-                        expect(self.callbackPlaylist?.songs.first?.uri?.absoluteString).to(equal("spotify:track:6NPVjNh8Jhru9xOmyQigds"))
+                        expect(self.callbackPlaylist?.songs.first?.uri.absoluteString).to(equal("spotify:track:6NPVjNh8Jhru9xOmyQigds"))
                         expect(self.callbackPlaylist?.songs[809].artistName).to(equal("Madeleine Peyroux, Marc Ribot, Christopher Bruce, Meshell Ndegeocello, Charley Drayton"))
                     }
                 }
@@ -97,8 +97,8 @@ class SpotifyServiceSpec: QuickSpec {
     func getPlaylist() -> Playlist! {
         var playlist = Playlist(name: "test playlist")
         for i in 1...75 {
-            playlist.songs.append(Song(title: "Susie Q", artistName: "Creedence Clearwater Revival", uri: NSURL(string: "spotify:track:5xpfodSZvstNnuvv0qXg3Y")))
-            playlist.songs.append(Song(title: "Suite: Judy Blue Eyes", artistName: "Crosby, Stills & Nash", uri: NSURL(string: "spotify:track:2Jf0PGy9NzR1PTXvRFfaoE")))
+            playlist.songs.append(Song(title: "Susie Q", artistName: "Creedence Clearwater Revival", uri: NSURL(string: "spotify:track:5xpfodSZvstNnuvv0qXg3Y")!))
+            playlist.songs.append(Song(title: "Suite: Judy Blue Eyes", artistName: "Crosby, Stills & Nash", uri: NSURL(string: "spotify:track:2Jf0PGy9NzR1PTXvRFfaoE")!))
         }
         return playlist
     }

@@ -14,7 +14,7 @@ class MockEchoNestService: EchoNestService {
         if let mockedResult = mockedResult as? EchoNestService.SongsResult {
             callback(mockedResult)
         } else {
-            callback(.Success([Song(title: "unimportant mocked song", artistName: nil, uri: nil)]))
+            callback(.Success([Song(title: "unimportant mocked song", artistName: nil, uri: NSURL(string: "unimportant:mocked-uri")!)]))
         }
     }
 }

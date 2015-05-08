@@ -140,7 +140,7 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                     
                     it("calls back with an empty song array") {
-                        self.callbackSongs.append(Song(title: "non-empty song list so we can check for empty later", artistName: nil, uri: nil))
+                        self.callbackSongs.append(Song(title: "non-empty song list so we can check for empty later", artistName: nil, uri: NSURL(string: "uri")!))
                         
                         echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
@@ -178,7 +178,7 @@ class EchoNestServiceSpec: QuickSpec {
                 }
                 
                 context("when only one song with no foreign catalog ID is found") {
-                    self.callbackSongs.append(Song(title: "non-nil song so we can check for nil later", artistName: nil, uri: nil))
+                    self.callbackSongs.append(Song(title: "non-nil song so we can check for nil later", artistName: nil, uri: NSURL(string: "uri")!))
                     let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-one-song-no-foreign_id", withExtension: "txt")
                     let data = NSData(contentsOfURL: url!)
                     

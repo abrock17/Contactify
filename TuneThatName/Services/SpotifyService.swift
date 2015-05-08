@@ -46,7 +46,7 @@ public class SpotifyService {
             } else {
                 var trackURIs = [NSURL]()
                 for song in playlist.songs {
-                    trackURIs.append(song.uri!)
+                    trackURIs.append(song.uri)
                 }
                 SPTTrack.tracksWithURIs(trackURIs, session: session) {
                     (error, tracks) in
