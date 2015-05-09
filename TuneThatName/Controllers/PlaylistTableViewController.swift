@@ -3,9 +3,11 @@ import UIKit
 public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
     
     enum SpotifyPostLoginAction {
-        case PlaySong(Song)
+        case PlaySong(index: Int)
         case SavePlaylist
     }
+    
+    let playSongErrorTitle = "Unable to play song"
     
     public var playlist: Playlist!
     var spotifyPostLoginAction: SpotifyPostLoginAction! = SpotifyPostLoginAction.SavePlaylist
@@ -80,50 +82,9 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     override public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let song = playlist.songs[indexPath.row]
-        
-        if spotifyAuth.session == nil || !spotifyAuth.session.isValid() {
-            spotifyPostLoginAction = SpotifyPostLoginAction.PlaySong(song)
-            openLogin()
-        } else {
-            playSong(song)
-        }
+        playFromIndex(indexPath.row)
     }
     
-    func playSong(song: Song) {
-        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-        self.spotifyAudioController.setIsPlaying(false, callback: nil)
-        let errorTitle = "Unable to play song"
-        spotifyAudioController.loginWithSession(spotifyAuth.session) {
-            error in
-            
-            if error != nil {
-                ControllerHelper.displaySimpleAlertForTitle(errorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
-            } else {
-                let songURIs = self.playlist.songURIs
-                let index: Int
-                if let uriIndex = find(songURIs, song.uri) {
-                    index = uriIndex
-                } else {
-                    index = 0
-                }
-                self.spotifyAudioController.setIsPlaying(true) {
-                    error in
-                    
-                    self.spotifyAudioController.playURIs(songURIs, fromIndex: Int32(index)) {
-                        error in
-                        
-                        if error != nil {
-                            ControllerHelper.displaySimpleAlertForTitle(errorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
-                        }
-                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
-                        self.updatePlayPauseButton()
-                    }
-                }
-            }
-        }
-    }
-
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -169,17 +130,21 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     */
     
-    
     @IBAction public func savePlaylistPressed(sender: AnyObject) {
-        if spotifyAuth.session == nil || !spotifyAuth.session.isValid() {
-            spotifyPostLoginAction = SpotifyPostLoginAction.SavePlaylist
-            openLogin()
-        } else {
+        if sessionIsValid() {
             savePlaylist()
+        } else {
+            openLogin(SpotifyPostLoginAction.SavePlaylist)
         }
     }
     
-    func openLogin() {
+    func sessionIsValid() -> Bool {
+        return spotifyAuth.session != nil && spotifyAuth.session.isValid()
+    }
+    
+    func openLogin(spotifyPostLoginAction: SpotifyPostLoginAction) {
+        self.spotifyPostLoginAction = spotifyPostLoginAction
+
         spotifyAuthController = SPTAuthViewController.authenticationViewControllerWithAuth(spotifyAuth)
         spotifyAuthController.delegate = self
         spotifyAuthController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
@@ -198,8 +163,8 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
         println("Login succeeded... session: \(session)")
         switch (spotifyPostLoginAction!) {
-        case .PlaySong(let song):
-            playSong(song)
+        case .PlaySong(let index):
+            playFromIndex(index)
         case .SavePlaylist:
             savePlaylist()
         }
@@ -248,12 +213,75 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     @IBAction func playPausePressed(sender: UIBarButtonItem) {
         if spotifyAudioController.currentTrackURI == nil {
-            tableView(self.tableView, didSelectRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 0))
+            playFromIndex(0)
         } else {
             spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying) {
                 error in
                 
-                self.updatePlayPauseButton()
+                if error != nil {
+                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
+                } else {
+                    self.updatePlayPauseButton()
+                }
+            }
+        }
+    }
+    
+    func playFromIndex(index: Int) {
+        if sessionIsValid() {
+            ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
+            
+            prepareToPlay() {
+                error in
+                if error != nil {
+                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
+                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                } else {
+                    self.spotifyAudioController.playURIs(self.playlist.songURIs, fromIndex: Int32(index)) {
+                        error in
+                        if error != nil {
+                            ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
+                        }
+                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                        self.updatePlayPauseButton()
+                    }
+                }
+            }
+        } else {
+            openLogin(SpotifyPostLoginAction.PlaySong(index: index))
+        }
+    }
+    
+    func prepareToPlay(callback: SPTErrorableOperationCallback) {
+        if !spotifyAudioController.loggedIn {
+            spotifyAudioController.loginWithSession(spotifyAuth.session) {
+                error in
+                
+                if error != nil {
+                    callback(error)
+                } else {
+                    if self.spotifyAudioController.isPlaying {
+                        self.resetIsPlaying(callback)
+                    } else {
+                        callback(nil)
+                    }
+                }
+            }
+        } else {
+            resetIsPlaying(callback)
+        }
+    }
+    
+    func resetIsPlaying(callback: SPTErrorableOperationCallback) {
+        spotifyAudioController.setIsPlaying(false) {
+            error in
+            if error != nil {
+                callback(error)
+            } else {
+                self.spotifyAudioController.setIsPlaying(true) {
+                    error in
+                    callback(error)
+                }
             }
         }
     }
