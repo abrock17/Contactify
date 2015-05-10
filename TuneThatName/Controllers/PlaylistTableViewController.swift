@@ -1,6 +1,6 @@
 import UIKit
 
-public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate {
+public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate, SPTAudioStreamingPlaybackDelegate {
     
     enum SpotifyPostLoginAction {
         case PlaySong(index: Int)
@@ -14,10 +14,10 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var spotifyAuthController: SPTAuthViewController!
-    var spotifyAudioController: SPTAudioStreamingController!
     
     public var echoNestService = EchoNestService()
     public var spotifyService = SpotifyService()
+    public var spotifyAudioService: SpotifyAudioService!
 
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.tableView)
     
@@ -27,10 +27,8 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-
-        if spotifyAudioController == nil {
-            spotifyAudioController = SPTAudioStreamingController(clientId: SpotifyService.clientID)
-        }
+        
+        spotifyAudioService = SpotifyAudioService(spotifyPlaybackDelegate: self)
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -49,7 +47,10 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     override public func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setToolbarHidden(true, animated: animated)
-        spotifyAudioController.stop(nil)
+        spotifyAudioService.stopPlay() {
+            error in
+            print("Error stopping play : \(error)")
+        }
     }
     
     override public func didReceiveMemoryWarning() {
@@ -189,7 +190,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                     self.updateSaveButtonAfterPlaylistSaved()
                 case .Failure(let error):
                     println("Error saving playlist: \(error)")
-                    ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
+                    ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andError: error, onController: self)
                 }
                 ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
@@ -212,16 +213,13 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     @IBAction func playPausePressed(sender: UIBarButtonItem) {
-        if spotifyAudioController.currentTrackURI == nil {
+        if spotifyAudioService.getCurrentTrackURI() == nil {
             playFromIndex(0)
         } else {
-            spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying) {
+            spotifyAudioService.togglePlay() {
                 error in
-                
                 if error != nil {
-                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
-                } else {
-                    self.updatePlayPauseButton()
+                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
                 }
             }
         }
@@ -231,65 +229,31 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         if sessionIsValid() {
             ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
             
-            prepareToPlay() {
+            spotifyAudioService.playPlaylist(self.playlist, fromIndex: index, inSession: spotifyAuth.session) {
                 error in
                 if error != nil {
-                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
-                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
-                } else {
-                    self.spotifyAudioController.playURIs(self.playlist.songURIs, fromIndex: Int32(index)) {
-                        error in
-                        if error != nil {
-                            ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
-                        }
-                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
-                        self.updatePlayPauseButton()
-                    }
+                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
                 }
+                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
         } else {
             openLogin(SpotifyPostLoginAction.PlaySong(index: index))
         }
     }
     
-    func prepareToPlay(callback: SPTErrorableOperationCallback) {
-        if !spotifyAudioController.loggedIn {
-            spotifyAudioController.loginWithSession(spotifyAuth.session) {
-                error in
-                
-                if error != nil {
-                    callback(error)
-                } else {
-                    if self.spotifyAudioController.isPlaying {
-                        self.resetIsPlaying(callback)
-                    } else {
-                        callback(nil)
-                    }
-                }
-            }
-        } else {
-            resetIsPlaying(callback)
-        }
+    public func audioStreaming(audioStreaming: SPTAudioStreamingController!,
+        didChangePlaybackStatus isPlaying: Bool) {
+        updatePlayPauseButton(isPlaying)
     }
     
-    func resetIsPlaying(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.setIsPlaying(false) {
-            error in
-            if error != nil {
-                callback(error)
-            } else {
-                self.spotifyAudioController.setIsPlaying(true) {
-                    error in
-                    callback(error)
-                }
-            }
-        }
-    }
-    
-    func updatePlayPauseButton() {
-        let buttonSystemItem = spotifyAudioController.isPlaying ? UIBarButtonSystemItem.Pause : UIBarButtonSystemItem.Play
+    func updatePlayPauseButton(isPlaying: Bool) {
+        let buttonSystemItem = isPlaying ? UIBarButtonSystemItem.Pause : UIBarButtonSystemItem.Play
         let updatedButton = UIBarButtonItem(barButtonSystemItem: buttonSystemItem, target: self, action: "playPausePressed:")
         self.navigationController?.toolbar.items?.removeLast()
         self.navigationController?.toolbar.items?.append(updatedButton)
+    }
+    
+    public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didStartPlayingTrack trackUri: NSURL!) {
+        self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: Int(audioStreaming.currentTrackIndex), inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.Middle)
     }
 }

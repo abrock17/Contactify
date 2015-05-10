@@ -37,7 +37,7 @@ public class CreatePlaylistController: UIViewController {
                 switch (playlistResult) {
                 case .Failure(let error):
                     println("Error creating playlist: \(error)")
-                    ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andMessage: error.userInfo?[NSLocalizedDescriptionKey] as! String, onController: self)
+                    ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andError: error, onController: self)
                 case .Success(let playlist):
                     self.handleCreatedPlaylist(playlist, sender: sender)
                 }

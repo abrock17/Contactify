@@ -9,6 +9,10 @@ public class ControllerHelper {
         controller.presentViewController(errorAlertViewController, animated: true, completion: nil)
     }
     
+    public class func displaySimpleAlertForTitle(title: String, andError error: NSError, onController controller: UIViewController) {
+        displaySimpleAlertForTitle(title, andMessage: error.localizedDescription, onController: controller)
+    }
+    
     public class func newActivityIndicatorForView(view: UIView) -> UIActivityIndicatorView {
         let indicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
         view.addSubview(indicator)

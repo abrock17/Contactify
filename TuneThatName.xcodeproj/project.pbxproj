@@ -22,6 +22,7 @@
 		4467307A1AD9B5E60056A840 /* ContactServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446730791AD9B5E60056A840 /* ContactServiceSpec.swift */; };
 		4467307B1AD9B7340056A840 /* SpotifyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE53951AACEA1D0089BFCD /* SpotifyServiceSpec.swift */; };
 		4467307C1AD9B8F70056A840 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44BDFB081ABC4F720060BB25 /* Spotify.framework */; };
+		446DFE001AFFE3D00022B75F /* SpotifyAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446DFDFF1AFFE3D00022B75F /* SpotifyAudioService.swift */; };
 		4484B5291AD1AD1600F33C8F /* ContactServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */; };
 		4484B52B1AD1C7B300F33C8F /* ContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52A1AD1C7B300F33C8F /* ContactService.swift */; };
 		4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52C1AD1C80400F33C8F /* Contact.swift */; };
@@ -87,6 +88,7 @@
 		4467306D1AD9B41E0056A840 /* TuneThatNameIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuneThatNameIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		446730701AD9B41E0056A840 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		446730791AD9B5E60056A840 /* ContactServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactServiceSpec.swift; sourceTree = "<group>"; };
+		446DFDFF1AFFE3D00022B75F /* SpotifyAudioService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAudioService.swift; sourceTree = "<group>"; };
 		4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactServiceSpec.swift; sourceTree = "<group>"; };
 		4484B52A1AD1C7B300F33C8F /* ContactService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 		4484B52C1AD1C80400F33C8F /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
@@ -178,8 +180,9 @@
 			children = (
 				4484B52A1AD1C7B300F33C8F /* ContactService.swift */,
 				44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */,
-				44BE53971AACEAD50089BFCD /* SpotifyService.swift */,
 				443F89F11AE2A3E1005920B1 /* PlaylistService.swift */,
+				44BE53971AACEAD50089BFCD /* SpotifyService.swift */,
+				446DFDFF1AFFE3D00022B75F /* SpotifyAudioService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -658,6 +661,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44BE53901AA76A1E0089BFCD /* PlaylistTableViewController.swift in Sources */,
+				446DFE001AFFE3D00022B75F /* SpotifyAudioService.swift in Sources */,
 				44FDE0C01A9EB52E0052C6D1 /* EchoNestService.swift in Sources */,
 				4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */,
 				443F89F21AE2A3E1005920B1 /* PlaylistService.swift in Sources */,
