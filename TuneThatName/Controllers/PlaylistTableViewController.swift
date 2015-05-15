@@ -10,14 +10,17 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     let playSongErrorTitle = "Unable to play song"
     
     public var playlist: Playlist!
+    var played = false
     var spotifyPostLoginAction: SpotifyPostLoginAction! = SpotifyPostLoginAction.SavePlaylist
     
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var spotifyAuthController: SPTAuthViewController!
     
-    public var echoNestService = EchoNestService()
     public var spotifyService = SpotifyService()
-    public var spotifyAudioService: SpotifyAudioService!
+    public var spotifyAudioFacadeOverride: SpotifyAudioFacade!
+    lazy var spotifyAudioFacade: SpotifyAudioFacade! = {
+        return self.spotifyAudioFacadeOverride != nil ? self.spotifyAudioFacadeOverride : SpotifyAudioFacadeImpl(spotifyPlaybackDelegate: self)
+    }()
 
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.tableView)
     
@@ -28,11 +31,8 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     override public func viewDidLoad() {
         super.viewDidLoad()
         
-        spotifyAudioService = SpotifyAudioService(spotifyPlaybackDelegate: self)
+        played = false
         
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
@@ -47,10 +47,13 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     override public func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setToolbarHidden(true, animated: animated)
-        spotifyAudioService.stopPlay() {
-            error in
-            print("Error stopping play : \(error)")
-        }
+        
+//        spotifyAudioFacade.stopPlay() {
+//            error in
+//            if error != nil {
+//                print("Error resetting audio facade: \(error)")
+//            }
+//        }
     }
     
     override public func didReceiveMemoryWarning() {
@@ -213,10 +216,11 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     @IBAction func playPausePressed(sender: UIBarButtonItem) {
-        if spotifyAudioService.getCurrentTrackURI() == nil {
+        if !played {
             playFromIndex(0)
+            played = true
         } else {
-            spotifyAudioService.togglePlay() {
+            spotifyAudioFacade.togglePlay() {
                 error in
                 if error != nil {
                     ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
@@ -229,7 +233,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         if sessionIsValid() {
             ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
             
-            spotifyAudioService.playPlaylist(self.playlist, fromIndex: index, inSession: spotifyAuth.session) {
+            spotifyAudioFacade.playPlaylist(self.playlist, fromIndex: index, inSession: spotifyAuth.session) {
                 error in
                 if error != nil {
                     ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)

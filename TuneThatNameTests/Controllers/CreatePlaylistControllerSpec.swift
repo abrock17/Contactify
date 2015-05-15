@@ -15,6 +15,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
                 createPlaylistController = navigationController.childViewControllers.first as! CreatePlaylistController
+//                let playlistTableViewController = navigationController.childViewControllers[1] as! PlaylistTableViewController
+//                playlistTableViewController.spotifyAudioFacade = MockSpotifyAudioFacade()
                 
                 mockPlaylistService = MockPlaylistService()
                 createPlaylistController.playlistService = mockPlaylistService

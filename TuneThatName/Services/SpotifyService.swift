@@ -7,7 +7,7 @@ public class SpotifyService {
         case Failure(NSError)
     }
     
-    static let clientID = "02b72a9ba42742acbebb0d3277c9996f"
+    public static let clientID = "02b72a9ba42742acbebb0d3277c9996f"
     let trackMaxBatchSize = 100
     
     public init() {

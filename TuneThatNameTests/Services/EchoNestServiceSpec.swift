@@ -23,7 +23,7 @@ class EchoNestServiceSpec: QuickSpec {
 
     override func spec() {
         
-        describe("The EchoNestService") {
+        describe("The Echo Nest Service") {
             var echoNestService: EchoNestService!
             
             beforeEach() {

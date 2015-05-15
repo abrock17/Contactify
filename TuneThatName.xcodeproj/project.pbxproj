@@ -22,7 +22,9 @@
 		4467307A1AD9B5E60056A840 /* ContactServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446730791AD9B5E60056A840 /* ContactServiceSpec.swift */; };
 		4467307B1AD9B7340056A840 /* SpotifyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE53951AACEA1D0089BFCD /* SpotifyServiceSpec.swift */; };
 		4467307C1AD9B8F70056A840 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44BDFB081ABC4F720060BB25 /* Spotify.framework */; };
-		446DFE001AFFE3D00022B75F /* SpotifyAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446DFDFF1AFFE3D00022B75F /* SpotifyAudioService.swift */; };
+		446DFE001AFFE3D00022B75F /* SpotifyAudioFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446DFDFF1AFFE3D00022B75F /* SpotifyAudioFacade.swift */; };
+		446DFE021B02183B0022B75F /* SpotifyAudioFacadeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446DFE011B02183B0022B75F /* SpotifyAudioFacadeSpec.swift */; };
+		446DFE041B0601470022B75F /* MockSpotifyAudioFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446DFE031B0601470022B75F /* MockSpotifyAudioFacade.swift */; };
 		4484B5291AD1AD1600F33C8F /* ContactServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */; };
 		4484B52B1AD1C7B300F33C8F /* ContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52A1AD1C7B300F33C8F /* ContactService.swift */; };
 		4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52C1AD1C80400F33C8F /* Contact.swift */; };
@@ -88,7 +90,9 @@
 		4467306D1AD9B41E0056A840 /* TuneThatNameIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuneThatNameIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		446730701AD9B41E0056A840 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		446730791AD9B5E60056A840 /* ContactServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactServiceSpec.swift; sourceTree = "<group>"; };
-		446DFDFF1AFFE3D00022B75F /* SpotifyAudioService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAudioService.swift; sourceTree = "<group>"; };
+		446DFDFF1AFFE3D00022B75F /* SpotifyAudioFacade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAudioFacade.swift; sourceTree = "<group>"; };
+		446DFE011B02183B0022B75F /* SpotifyAudioFacadeSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAudioFacadeSpec.swift; sourceTree = "<group>"; };
+		446DFE031B0601470022B75F /* MockSpotifyAudioFacade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSpotifyAudioFacade.swift; sourceTree = "<group>"; };
 		4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactServiceSpec.swift; sourceTree = "<group>"; };
 		4484B52A1AD1C7B300F33C8F /* ContactService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 		4484B52C1AD1C80400F33C8F /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
@@ -182,7 +186,7 @@
 				44FDE0BF1A9EB52E0052C6D1 /* EchoNestService.swift */,
 				443F89F11AE2A3E1005920B1 /* PlaylistService.swift */,
 				44BE53971AACEAD50089BFCD /* SpotifyService.swift */,
-				446DFDFF1AFFE3D00022B75F /* SpotifyAudioService.swift */,
+				446DFDFF1AFFE3D00022B75F /* SpotifyAudioFacade.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -213,6 +217,7 @@
 				44FDE0BD1A9EB3410052C6D1 /* EchoNestServiceSpec.swift */,
 				4484B5281AD1AD1600F33C8F /* ContactServiceSpec.swift */,
 				44F696231AEB198F00F2C2F8 /* PlaylistServiceSpec.swift */,
+				446DFE011B02183B0022B75F /* SpotifyAudioFacadeSpec.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -223,6 +228,7 @@
 				443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */,
 				445914811ACB6B1D00E9734C /* Mocker.swift */,
 				44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */,
+				446DFE031B0601470022B75F /* MockSpotifyAudioFacade.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -661,7 +667,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44BE53901AA76A1E0089BFCD /* PlaylistTableViewController.swift in Sources */,
-				446DFE001AFFE3D00022B75F /* SpotifyAudioService.swift in Sources */,
+				446DFE001AFFE3D00022B75F /* SpotifyAudioFacade.swift in Sources */,
 				44FDE0C01A9EB52E0052C6D1 /* EchoNestService.swift in Sources */,
 				4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */,
 				443F89F21AE2A3E1005920B1 /* PlaylistService.swift in Sources */,
@@ -682,6 +688,7 @@
 			files = (
 				44F696241AEB198F00F2C2F8 /* PlaylistServiceSpec.swift in Sources */,
 				445914821ACB6B1D00E9734C /* Mocker.swift in Sources */,
+				446DFE021B02183B0022B75F /* SpotifyAudioFacadeSpec.swift in Sources */,
 				44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */,
 				44FBFE981AC650EE0087C9FF /* SongSpec.swift in Sources */,
 				44B2191C1AEA5C53002EA154 /* ControllerHelperSpec.swift in Sources */,
@@ -690,6 +697,7 @@
 				443F89F41AE2A551005920B1 /* CreatePlaylistControllerSpec.swift in Sources */,
 				4484B5291AD1AD1600F33C8F /* ContactServiceSpec.swift in Sources */,
 				4439639D1A97B0DE00E0C385 /* SpotifySpike.swift in Sources */,
+				446DFE041B0601470022B75F /* MockSpotifyAudioFacade.swift in Sources */,
 				4433E6261ABD9708006CE8B8 /* PlaylistTableViewControllerSpec.swift in Sources */,
 				443F9EC81AA4BCFF00705340 /* MockURLProtocol.swift in Sources */,
 				44A0A8D51AEC57F900E7A2A1 /* MockEchoNestService.swift in Sources */,

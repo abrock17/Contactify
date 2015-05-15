@@ -1,6 +1,15 @@
 import Foundation
 
-public class SpotifyAudioService {
+public protocol SpotifyAudioFacade {
+    
+    func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback)
+    
+    func togglePlay(callback: SPTErrorableOperationCallback)
+    
+    func stopPlay(callback: SPTErrorableOperationCallback)
+}
+
+public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
 
     static let sharedSpotifyAudioController: SPTAudioStreamingController = {
         let spotifyAudioController = SPTAudioStreamingController(clientId: SpotifyService.clientID)
@@ -10,7 +19,9 @@ public class SpotifyAudioService {
 
     let spotifyAudioController: SPTAudioStreamingController
     
-    public init(spotifyAudioController: SPTAudioStreamingController = SpotifyAudioService.sharedSpotifyAudioController, spotifyPlaybackDelegate: SPTAudioStreamingPlaybackDelegate) {
+    public init(
+        spotifyAudioController: SPTAudioStreamingController = sharedSpotifyAudioController,
+        spotifyPlaybackDelegate: SPTAudioStreamingPlaybackDelegate) {
         self.spotifyAudioController = spotifyAudioController
         self.spotifyAudioController.playbackDelegate = spotifyPlaybackDelegate
     }
@@ -62,10 +73,6 @@ public class SpotifyAudioService {
         }
     }
     
-    public func getCurrentTrackURI() -> NSURL! {
-        return spotifyAudioController.currentTrackURI
-    }
-    
     public func togglePlay(callback: SPTErrorableOperationCallback) {
         spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying) {
             error in
@@ -74,7 +81,7 @@ public class SpotifyAudioService {
     }
     
     public func stopPlay(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.stop() {
+        self.spotifyAudioController.stop() {
             error in
             callback(error)
         }

@@ -7,8 +7,8 @@ class PlaylistTableViewControllerSpec: QuickSpec {
     override func spec() {
         describe("PlaylistTableViewController") {
             var playlistTableViewController: PlaylistTableViewController!
-            var mockEchoNestService: MockEchoNestService!
             var mockSpotifyService: MockSpotifyService!
+            var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -16,9 +16,9 @@ class PlaylistTableViewControllerSpec: QuickSpec {
 
                 mockSpotifyService = MockSpotifyService()
                 playlistTableViewController.spotifyService = mockSpotifyService
-                mockEchoNestService = MockEchoNestService()
-                playlistTableViewController.echoNestService = mockEchoNestService
                 playlistTableViewController.playlist = Playlist(name: "existing playlist to keep view from reloading")
+                mockSpotifyAudioFacade = MockSpotifyAudioFacade()
+                playlistTableViewController.spotifyAudioFacadeOverride = mockSpotifyAudioFacade
                 
                 UIApplication.sharedApplication().keyWindow!.rootViewController = playlistTableViewController
             }
