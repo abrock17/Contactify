@@ -124,7 +124,8 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                 it("calls stop on the audio streaming controller") {
                     spotifyAudioFacade.stopPlay(self.errorCallback)
                     
-                    expect(mockAudioStreamingController.mocker.recordedParameters[MockSPTAudioStreamingController.Method.stop]?.count).to(equal(1))
+                    expect(mockAudioStreamingController.mocker.getCallCountFor(
+                        MockSPTAudioStreamingController.Method.stop)).to(equal(1))
                 }
                 
                 context("when stop calls back with an error") {

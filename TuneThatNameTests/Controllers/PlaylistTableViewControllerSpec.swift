@@ -86,7 +86,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                         expect(playlistParameter).to(equal(playlist))
                     }
                     
-                    context("upon saving the playlist successfully") {
+                    context("and upon saving the playlist successfully") {
                         let savedPlaylist = Playlist(name: "saved playlist", uri: NSURL(string: "uri"))
                         beforeEach() {
                             mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Success(savedPlaylist))
@@ -108,7 +108,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                         }
                     }
                     
-                    context("upon failing to save the playlist") {
+                    context("and upon failing to save the playlist") {
                         let error = NSError(domain: "com.spotify.ios", code: 777, userInfo: [NSLocalizedDescriptionKey: "error description"])
                         
                         it("displays the error message in an alert") {
@@ -116,11 +116,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                             
                             self.pressSaveButton(playlistTableViewController)
 
-                            expect(playlistTableViewController.presentedViewController).toEventuallyNot(beNil())
-                            expect(playlistTableViewController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
-                            let alertController = playlistTableViewController.presentedViewController as! UIAlertController
-                            expect(alertController.title).toEventually(equal("Unable to Save Your Playlist"))
-                            expect(alertController.message).toEventually(equal(error.userInfo![NSLocalizedDescriptionKey] as? String))
+                            self.assertSimpleUIAlertControllerPresented(parentController: playlistTableViewController, expectedTitle: "Unable to Save Your Playlist", expectedMessage: error.localizedDescription)
                         }
                     }
                 }
@@ -181,7 +177,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).to(equal(spotifyAuth.session))
                     }
                     
-                    context("upon failing to play the playlist") {
+                    context("and upon failing to play the playlist") {
                         let error = NSError(domain: "com.spotify.ios", code: 888, userInfo: [NSLocalizedDescriptionKey: "this list is unplayable"])
                         
                         it("displays the error message in an alert") {
@@ -190,11 +186,66 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                             
                             playlistTableViewController.tableView(playlistTableViewController.tableView, didSelectRowAtIndexPath: indexPath)
                             
-                            expect(playlistTableViewController.presentedViewController).toEventuallyNot(beNil())
-                            expect(playlistTableViewController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
-                            let alertController = playlistTableViewController.presentedViewController as! UIAlertController
-                            expect(alertController.title).toEventually(equal("Unable to play song"))
-                            expect(alertController.message).toEventually(equal(error.localizedDescription))
+                            self.assertSimpleUIAlertControllerPresented(parentController: playlistTableViewController, expectedTitle: "Unable to Play Song", expectedMessage: error.localizedDescription)
+                        }
+                    }
+                }
+            }
+            
+            describe("press the play/pause button") {
+                context("when the session is invalid") {
+                    let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: -60)
+                    
+                    it("prompts the user to log in") {
+                        playlistTableViewController.spotifyAuth = spotifyAuth
+                        
+                        self.pressPlayPauseButton(playlistTableViewController)
+                        
+                        expect(playlistTableViewController.presentedViewController).toEventuallyNot(beNil())
+                    }
+                }
+
+                context("when there is a valid session") {
+                    let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                    
+                    beforeEach() {
+                        playlistTableViewController.spotifyAuth = spotifyAuth
+                    }
+                    
+                    context("and the playlist has not played yet") {
+                        it("calls to play the playlist from the first index") {
+                            self.pressPlayPauseButton(playlistTableViewController)
+                            
+                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).to(equal(playlist))
+                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).to(equal(0))
+                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).to(equal(spotifyAuth.session))
+                        }
+                    }
+                    
+                    context("and play has already started") {
+                        beforeEach() {
+                            self.pressPlayPauseButton(playlistTableViewController)
+                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).to(equal(playlist))
+                        }
+
+                        it("toggles play") {
+                            self.pressPlayPauseButton(playlistTableViewController)
+                            
+                            expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                                MockSpotifyAudioFacade.Method.togglePlay)).to(equal(1))
+                        }
+                        
+                        context("and upon failing to toggle play") {
+                            let error = NSError(domain: "com.spotify.ios", code: 999, userInfo: [NSLocalizedDescriptionKey: "couldn't toggle play"])
+                            
+                            it("displays the error message in an alert") {
+                                mockSpotifyAudioFacade.mocker.prepareForCallTo(
+                                    MockSpotifyAudioFacade.Method.togglePlay, returnValue: error)
+                                
+                                self.pressPlayPauseButton(playlistTableViewController)
+                                
+                                self.assertSimpleUIAlertControllerPresented(parentController: playlistTableViewController, expectedTitle: "Unable to Play Song", expectedMessage: error.localizedDescription)
+                            }
                         }
                     }
                 }
@@ -217,10 +268,24 @@ class PlaylistTableViewControllerSpec: QuickSpec {
 
         return fakeSpotifyAuth
     }
-    
+
     func pressSaveButton(playlistTableViewController: PlaylistTableViewController) {
         let saveButton = playlistTableViewController.saveButton
         UIApplication.sharedApplication().sendAction(saveButton.action, to: saveButton.target, from: self, forEvent: nil)
+    }
+    
+    func pressPlayPauseButton(playlistTableViewController: PlaylistTableViewController) {
+        let playPauseButton = playlistTableViewController.playPauseButton
+        UIApplication.sharedApplication().sendAction(playPauseButton.action, to: playPauseButton.target, from: self, forEvent: nil)
+    }
+    
+    func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {
+        expect(parentController.presentedViewController).toEventuallyNot(beNil())
+        expect(parentController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
+        if let alertController = parentController.presentedViewController as? UIAlertController {
+            expect(alertController.title).toEventually(equal(expectedTitle))
+            expect(alertController.message).toEventually(equal(expectedMessage))
+        }
     }
 }
 

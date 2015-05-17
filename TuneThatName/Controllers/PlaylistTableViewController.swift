@@ -7,7 +7,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         case SavePlaylist
     }
     
-    let playSongErrorTitle = "Unable to play song"
+    let playSongErrorTitle = "Unable to Play Song"
     
     public var playlist: Playlist!
     var played = false
@@ -216,17 +216,17 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     @IBAction func playPausePressed(sender: UIBarButtonItem) {
-//        if !played {
-//            playFromIndex(0)
-//            played = true
-//        } else {
-//            spotifyAudioFacade.togglePlay() {
-//                error in
-//                if error != nil {
-//                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
-//                }
-//            }
-//        }
+        if !played {
+            playFromIndex(0)
+            played = true
+        } else {
+            spotifyAudioFacade.togglePlay() {
+                error in
+                if error != nil {
+                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
+                }
+            }
+        }
     }
     
     func playFromIndex(index: Int) {

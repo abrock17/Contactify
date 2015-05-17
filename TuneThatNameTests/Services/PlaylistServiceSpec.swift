@@ -340,7 +340,7 @@ class PlaylistServiceSpec: QuickSpec {
     }
     
     func numberOfTimesFindSongsWasCalled(mockEchoNestService: MockEchoNestService) -> Int {
-        return mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSongs]?.count ?? 0
+        return mockEchoNestService.mocker.getCallCountFor(MockEchoNestService.Method.findSongs)
     }
     
     func numberOfTimesFindSongsWasCalledForName(name: String, mockEchoNestService: MockEchoNestService) -> Int {
