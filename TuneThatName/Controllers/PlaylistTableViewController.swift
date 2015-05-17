@@ -2,16 +2,16 @@ import UIKit
 
 public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate, SPTAudioStreamingPlaybackDelegate {
     
-    enum SpotifyPostLoginAction {
-        case PlaySong(index: Int)
+    public enum SpotifyPostLoginAction {
+        case PlayPlaylist(index: Int)
         case SavePlaylist
     }
     
     let playSongErrorTitle = "Unable to Play Song"
     
     public var playlist: Playlist!
+    public var spotifyPostLoginAction: SpotifyPostLoginAction!
     var played = false
-    var spotifyPostLoginAction: SpotifyPostLoginAction! = SpotifyPostLoginAction.SavePlaylist
     
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var spotifyAuthController: SPTAuthViewController!
@@ -167,7 +167,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
         println("Login succeeded... session: \(session)")
         switch (spotifyPostLoginAction!) {
-        case .PlaySong(let index):
+        case .PlayPlaylist(let index):
             playFromIndex(index)
         case .SavePlaylist:
             savePlaylist()
@@ -175,7 +175,6 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     }
     
     public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
-        println("Login cancelled")
     }
     
     func savePlaylist() {
@@ -241,7 +240,7 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
         } else {
-            openLogin(SpotifyPostLoginAction.PlaySong(index: index))
+            openLogin(SpotifyPostLoginAction.PlayPlaylist(index: index))
         }
     }
     

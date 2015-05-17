@@ -124,19 +124,31 @@ class PlaylistTableViewControllerSpec: QuickSpec {
             
             describe("successful login") {
                 let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                
+                beforeEach() {
+                    playlistTableViewController.spotifyAuth = spotifyAuth
+                }
 
-                context("when login is successful") {
+                context("when post login action is SavePlaylist") {
                     it("calls the service to save the playlist") {
-                        playlistTableViewController.spotifyAuth = spotifyAuth
-                        
-                        playlistTableViewController.playlist = playlist
-                        mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Success(playlist))
+                        playlistTableViewController.spotifyPostLoginAction = PlaylistTableViewController.SpotifyPostLoginAction.SavePlaylist
 
                         playlistTableViewController.authenticationViewController(SPTAuthViewController(), didLoginWithSession: spotifyAuth.session)
                         
-                        expect(mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)).toEventuallyNot(beEmpty())
-                        var playlistParameter = mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)?.first as? Playlist
-                        expect(playlistParameter).to(equal(playlist))
+                        expect(mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)?.first as? Playlist).toEventually(equal(playlist))
+                    }
+                }
+                
+                context("when the post login action is PlayPlaylist") {
+                    let index = 1
+                    it("plays the playlist from the given index") {
+                        playlistTableViewController.spotifyPostLoginAction = PlaylistTableViewController.SpotifyPostLoginAction.PlayPlaylist(index: index)
+                        
+                        playlistTableViewController.authenticationViewController(SPTAuthViewController(), didLoginWithSession: spotifyAuth.session)
+                        
+                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).to(equal(playlist))
+                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).to(equal(index))
+                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).to(equal(spotifyAuth.session))
                     }
                 }
             }
