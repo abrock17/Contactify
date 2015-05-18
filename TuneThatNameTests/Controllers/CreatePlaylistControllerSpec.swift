@@ -9,6 +9,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
         describe("The CreatePlaylistController") {
             var navigationController: UINavigationController!
             var createPlaylistController: CreatePlaylistController!
+            var playlistTableViewController: PlaylistTableViewController?
             var mockPlaylistService: MockPlaylistService!
             
             beforeEach() {
@@ -21,6 +22,13 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
                 createPlaylistController.loadView()
+            }
+            
+            afterEach() {
+                // doing this to keep from instantiating a real SPTAudioStreamingController which causes errors elsewhere in the tests (because it's trying to spin up more than one)
+                if let playlistTableViewController = playlistTableViewController {
+                    playlistTableViewController.spotifyAudioFacadeOverride = MockSpotifyAudioFacade()
+                }
             }
 
             describe("press the create playlist button") {
@@ -56,8 +64,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     
                     it("segues to the playlist table view passing the playlist") {
                         expect(navigationController.topViewController).toEventually(beAnInstanceOf(PlaylistTableViewController))
-                        let playlistTableViewController = navigationController.topViewController as! PlaylistTableViewController
-                        expect(playlistTableViewController.playlist).to(equal(expectedPlaylist))
+                        playlistTableViewController = navigationController.topViewController as? PlaylistTableViewController
+                        expect(playlistTableViewController?.playlist).to(equal(expectedPlaylist))
                     }
                 }
             }

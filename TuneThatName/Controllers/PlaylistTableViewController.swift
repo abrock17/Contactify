@@ -48,12 +48,12 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
         super.viewWillDisappear(animated)
         self.navigationController?.setToolbarHidden(true, animated: animated)
         
-//        spotifyAudioFacade.stopPlay() {
-//            error in
-//            if error != nil {
-//                print("Error resetting audio facade: \(error)")
-//            }
-//        }
+        spotifyAudioFacade.stopPlay() {
+            error in
+            if error != nil {
+                print("Error stopping play: \(error)")
+            }
+        }
     }
     
     override public func didReceiveMemoryWarning() {

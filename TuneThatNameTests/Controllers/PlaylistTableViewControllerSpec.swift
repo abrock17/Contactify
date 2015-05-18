@@ -286,6 +286,16 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("view will disappear") {
+                it("stops play") {
+                    navigationController.popToRootViewControllerAnimated(false)
+                    NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+                    
+                    expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                        MockSpotifyAudioFacade.Method.stopPlay)).to(equal(1))
+                }
+            }
         }
     }
     
