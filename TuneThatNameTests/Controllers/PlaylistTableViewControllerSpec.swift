@@ -274,8 +274,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                     it("sets the play/pause button to the 'pause' system item") {
                         playlistTableViewController.audioStreaming(nil, didChangePlaybackStatus: true)
                         
-                        let playPauseButton = playlistTableViewController.navigationController?.toolbar.items?.last as? UIBarButtonItem
-                        expect((playPauseButton?.valueForKey("systemItem") as? Int)).to(equal(UIBarButtonSystemItem.Pause.rawValue))
+                        expect(self.getPlayPauseButtonSystemItemFromToolbar(playlistTableViewController)).to(equal(UIBarButtonSystemItem.Pause))
                     }
                 }
                 
@@ -283,8 +282,7 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                     it("sets the play/pause button to the 'play' system item") {
                         playlistTableViewController.audioStreaming(nil, didChangePlaybackStatus: false)
                         
-                        let playPauseButton = playlistTableViewController.navigationController?.toolbar.items?.last as? UIBarButtonItem
-                        expect((playPauseButton?.valueForKey("systemItem") as? Int)).to(equal(UIBarButtonSystemItem.Play.rawValue))
+                        expect(self.getPlayPauseButtonSystemItemFromToolbar(playlistTableViewController)).to(equal(UIBarButtonSystemItem.Play))
                     }
                 }
             }
@@ -324,6 +322,11 @@ class PlaylistTableViewControllerSpec: QuickSpec {
             expect(alertController.title).toEventually(equal(expectedTitle))
             expect(alertController.message).toEventually(equal(expectedMessage))
         }
+    }
+    
+    func getPlayPauseButtonSystemItemFromToolbar(playlistTableViewController: PlaylistTableViewController) -> UIBarButtonSystemItem {
+        let playPauseButton = playlistTableViewController.navigationController?.toolbar.items?[3] as? UIBarButtonItem
+        return UIBarButtonSystemItem(rawValue: playPauseButton!.valueForKey("systemItem") as! Int)!
     }
 }
 
