@@ -241,9 +241,13 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                     }
                     
                     context("and play has already started") {
+                        let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+                        
                         beforeEach() {
-                            self.pressPlayPauseButton(playlistTableViewController)
+                            playlistTableViewController.tableView(playlistTableViewController.tableView, didSelectRowAtIndexPath: indexPath)
                             expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).to(equal(playlist))
+                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).to(equal(indexPath.row))
+                            NSRunLoop.mainRunLoop().runUntilDate(NSDate())
                         }
 
                         it("toggles play") {

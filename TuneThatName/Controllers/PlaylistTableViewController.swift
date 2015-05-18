@@ -217,7 +217,6 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
     @IBAction func playPausePressed(sender: UIBarButtonItem) {
         if !played {
             playFromIndex(0)
-            played = true
         } else {
             spotifyAudioFacade.togglePlay() {
                 error in
@@ -236,6 +235,8 @@ public class PlaylistTableViewController: UITableViewController, SPTAuthViewDele
                 error in
                 if error != nil {
                     ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
+                } else {
+                    self.played = true
                 }
                 ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
