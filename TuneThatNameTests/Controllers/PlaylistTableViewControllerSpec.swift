@@ -10,20 +10,26 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                 [Song(title: "Me And Bobby McGee", artistName: "Janis Joplin", uri: NSURL(string: "spotify:track:3RpndSyVypRVcN38z98MvU")!),
                     Song(title: "Bobby Brown Goes Down", artistName: "Frank Zappa", uri: NSURL(string: "spotify:album:4hBKoHOpEvQ6g4CQFsEAdU")!)])
             var playlistTableViewController: PlaylistTableViewController!
+            var navigationController: UINavigationController!
             var mockSpotifyService: MockSpotifyService!
             var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                playlistTableViewController = storyboard.instantiateViewControllerWithIdentifier("PlaylistTableViewController") as!  PlaylistTableViewController
+                
+                navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
 
+                playlistTableViewController = storyboard.instantiateViewControllerWithIdentifier("PlaylistTableViewController") as!  PlaylistTableViewController
+                
                 playlistTableViewController.playlist = playlist
                 mockSpotifyService = MockSpotifyService()
                 playlistTableViewController.spotifyService = mockSpotifyService
                 mockSpotifyAudioFacade = MockSpotifyAudioFacade()
                 playlistTableViewController.spotifyAudioFacadeOverride = mockSpotifyAudioFacade
                 
-                UIApplication.sharedApplication().keyWindow!.rootViewController = playlistTableViewController
+                navigationController.pushViewController(playlistTableViewController, animated: false)
+                UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
+                NSRunLoop.mainRunLoop().runUntilDate(NSDate())
             }
 
             describe("press the 'save to spotify' button") {
@@ -259,6 +265,26 @@ class PlaylistTableViewControllerSpec: QuickSpec {
                                 self.assertSimpleUIAlertControllerPresented(parentController: playlistTableViewController, expectedTitle: "Unable to Play Song", expectedMessage: error.localizedDescription)
                             }
                         }
+                    }
+                }
+            }
+            
+            describe("playback status change") {
+                context("when is playing") {
+                    it("sets the play/pause button to the 'pause' system item") {
+                        playlistTableViewController.audioStreaming(nil, didChangePlaybackStatus: true)
+                        
+                        let playPauseButton = playlistTableViewController.navigationController?.toolbar.items?.last as? UIBarButtonItem
+                        expect((playPauseButton?.valueForKey("systemItem") as? Int)).to(equal(UIBarButtonSystemItem.Pause.rawValue))
+                    }
+                }
+                
+                context("when is not playing") {
+                    it("sets the play/pause button to the 'play' system item") {
+                        playlistTableViewController.audioStreaming(nil, didChangePlaybackStatus: false)
+                        
+                        let playPauseButton = playlistTableViewController.navigationController?.toolbar.items?.last as? UIBarButtonItem
+                        expect((playPauseButton?.valueForKey("systemItem") as? Int)).to(equal(UIBarButtonSystemItem.Play.rawValue))
                     }
                 }
             }
