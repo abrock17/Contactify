@@ -9,7 +9,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
         describe("The CreatePlaylistController") {
             var navigationController: UINavigationController!
             var createPlaylistController: CreatePlaylistController!
-            var playlistTableViewController: PlaylistTableViewController?
+            var spotifyPlaylistTableController: SpotifyPlaylistTableController?
             var mockPlaylistService: MockPlaylistService!
             
             beforeEach() {
@@ -26,8 +26,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
             
             afterEach() {
                 // doing this to keep from instantiating a real SPTAudioStreamingController which causes errors elsewhere in the tests (because it's trying to spin up more than one)
-                if let playlistTableViewController = playlistTableViewController {
-                    playlistTableViewController.spotifyAudioFacadeOverride = MockSpotifyAudioFacade()
+                if let spotifyPlaylistTableController = spotifyPlaylistTableController {
+                    spotifyPlaylistTableController.spotifyAudioFacadeOverride = MockSpotifyAudioFacade()
                 }
             }
 
@@ -41,7 +41,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     }
                     
                     it("does not segue to the playlist table view") {
-                        expect(navigationController.topViewController).toEventuallyNot(beAnInstanceOf(PlaylistTableViewController))
+                        expect(navigationController.topViewController).toEventuallyNot(beAnInstanceOf(SpotifyPlaylistTableController))
                     }
 
                     it("displays the error message in an alert") {
@@ -63,9 +63,9 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     }
                     
                     it("segues to the playlist table view passing the playlist") {
-                        expect(navigationController.topViewController).toEventually(beAnInstanceOf(PlaylistTableViewController))
-                        playlistTableViewController = navigationController.topViewController as? PlaylistTableViewController
-                        expect(playlistTableViewController?.playlist).to(equal(expectedPlaylist))
+                        expect(navigationController.topViewController).toEventually(beAnInstanceOf(SpotifyPlaylistTableController))
+                        spotifyPlaylistTableController = navigationController.topViewController as? SpotifyPlaylistTableController
+                        expect(spotifyPlaylistTableController?.playlist).to(equal(expectedPlaylist))
                     }
                 }
             }

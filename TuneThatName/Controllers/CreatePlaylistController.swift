@@ -24,8 +24,8 @@ public class CreatePlaylistController: UIViewController {
     // MARK: - Navigation
 
     override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        let playlistTableViewController = segue.destinationViewController as! PlaylistTableViewController
-        playlistTableViewController.playlist = self.playlist
+        let spotifyPlaylistTableController = segue.destinationViewController as! SpotifyPlaylistTableController
+        spotifyPlaylistTableController.playlist = self.playlist
     }
     
     @IBAction public func createPlaylistPressed(sender: AnyObject) {

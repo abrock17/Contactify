@@ -1,6 +1,6 @@
 import UIKit
 
-public class PlaylistTableViewController: UITableViewController, SPTAuthViewDelegate, SPTAudioStreamingPlaybackDelegate {
+public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewDelegate, SPTAudioStreamingPlaybackDelegate {
     
     public enum SpotifyPostLoginAction {
         case PlayPlaylist(index: Int)

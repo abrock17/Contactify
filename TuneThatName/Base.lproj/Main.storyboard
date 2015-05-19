@@ -52,7 +52,7 @@
         <!--Playlist-->
         <scene sceneID="vfc-kJ-NwV">
             <objects>
-                <tableViewController storyboardIdentifier="PlaylistTableViewController" id="197-cV-9aq" customClass="PlaylistTableViewController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="SpotifyPlaylistTableController" id="197-cV-9aq" customClass="SpotifyPlaylistTableController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="cAJ-dZ-no8">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
