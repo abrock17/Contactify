@@ -25,6 +25,10 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
         callback(getMockedError(Method.stopPlay))
     }
     
+    func getCurrentTrackInSession(session: SPTSession, callback: SPTRequestCallback) {
+        callback(nil, nil)
+    }
+
     func getMockedError(method: String) -> NSError! {
         let error: NSError!
         let mockedResult = mocker.returnValueForCallTo(method)

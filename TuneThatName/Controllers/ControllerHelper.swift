@@ -30,4 +30,16 @@ public class ControllerHelper {
         view.userInteractionEnabled = true
         activityIndicator.stopAnimating()
     }
+    
+    public class func getImageForURL(url: NSURL) -> UIImage? {
+        var image: UIImage?
+        let data = NSData(contentsOfURL: url)
+        if let data = data {
+            image = UIImage(data: data)
+        } else {
+            print("error retrieving image for \(url)")
+        }
+        
+        return image
+    }
 }

@@ -12,6 +12,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     public var playlist: Playlist!
     public var spotifyPostLoginAction: SpotifyPostLoginAction!
     var played = false
+    var songView: SongView?
     
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var spotifyAuthController: SPTAuthViewController!
@@ -128,11 +129,12 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using [segue destinationViewController].
         // Pass the selected object to the new view controller.
     }
     */
+    
     
     @IBAction public func savePlaylistPressed(sender: AnyObject) {
         if sessionIsValid() {
@@ -237,12 +239,52 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                     ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
                 } else {
                     self.played = true
+                    self.displaySongView()
                 }
                 ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
         } else {
             openLogin(SpotifyPostLoginAction.PlayPlaylist(index: index))
         }
+    }
+    
+    func displaySongView() {
+        spotifyAudioFacade.getCurrentTrackInSession(spotifyAuth.session) {
+            (error, track) in
+            
+            if error != nil {
+                print("Error getting track : \(error)")
+            } else {
+                let currentTrack = track as! SPTTrack
+
+                self.songView = (NSBundle.mainBundle().loadNibNamed("SongView", owner: self, options: nil).first as! SongView)
+                self.view.addSubview(self.songView!)
+                self.songView!.frame = self.view.bounds
+                self.printViewStuff(self.view, name: "self.view")
+                self.printViewStuff(self.navigationController!.view, name: "navigationController!.view")
+                self.printViewStuff(self.songView!, name: "songView")
+                
+                self.songView!.title.text = currentTrack.name
+                self.songView!.artist.text = currentTrack.artists?.first?.name
+                self.songView!.album.text = currentTrack.album?.name
+                dispatch_async(dispatch_get_main_queue()) {
+                    let albumImage = ControllerHelper.getImageForURL(currentTrack.album.largestCover.imageURL)
+                    self.songView!.image.image = albumImage
+                }
+            }
+        }
+    }
+    
+    func printViewStuff(view: UIView, name: String) {
+        println("\(name) bounds x = \(view.bounds.origin.x)")
+        println("\(name) bounds y = \(view.bounds.origin.y)")
+        println("\(name) bounds width = \(view.bounds.size.width)")
+        println("\(name) bounds height = \(view.bounds.size.height)")
+        println("\(name) frame x = \(view.frame.origin.x)")
+        println("\(name) frame y = \(view.frame.origin.y)")
+        println("\(name) frame width = \(view.frame.size.width)")
+        println("\(name) frame height = \(view.frame.size.height)")
+        println("\(name) center = \(view.center)")
     }
     
     public func audioStreaming(audioStreaming: SPTAudioStreamingController!,

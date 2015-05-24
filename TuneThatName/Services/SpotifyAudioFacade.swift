@@ -7,10 +7,12 @@ public protocol SpotifyAudioFacade {
     func togglePlay(callback: SPTErrorableOperationCallback)
     
     func stopPlay(callback: SPTErrorableOperationCallback)
+    
+    func getCurrentTrackInSession(session: SPTSession, callback: SPTRequestCallback)
 }
 
 public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
-
+    
     static let sharedSpotifyAudioController: SPTAudioStreamingController = {
         let spotifyAudioController = SPTAudioStreamingController(clientId: SpotifyService.clientID)
         spotifyAudioController.diskCache = SPTDiskCache(capacity: 67108864)
@@ -85,5 +87,9 @@ public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
             error in
             callback(error)
         }
+    }
+    
+    public func getCurrentTrackInSession(session: SPTSession, callback: SPTRequestCallback) {
+        SPTTrack.trackWithURI(self.spotifyAudioController.currentTrackURI, session: session, callback: callback)
     }
 }
