@@ -31,15 +31,19 @@ public class ControllerHelper {
         activityIndicator.stopAnimating()
     }
     
-    public class func getImageForURL(url: NSURL) -> UIImage? {
-        var image: UIImage?
-        let data = NSData(contentsOfURL: url)
-        if let data = data {
-            image = UIImage(data: data)
-        } else {
-            print("error retrieving image for \(url)")
+    public class func getImageForURL(url: NSURL, completionHandler: UIImage? -> Void) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            var image: UIImage?
+            let data = NSData(contentsOfURL: url)
+            if let data = data {
+                image = UIImage(data: data)
+            } else {
+                print("No image for url: \(url)")
+            }
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                completionHandler(image)
+            }
         }
-        
-        return image
     }
 }

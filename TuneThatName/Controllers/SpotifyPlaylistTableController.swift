@@ -8,11 +8,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     let playSongErrorTitle = "Unable to Play Song"
+    let songViewTag = 718
     
     public var playlist: Playlist!
     public var spotifyPostLoginAction: SpotifyPostLoginAction!
     var played = false
-    var songView: SongView?
     
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var spotifyAuthController: SPTAuthViewController!
@@ -250,40 +250,24 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     func displaySongView() {
         spotifyAudioFacade.getCurrentTrackInSession(spotifyAuth.session) {
-            (error, track) in
-            
-            if error != nil {
+            spotifyTrackResult in
+        
+            switch (spotifyTrackResult) {
+            case .Success(let track):
+                let songView = (NSBundle.mainBundle().loadNibNamed("SongView", owner: self, options: nil).first as! SongView)
+                songView.frame = self.view.bounds
+                songView.tag = self.songViewTag
+                self.updateSongView(songView, forTrack: track)
+                self.view.addSubview(songView)
+            case .Failure(let error):
                 print("Error getting track : \(error)")
-            } else {
-                let currentTrack = track as! SPTTrack
-
-                self.songView = (NSBundle.mainBundle().loadNibNamed("SongView", owner: self, options: nil).first as! SongView)
-                self.view.addSubview(self.songView!)
-                self.songView!.frame = self.view.bounds
-                self.printViewStuff(self.view, name: "self.view")
-                self.printViewStuff(self.navigationController!.view, name: "navigationController!.view")
-                self.printViewStuff(self.songView!, name: "songView")
-                
-                self.songView!.title.text = currentTrack.name
-                self.songView!.artist.text = currentTrack.artists?.first?.name
-                self.songView!.album.text = currentTrack.album?.name
-                dispatch_async(dispatch_get_main_queue()) {
-                    let albumImage = ControllerHelper.getImageForURL(currentTrack.album.largestCover.imageURL)
-                    self.songView!.image.image = albumImage
-                }
             }
         }
     }
     
     func printViewStuff(view: UIView, name: String) {
-        println("\(name) bounds x = \(view.bounds.origin.x)")
-        println("\(name) bounds y = \(view.bounds.origin.y)")
-        println("\(name) bounds width = \(view.bounds.size.width)")
-        println("\(name) bounds height = \(view.bounds.size.height)")
-        println("\(name) frame x = \(view.frame.origin.x)")
-        println("\(name) frame y = \(view.frame.origin.y)")
-        println("\(name) frame width = \(view.frame.size.width)")
-        println("\(name) frame height = \(view.frame.size.height)")
+        println("\(name) bounds: x = \(view.bounds.origin.x), y = \(view.bounds.origin.y), width = \(view.bounds.size.width), height = \(view.bounds.size.height)")
+        println("\(name) frame: x = \(view.frame.origin.x), y = \(view.frame.origin.y), width = \(view.frame.size.width), height = \(view.frame.size.height)")
         println("\(name) center = \(view.center)")
     }
     
@@ -301,5 +285,29 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didStartPlayingTrack trackUri: NSURL!) {
         self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: Int(audioStreaming.currentTrackIndex), inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.Middle)
+        if let songView = self.view.viewWithTag(songViewTag) as? SongView {
+            spotifyAudioFacade.getTrackWithURI(trackUri, inSession: spotifyAuth.session) {
+                spotifyTrackResult in
+                
+                switch (spotifyTrackResult) {
+                case .Success(let track):
+                    self.updateSongView(songView, forTrack: track)
+                case .Failure(let error):
+                    print("Error getting track : \(error)")
+                }
+            }
+        }
     }
+    
+    func updateSongView(songView: SongView, forTrack track: SPTTrack) {
+        songView.title.text = track.name
+        songView.artist.text = track.artists?.first?.name
+        songView.album.text = track.album?.name
+        ControllerHelper.getImageForURL(track.album.largestCover.imageURL) {
+            image in
+            songView.image.image = image
+        }
+    }
+    
+    
 }

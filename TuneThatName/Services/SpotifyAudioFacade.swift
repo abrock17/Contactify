@@ -8,7 +8,14 @@ public protocol SpotifyAudioFacade {
     
     func stopPlay(callback: SPTErrorableOperationCallback)
     
-    func getCurrentTrackInSession(session: SPTSession, callback: SPTRequestCallback)
+    func getTrackWithURI(uri: NSURL, inSession session: SPTSession, callback: SpotifyTrackResult -> Void)
+    
+    func getCurrentTrackInSession(session: SPTSession, callback: SpotifyTrackResult -> Void)
+}
+
+public enum SpotifyTrackResult {
+    case Success(SPTTrack)
+    case Failure(NSError)
 }
 
 public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
@@ -89,7 +96,19 @@ public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
         }
     }
     
-    public func getCurrentTrackInSession(session: SPTSession, callback: SPTRequestCallback) {
-        SPTTrack.trackWithURI(self.spotifyAudioController.currentTrackURI, session: session, callback: callback)
+    public func getTrackWithURI(uri: NSURL, inSession session: SPTSession, callback: SpotifyTrackResult -> Void) {
+        SPTTrack.trackWithURI(uri, session: session) {
+            (error, result) in
+            
+            if error != nil {
+                callback(.Failure(error))
+            } else {
+                callback(.Success(result as! SPTTrack))
+            }
+        }
+    }
+    
+    public func getCurrentTrackInSession(session: SPTSession, callback: SpotifyTrackResult -> Void) {
+        getTrackWithURI(self.spotifyAudioController.currentTrackURI, inSession: session, callback: callback)
     }
 }
