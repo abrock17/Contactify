@@ -1,6 +1,7 @@
 import Foundation
 
 public struct Song: Equatable, Hashable, Printable {
+
     public let title: String!
     public let artistName: String?
     public let uri: NSURL

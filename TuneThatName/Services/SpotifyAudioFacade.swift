@@ -14,7 +14,7 @@ public protocol SpotifyAudioFacade {
 }
 
 public enum SpotifyTrackResult {
-    case Success(SPTTrack)
+    case Success(SpotifyTrack)
     case Failure(NSError)
 }
 
@@ -90,7 +90,7 @@ public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
     }
     
     public func stopPlay(callback: SPTErrorableOperationCallback) {
-        self.spotifyAudioController.stop() {
+        spotifyAudioController.stop() {
             error in
             callback(error)
         }
@@ -103,7 +103,7 @@ public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
             if error != nil {
                 callback(.Failure(error))
             } else {
-                callback(.Success(result as! SPTTrack))
+                callback(.Success(SpotifyTrack(sptTrack: result as! SPTTrack)))
             }
         }
     }

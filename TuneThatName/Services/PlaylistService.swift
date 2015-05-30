@@ -46,42 +46,44 @@ public class PlaylistService {
         
         var findSongsForRandomName: (() -> ())!
         findSongsForRandomName = { () -> () in
-            let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
-            let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
-            contactsSearched.append(searchContact)
-            self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, desiredNumberOfSongs: searchNumber) {
-                songsResult in
-                
-                switch (songsResult) {
-                case .Success(let songs):
-                    if !songs.isEmpty {
-                        contactSongsResultMap[searchContact] = songs
-                    } else {
-                        findSongsForRandomName()
-                    }
+            if !contactsToBeSearched.isEmpty {
+                let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
+                let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
+                contactsSearched.append(searchContact)
+                self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, desiredNumberOfSongs: searchNumber) {
+                    songsResult in
                     
-                    if contactSongsResultMap.count == numberOfSongs {
+                    switch (songsResult) {
+                    case .Success(let songs):
+                        if !songs.isEmpty {
+                            contactSongsResultMap[searchContact] = songs
+                        } else {
+                            findSongsForRandomName()
+                        }
+                        
+                        if contactSongsResultMap.count == numberOfSongs {
                             calledBack = true
                             callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
-                    }
-                case .Failure(let error):
-                    searchErrorCount++
-                    println("Error finding songs for \(searchContact): \(error)")
-                    
-                    if  searchErrorCount >= 3 && searchErrorCount > (numberOfSongs / 5) {
-                        if !calledBack {
-                            calledBack = true
-                            callback(.Failure(error))
                         }
-                    } else {
-                        findSongsForRandomName()
+                    case .Failure(let error):
+                        searchErrorCount++
+                        println("Error finding songs for \(searchContact): \(error)")
+                        
+                        if  searchErrorCount >= 3 && searchErrorCount > (numberOfSongs / 5) {
+                            if !calledBack {
+                                calledBack = true
+                                callback(.Failure(error))
+                            }
+                        } else {
+                            findSongsForRandomName()
+                        }
                     }
-                }
-                
-                searchCallbackCount++
-                if !calledBack && searchCallbackCount == searchableContacts.count {
-                    calledBack = true
-                    callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
+                    
+                    searchCallbackCount++
+                    if !calledBack && searchCallbackCount == searchableContacts.count {
+                        calledBack = true
+                        callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
+                    }
                 }
             }
         }

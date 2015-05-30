@@ -2,6 +2,9 @@ import UIKit
 
 public class ControllerHelper {
     
+    public init() {
+    }
+    
     public class func displaySimpleAlertForTitle(title: String, andMessage message: String, onController controller: UIViewController) {
         let errorAlertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
         let okAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
@@ -31,7 +34,7 @@ public class ControllerHelper {
         activityIndicator.stopAnimating()
     }
     
-    public class func getImageForURL(url: NSURL, completionHandler: UIImage? -> Void) {
+    public func getImageForURL(url: NSURL, completionHandler: UIImage? -> Void) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             var image: UIImage?
             let data = NSData(contentsOfURL: url)

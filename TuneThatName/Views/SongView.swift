@@ -1,6 +1,6 @@
 import UIKit
 
-class SongView: UIView {
+public class SongView: UIView {
 
     /*
     // Only override drawRect: if you perform custom drawing.
@@ -10,11 +10,11 @@ class SongView: UIView {
     }
     */
 
-    @IBOutlet weak var image: UIImageView!
-    @IBOutlet weak var title: UILabel!
-    @IBOutlet weak var artist: UILabel!
-    @IBOutlet weak var album: UILabel!
-    @IBOutlet weak var closeButton: UIButton!
+    @IBOutlet public weak var image: UIImageView!
+    @IBOutlet public weak var title: UILabel!
+    @IBOutlet public weak var artist: UILabel!
+    @IBOutlet public weak var album: UILabel!
+    @IBOutlet public weak var closeButton: UIButton!
     
     @IBAction func close(sender: AnyObject) {
         self.removeFromSuperview()

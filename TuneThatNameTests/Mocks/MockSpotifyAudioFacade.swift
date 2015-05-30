@@ -27,16 +27,6 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
         callback(getMockedError(Method.stopPlay))
     }
     
-    func getTrackWithURI(uri: NSURL, inSession session: SPTSession, callback: SpotifyTrackResult -> Void) {
-        mocker.recordCall(Method.getTrackWithURI, parameters: uri, session)
-        callback(mocker.returnValueForCallTo(Method.getTrackWithURI) as! SpotifyTrackResult)
-    }
-    
-    func getCurrentTrackInSession(session: SPTSession, callback: SpotifyTrackResult -> Void) {
-        mocker.recordCall(Method.getCurrentTrackInSession, parameters: session)
-        callback(mocker.returnValueForCallTo(Method.getCurrentTrackInSession) as! SpotifyTrackResult)
-    }
-
     func getMockedError(method: String) -> NSError! {
         let error: NSError!
         let mockedResult = mocker.returnValueForCallTo(method)
@@ -47,5 +37,34 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
         }
         
         return error
+    }
+    
+    func getTrackWithURI(uri: NSURL, inSession session: SPTSession, callback: SpotifyTrackResult -> Void) {
+        mocker.recordCall(Method.getTrackWithURI, parameters: uri, session)
+        callback(getMockedSpotifyTrackResult(Method.getTrackWithURI))
+    }
+    
+    func getCurrentTrackInSession(session: SPTSession, callback: SpotifyTrackResult -> Void) {
+        mocker.recordCall(Method.getCurrentTrackInSession, parameters: session)
+        callback(getMockedSpotifyTrackResult(Method.getCurrentTrackInSession))
+    }
+    
+    func getMockedSpotifyTrackResult(method: String) -> SpotifyTrackResult {
+        let spotifyTrackResult: SpotifyTrackResult
+        let mockedResult = mocker.returnValueForCallTo(Method.getCurrentTrackInSession)
+        if let mockedResult = mockedResult as? SpotifyTrackResult {
+            spotifyTrackResult = mockedResult
+        } else {
+            spotifyTrackResult = SpotifyTrackResult.Success(
+                SpotifyTrack(
+                    uri: nil,
+                    name: "unimportant mocked track",
+                    artistNames: [],
+                    albumName: nil,
+                    albumLargestCoverImageURL: nil,
+                    albumSmallestCoverImageURL: nil))
+        }
+        
+        return spotifyTrackResult
     }
 }
