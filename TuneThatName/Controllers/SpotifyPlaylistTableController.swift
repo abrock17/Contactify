@@ -272,14 +272,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                 self.updateSongView(songView, forTrack: spotifyTrack)
             case .Failure(let error):
                 println("Error getting track : \(error)")
+                self.updateSongViewButtonForImage(nil)                
             }
         }
-    }
-    
-    func printViewStuff(view: UIView, name: String) {
-        println("\(name) bounds: x = \(view.bounds.origin.x), y = \(view.bounds.origin.y), width = \(view.bounds.size.width), height = \(view.bounds.size.height)")
-        println("\(name) frame: x = \(view.frame.origin.x), y = \(view.frame.origin.y), width = \(view.frame.size.width), height = \(view.frame.size.height)")
-        println("\(name) center = \(view.center)")
     }
     
     func getExistingSongView() -> SongView? {
@@ -302,7 +297,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: Int(audioStreaming.currentTrackIndex), inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.Middle)
         spotifyAudioFacade.getTrackWithURI(trackUri, inSession: spotifyAuth.session) {
             spotifyTrackResult in
-            
+
             switch (spotifyTrackResult) {
             case .Success(let spotifyTrack):
                 self.updateSongViewButtonForTrack(spotifyTrack)
@@ -311,6 +306,8 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                 }
             case .Failure(let error):
                 println("Error getting track : \(error)")
+                self.getExistingSongView()?.removeFromSuperview()
+                self.updateSongViewButtonForImage(nil)
             }
         }
     }
@@ -319,14 +316,25 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         if track.albumSmallestCoverImageURL != nil {
             controllerHelper.getImageForURL(track.albumSmallestCoverImageURL) {
                 image in
-                let imageButton = UIButton(frame: CGRectMake(0, 0, self.songViewButtonWidth, self.songViewButtonWidth))
-                imageButton.setBackgroundImage(image, forState: UIControlState.Normal)
-                imageButton.addTarget(self, action: "songViewPressed:", forControlEvents: UIControlEvents.TouchUpInside)
-                let updatedBarButton = UIBarButtonItem(customView: imageButton)
-                self.navigationController?.toolbar.items?.removeAtIndex(0)
-                self.navigationController?.toolbar.items?.insert(updatedBarButton, atIndex: 0)
+                self.updateSongViewButtonForImage(image)
             }
+        } else {
+            updateSongViewButtonForImage(nil)
         }
+    }
+    
+    func updateSongViewButtonForImage(image: UIImage?) {
+        let imageButton: UIButton
+        if image != nil {
+            imageButton = UIButton(frame: CGRectMake(0, 0, self.songViewButtonWidth, self.songViewButtonWidth))
+            imageButton.setBackgroundImage(image, forState: UIControlState.Normal)
+        } else {
+            imageButton = UIButton()
+        }
+        imageButton.addTarget(self, action: "songViewPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        let updatedBarButton = UIBarButtonItem(customView: imageButton)
+        self.navigationController?.toolbar.items?.removeAtIndex(0)
+        self.navigationController?.toolbar.items?.insert(updatedBarButton, atIndex: 0)
     }
     
     func updateSongView(songView: SongView, forTrack track: SpotifyTrack) {

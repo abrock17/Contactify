@@ -18,6 +18,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 albumName: "Sheik Yerbouti",
                 albumLargestCoverImageURL: NSURL(string: "https://i.scdn.co/image/9a4d67719ada036cfd70dbf8e6519bbaa1bba3c8")!,
                 albumSmallestCoverImageURL: NSURL(string: "https://i.scdn.co/image/a58609bb6df41d2a3a4e96d8a436bb9176c12d85")!)
+            let image = UIImage(named: "yuck.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
             
             var spotifyPlaylistTableController: SpotifyPlaylistTableController!
             var navigationController: UINavigationController!
@@ -189,11 +190,10 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
 
                 context("when there is a valid session") {
                     let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
-                    let largestAlbumCoverImage = UIImage(named: "yuck.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
                     
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
-                        mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: largestAlbumCoverImage)
+                        mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
                     }
                     
                     afterEach() {
@@ -215,8 +215,6 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                     
                     it("requests the current spotify track") {
-                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession, returnValue: SpotifyTrackResult.Success(spotifyTrack))
-                        
                         spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                         
                         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession, n: 0)?.first as? SPTSession).to(equal(spotifyAuth.session))
@@ -228,14 +226,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             
                             spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                             
-                            let view = spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)
-                            expect(view).toEventuallyNot(beNil())
-                            if let songView = view as? SongView {
-                                expect(songView.title.text).to(equal(spotifyTrack.name))
-                                expect(songView.artist.text).to(equal(spotifyTrack.artistNames.first))
-                                expect(songView.album.text).to(equal(spotifyTrack.albumName))
-                                expect(songView.image.image).toEventually(equal(largestAlbumCoverImage))
-                            }
+                            self.assertSongViewDisplayedOnController(spotifyPlaylistTableController, forSpotifyTrack: spotifyTrack, andImage: image!)
                         }
                     }
                 
@@ -330,7 +321,6 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             
             describe("press the song view button") {
                 let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
-                let image = UIImage(named: "yuck.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
                 
                 beforeEach() {
                     spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -368,9 +358,60 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
             }
             
-//            describe("track starts playing") {
-//                it("")
-//            }
+            describe("track starts playing") {
+                let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                let mockSpotifyAudioStreamingController = MockSPTAudioStreamingController(clientId: SpotifyService.clientID)
+
+                beforeEach() {
+                    spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                    mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
+                }
+                
+                it("requests the track for the provided uri") {
+                    spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
+                    
+                    expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.getTrackWithURI, n: 0)?[0] as? NSURL).to(equal(spotifyTrack.uri))
+                }
+                
+                context("and track for uri calls back successfully") {
+                    beforeEach() {
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getTrackWithURI, returnValue: SpotifyTrackResult.Success(spotifyTrack))
+                    }
+                    
+                    it("updates the song view button image") {
+                        spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
+
+                        expect(self.getSongViewButtonBackgroundImageFromToolbar(spotifyPlaylistTableController)).toEventually(equal(image))
+                    }
+                    
+                    context("and song view is visible") {
+                        it("updates the song view with to display the track") {
+                            self.pressSongViewButton(spotifyPlaylistTableController)
+                            
+                            spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
+                            
+                            self.assertSongViewDisplayedOnController(spotifyPlaylistTableController, forSpotifyTrack: spotifyTrack, andImage: image!)
+                        }
+                    }
+                }
+                
+                context("and track for uri callback fails") {
+                    beforeEach() {
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession, returnValue: SpotifyTrackResult.Success(spotifyTrack))
+                        self.pressSongViewButton(spotifyPlaylistTableController)
+                        expect(spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)).toEventuallyNot(beNil())
+                        
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getTrackWithURI, returnValue: SpotifyTrackResult.Failure(NSError(domain: "domain", code: 87, userInfo: nil)))
+
+                        spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
+                    }
+                    
+                    it("closes the song view") {
+                        expect(spotifyPlaylistTableController.view.viewWithTag(self.songViewTag))
+                            .toEventually(beNil())
+                    }
+                }
+            }
             
             describe("view will disappear") {
                 it("stops play") {
@@ -438,6 +479,11 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     func getPlayPauseButtonSystemItemFromToolbar(spotifyPlaylistTableController: SpotifyPlaylistTableController) -> UIBarButtonSystemItem {
         let playPauseButton = spotifyPlaylistTableController.navigationController?.toolbar.items?[4] as? UIBarButtonItem
         return UIBarButtonSystemItem(rawValue: playPauseButton!.valueForKey("systemItem") as! Int)!
+    }
+    
+    func getSongViewButtonBackgroundImageFromToolbar(spotifyPlaylistTableController: SpotifyPlaylistTableController) -> UIImage? {
+        let saveViewButton = spotifyPlaylistTableController.navigationController?.toolbar.items?[0] as? UIBarButtonItem
+        return (saveViewButton?.customView as? UIButton)?.currentBackgroundImage
     }
 }
 

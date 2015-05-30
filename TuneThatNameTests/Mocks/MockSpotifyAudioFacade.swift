@@ -51,7 +51,7 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
     
     func getMockedSpotifyTrackResult(method: String) -> SpotifyTrackResult {
         let spotifyTrackResult: SpotifyTrackResult
-        let mockedResult = mocker.returnValueForCallTo(Method.getCurrentTrackInSession)
+        let mockedResult = mocker.returnValueForCallTo(method)
         if let mockedResult = mockedResult as? SpotifyTrackResult {
             spotifyTrackResult = mockedResult
         } else {
