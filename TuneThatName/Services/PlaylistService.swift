@@ -85,6 +85,15 @@ public class PlaylistService {
                         callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
                     }
                 }
+            } else if !calledBack {
+                calledBack = true
+                if !contactSongsResultMap.isEmpty {
+                callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
+                } else {
+                    callback(.Failure(NSError(domain: Constants.Error.Domain,
+                        code: Constants.Error.PlaylistGeneralErrorCode,
+                        userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistGeneralErrorMessage])))
+                }
             }
         }
         

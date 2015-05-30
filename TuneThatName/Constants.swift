@@ -10,5 +10,8 @@ public struct Constants {
         
         public static let NoContactsCode = 15
         public static let NoContactsMessage = "You currently have no contacts."
+        
+        public static let PlaylistGeneralErrorCode = 20
+        public static let PlaylistGeneralErrorMessage = "Unable to build your playlist."
     }
 }
