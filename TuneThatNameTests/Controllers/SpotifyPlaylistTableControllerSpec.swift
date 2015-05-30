@@ -328,6 +328,28 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
             }
             
+            describe("press the song view button") {
+                let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                let image = UIImage(named: "yuck.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
+                
+                beforeEach() {
+                    spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                    mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
+                }
+                
+                afterEach() {
+                    spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)?.removeFromSuperview()
+                }
+
+                it("displays the current track in the song view") {
+                    mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession, returnValue: SpotifyTrackResult.Success(spotifyTrack))
+                    
+                    self.pressSongViewButton(spotifyPlaylistTableController)
+                    
+                    self.assertSongViewDisplayedOnController(spotifyPlaylistTableController, forSpotifyTrack: spotifyTrack, andImage: image!)
+                }
+            }
+            
             describe("playback status change") {
                 context("when is playing") {
                     it("sets the play/pause button to the 'pause' system item") {
@@ -345,6 +367,10 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                 }
             }
+            
+//            describe("track starts playing") {
+//                it("")
+//            }
             
             describe("view will disappear") {
                 it("stops play") {
@@ -384,6 +410,11 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
         UIApplication.sharedApplication().sendAction(playPauseButton.action, to: playPauseButton.target, from: self, forEvent: nil)
     }
     
+    func pressSongViewButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
+        let songViewButton = spotifyPlaylistTableController.songViewButton
+        UIApplication.sharedApplication().sendAction(songViewButton.action, to: songViewButton.target, from: self, forEvent: nil)
+    }
+    
     func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {
         expect(parentController.presentedViewController).toEventuallyNot(beNil())
         expect(parentController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
@@ -393,6 +424,16 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
         }
     }
     
+    func assertSongViewDisplayedOnController(spotifyPlaylistTableController: SpotifyPlaylistTableController, forSpotifyTrack spotifyTrack: SpotifyTrack, andImage image: UIImage) {
+        let view = spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)
+        expect(view).toEventuallyNot(beNil())
+        if let songView = view as? SongView {
+            expect(songView.title.text).to(equal(spotifyTrack.name))
+            expect(songView.artist.text).to(equal(spotifyTrack.artistNames.first))
+            expect(songView.album.text).to(equal(spotifyTrack.albumName))
+            expect(songView.image.image).toEventually(equal(image))
+        }
+    }
     
     func getPlayPauseButtonSystemItemFromToolbar(spotifyPlaylistTableController: SpotifyPlaylistTableController) -> UIBarButtonSystemItem {
         let playPauseButton = spotifyPlaylistTableController.navigationController?.toolbar.items?[4] as? UIBarButtonItem
