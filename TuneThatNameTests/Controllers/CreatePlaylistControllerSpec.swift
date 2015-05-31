@@ -21,13 +21,30 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 createPlaylistController.playlistService = mockPlaylistService
                 
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
-                createPlaylistController.loadView()
+                NSRunLoop.mainRunLoop().runUntilDate(NSDate())
             }
             
             afterEach() {
-                // doing this to keep from instantiating a real SPTAudioStreamingController which causes errors elsewhere in the tests (because it's trying to spin up more than one)
-                if let spotifyPlaylistTableController = spotifyPlaylistTableController {
-                    spotifyPlaylistTableController.spotifyAudioFacadeOverride = MockSpotifyAudioFacade()
+                // doing this to keep from instantiating a real SPTAudioStreamingController 
+                // which causes errors elsewhere in the tests (because it's trying to spin up more than one)
+                spotifyPlaylistTableController?.spotifyAudioFacadeOverride = MockSpotifyAudioFacade()
+            }
+            
+            context("view did load") {
+                beforeEach() {
+                    createPlaylistController.viewDidLoad()
+                }
+                
+                describe("number of songs slider") {
+                    it("has an initial value of 0.1") {
+                        expect(createPlaylistController.numberOfSongsSlider.value).to(equal(0.1))
+                    }
+                }
+                
+                describe("number of songs label") {
+                    it("has initial text of '10'") {
+                        expect(createPlaylistController.numberOfSongsLabel.text).to(equal("10"))
+                    }
                 }
             }
 

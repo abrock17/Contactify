@@ -17,6 +17,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Number of Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="y5E-JQ-5i5">
+                                <rect key="frame" x="16" y="84" width="250" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HeA-qY-xM1">
                                 <rect key="frame" x="16" y="538" width="568" height="42"/>
                                 <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -31,17 +37,42 @@
                                     <action selector="createPlaylistPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y5J-wG-RA3"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="000" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hbq-o6-8bp">
+                                <rect key="frame" x="552" y="84" width="32" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="32" id="8MV-E9-fuc"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="4jn-1I-rWE">
+                                <rect key="frame" x="272" y="80" width="270" height="31"/>
+                                <connections>
+                                    <action selector="numberOfSongsValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="xwU-KV-PMc"/>
+                                </connections>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="y5E-JQ-5i5" firstAttribute="centerY" secondItem="hbq-o6-8bp" secondAttribute="centerY" id="0cX-XE-cqY"/>
+                            <constraint firstItem="y5E-JQ-5i5" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2eT-ED-cqu"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="HeA-qY-xM1" secondAttribute="bottom" constant="20" id="3LM-zo-t1k"/>
+                            <constraint firstItem="y5E-JQ-5i5" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="4Qm-xY-aud"/>
+                            <constraint firstItem="y5E-JQ-5i5" firstAttribute="centerY" secondItem="4jn-1I-rWE" secondAttribute="centerY" id="59L-Ha-wc3"/>
                             <constraint firstItem="HeA-qY-xM1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="5Li-Sw-Ih5"/>
+                            <constraint firstItem="hbq-o6-8bp" firstAttribute="leading" secondItem="4jn-1I-rWE" secondAttribute="trailing" constant="8" id="Ewz-g6-Zbm"/>
+                            <constraint firstItem="hbq-o6-8bp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="HL4-KR-bGu"/>
                             <constraint firstItem="HeA-qY-xM1" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="hr8-oz-PrJ"/>
+                            <constraint firstItem="4jn-1I-rWE" firstAttribute="leading" secondItem="y5E-JQ-5i5" secondAttribute="trailing" constant="8" id="jJa-uf-fET"/>
+                            <constraint firstItem="hbq-o6-8bp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="yz2-tu-ePb"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="New Playlist" id="FFN-9L-8gU"/>
                     <connections>
                         <outlet property="createPlaylistButton" destination="HeA-qY-xM1" id="A3O-oK-qk0"/>
+                        <outlet property="numberOfSongsLabel" destination="hbq-o6-8bp" id="Y8Q-HR-IFS"/>
+                        <outlet property="numberOfSongsSlider" destination="4jn-1I-rWE" id="PsK-35-J9n"/>
                         <segue destination="197-cV-9aq" kind="show" identifier="CreatePlaylistSegue" id="RN0-Nu-pK0"/>
                     </connections>
                 </viewController>

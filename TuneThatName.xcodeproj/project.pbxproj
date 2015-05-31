@@ -182,9 +182,9 @@
 		4433E6241ABD9634006CE8B8 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */,
-				443F89F31AE2A551005920B1 /* CreatePlaylistControllerSpec.swift */,
 				44B2191B1AEA5C53002EA154 /* ControllerHelperSpec.swift */,
+				443F89F31AE2A551005920B1 /* CreatePlaylistControllerSpec.swift */,
+				4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";

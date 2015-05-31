@@ -90,9 +90,7 @@ public class PlaylistService {
                 if !contactSongsResultMap.isEmpty {
                 callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
                 } else {
-                    callback(.Failure(NSError(domain: Constants.Error.Domain,
-                        code: Constants.Error.PlaylistGeneralErrorCode,
-                        userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistGeneralErrorMessage])))
+                    callback(.Failure(self.generalError()))
                 }
             }
         }
@@ -140,5 +138,11 @@ public class PlaylistService {
         }
     
         return Playlist(name: name, uri: nil, songs: playlistSongs)
+    }
+    
+    func generalError() -> NSError {
+        return NSError(domain: Constants.Error.Domain,
+            code: Constants.Error.PlaylistGeneralErrorCode,
+            userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistGeneralErrorMessage])
     }
 }
