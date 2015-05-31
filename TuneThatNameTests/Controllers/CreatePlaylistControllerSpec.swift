@@ -26,7 +26,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
             
             describe("number of songs slider") {
                 it("has the correct initial value") {
-                    expect(createPlaylistController.numberOfSongsSlider.value).to(equal(0.1))
+                    expect(createPlaylistController.numberOfSongsSlider.value).to(beCloseTo(0.0909, within: 0.0001))
                 }
             }
             

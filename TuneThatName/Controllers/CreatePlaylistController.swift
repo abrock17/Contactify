@@ -2,6 +2,7 @@ import UIKit
 
 public class CreatePlaylistController: UIViewController {
     
+    let minNumberOfSongs = 1
     let maxNumberOfSongs = 100
     
     var playlist: Playlist?
@@ -25,7 +26,7 @@ public class CreatePlaylistController: UIViewController {
     func initializeNumberOfSongs() {
         if numberOfSongs == nil {
             numberOfSongs = 10
-            numberOfSongsSlider.value = Float(numberOfSongs) / Float(maxNumberOfSongs)
+            numberOfSongsSlider.value = (Float(numberOfSongs - minNumberOfSongs) / Float(maxNumberOfSongs - minNumberOfSongs))
             numberOfSongsLabel.text = String(numberOfSongs)
         }
     }
@@ -43,7 +44,7 @@ public class CreatePlaylistController: UIViewController {
     }
     
     @IBAction public func numberOfSongsValueChanged(sender: UISlider) {
-        numberOfSongs = Int(round(sender.value * Float(maxNumberOfSongs)))
+        numberOfSongs = Int(round(sender.value * Float(maxNumberOfSongs - minNumberOfSongs))) + minNumberOfSongs
         numberOfSongsLabel.text = String(numberOfSongs)
     }
     
