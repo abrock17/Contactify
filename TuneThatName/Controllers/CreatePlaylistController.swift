@@ -42,25 +42,27 @@ public class CreatePlaylistController: UIViewController {
         spotifyPlaylistTableController.playlist = self.playlist
     }
     
-    @IBAction func numberOfSongsValueChanged(sender: UISlider) {
-//        numberOfSongs = Int(round(sender.value * Float(maxNumberOfSongs)))
-//        numberOfSongsLabel.text = String(numberOfSongs)
+    @IBAction public func numberOfSongsValueChanged(sender: UISlider) {
+        numberOfSongs = Int(round(sender.value * Float(maxNumberOfSongs)))
+        numberOfSongsLabel.text = String(numberOfSongs)
     }
     
     @IBAction public func createPlaylistPressed(sender: AnyObject) {
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-        dispatch_async(dispatch_get_main_queue()) {
-            self.playlistService.createPlaylist(numberOfSongs: 10) {//self.numberOfSongs) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            self.playlistService.createPlaylist(numberOfSongs: self.numberOfSongs) {
                 playlistResult in
                 
-                switch (playlistResult) {
-                case .Failure(let error):
-                    println("Error creating playlist: \(error)")
-                    ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andError: error, onController: self)
-                case .Success(let playlist):
-                    self.handleCreatedPlaylist(playlist, sender: sender)
+                dispatch_async(dispatch_get_main_queue()) {
+                    switch (playlistResult) {
+                    case .Failure(let error):
+                        println("Error creating playlist: \(error)")
+                        ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andError: error, onController: self)
+                    case .Success(let playlist):
+                        self.handleCreatedPlaylist(playlist, sender: sender)
+                    }
+                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                 }
-                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
         }
     }

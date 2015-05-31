@@ -9,7 +9,6 @@ class CreatePlaylistControllerSpec: QuickSpec {
         describe("The CreatePlaylistController") {
             var navigationController: UINavigationController!
             var createPlaylistController: CreatePlaylistController!
-            var spotifyPlaylistTableController: SpotifyPlaylistTableController?
             var mockPlaylistService: MockPlaylistService!
             
             beforeEach() {
@@ -19,36 +18,44 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 
                 mockPlaylistService = MockPlaylistService()
                 createPlaylistController.playlistService = mockPlaylistService
-                
+
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
                 NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+                createPlaylistController.viewDidLoad()
             }
             
-            afterEach() {
-                // doing this to keep from instantiating a real SPTAudioStreamingController 
-                // which causes errors elsewhere in the tests (because it's trying to spin up more than one)
-                spotifyPlaylistTableController?.spotifyAudioFacadeOverride = MockSpotifyAudioFacade()
+            describe("number of songs slider") {
+                it("has the correct initial value") {
+                    expect(createPlaylistController.numberOfSongsSlider.value).to(equal(0.1))
+                }
             }
             
-            context("view did load") {
-                beforeEach() {
-                    createPlaylistController.viewDidLoad()
+            describe("number of songs label") {
+                it("has the correct initial text") {
+                    expect(createPlaylistController.numberOfSongsLabel.text).to(equal("10"))
                 }
-                
-                describe("number of songs slider") {
-                    it("has an initial value of 0.1") {
-                        expect(createPlaylistController.numberOfSongsSlider.value).to(equal(0.1))
-                    }
-                }
-                
-                describe("number of songs label") {
-                    it("has initial text of '10'") {
-                        expect(createPlaylistController.numberOfSongsLabel.text).to(equal("10"))
+            }
+            
+            describe("number of songs slider value change") {
+                context("when value changes") {
+                    it("updates the number of songs label accordingly") {
+                        createPlaylistController.numberOfSongsSlider.value = 1
+                        createPlaylistController.numberOfSongsValueChanged(createPlaylistController.numberOfSongsSlider)
+                        
+                        expect(createPlaylistController.numberOfSongsLabel.text).to(equal("100"))
                     }
                 }
             }
 
             describe("press the create playlist button") {
+                it("calls the playlist service with the correct number of songs") {
+                    createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+
+                    expect(mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylist, n: 0)?.first as? Int).toEventually(equal(10))
+                    
+                    self.mockSpotifyAudioFacadeAfterSegue(navigationController)
+                }
+                
                 context("when the playlist service calls back with an error") {
                     let expectedError = NSError(domain: "domain", code: 435, userInfo: [NSLocalizedDescriptionKey: "an error description"])
                     beforeEach() {
@@ -81,12 +88,23 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     
                     it("segues to the playlist table view passing the playlist") {
                         expect(navigationController.topViewController).toEventually(beAnInstanceOf(SpotifyPlaylistTableController))
-                        spotifyPlaylistTableController = navigationController.topViewController as? SpotifyPlaylistTableController
+                        let spotifyPlaylistTableController = navigationController.topViewController as? SpotifyPlaylistTableController
                         expect(spotifyPlaylistTableController?.playlist).to(equal(expectedPlaylist))
+                        
+                        self.mockSpotifyAudioFacadeAfterSegue(navigationController)
                     }
                 }
             }
         }
+    }
+    
+    /* 
+    * doing this to keep from instantiating a real SPTAudioStreamingController
+    * which causes errors elsewhere in the tests
+    */
+    func mockSpotifyAudioFacadeAfterSegue(navigationController: UINavigationController) {
+        expect(navigationController.topViewController).toEventually(beAnInstanceOf(SpotifyPlaylistTableController))
+        (navigationController.topViewController as? SpotifyPlaylistTableController)?.spotifyAudioFacadeOverride = MockSpotifyAudioFacade()
     }
 }
 
