@@ -43,7 +43,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 
                 navigationController.pushViewController(spotifyPlaylistTableController, animated: false)
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
-                NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+                NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: 0.1))
             }
 
             describe("press the 'save to spotify' button") {
