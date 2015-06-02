@@ -36,6 +36,12 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 }
             }
             
+            describe("favor popular songs switch") {
+                it("has the correct initial state") {
+                    expect(createPlaylistController.favorPopularSwitch.on).to(beTrue())
+                }
+            }
+            
             describe("number of songs slider value change") {
                 context("when value changes") {
                     it("updates the number of songs label accordingly") {
@@ -43,6 +49,19 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         createPlaylistController.numberOfSongsValueChanged(createPlaylistController.numberOfSongsSlider)
                         
                         expect(createPlaylistController.numberOfSongsLabel.text).to(equal("100"))
+                    }
+                }
+            }
+            
+            describe("favor popular songs switch state change") {
+                context("when state changes") {
+                    it("updates the favor popular flag") {
+                        createPlaylistController.favorPopularSwitch.on = false
+                        createPlaylistController.favorPopularStateChanged(createPlaylistController.favorPopularSwitch)
+                        
+                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylist, n: 0)?[1] as? SongPreferences)?.favorPopular).toEventually(beFalse())
+                        self.mockSpotifyAudioFacadeAfterSegue(navigationController)
                     }
                 }
             }
@@ -116,8 +135,8 @@ class MockPlaylistService: PlaylistService {
         static let createPlaylist = "createPlaylist"
     }
     
-    override func createPlaylist(#numberOfSongs: Int, callback: PlaylistService.PlaylistResult -> Void) {
-        mocker.recordCall(Method.createPlaylist, parameters: numberOfSongs)
+    override func createPlaylist(#numberOfSongs: Int, songPreferences: SongPreferences, callback: PlaylistService.PlaylistResult -> Void) {
+        mocker.recordCall(Method.createPlaylist, parameters: numberOfSongs, songPreferences)
         let mockedResult = mocker.returnValueForCallTo(Method.createPlaylist)
         if let mockedResult = mockedResult as? PlaylistService.PlaylistResult {
             callback(mockedResult)

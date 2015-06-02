@@ -17,7 +17,7 @@ public class PlaylistService {
         self.echoNestService = echoNestService
     }
     
-    public func createPlaylist(#numberOfSongs: Int, callback: PlaylistResult -> Void) {
+    public func createPlaylist(#numberOfSongs: Int, songPreferences: SongPreferences, callback: PlaylistResult -> Void) {
         contactService.retrieveAllContacts() {
             contactListResult in
             

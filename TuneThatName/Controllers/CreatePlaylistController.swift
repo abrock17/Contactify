@@ -7,6 +7,7 @@ public class CreatePlaylistController: UIViewController {
     
     var playlist: Playlist?
     var numberOfSongs: Int!
+    var songPreferences: SongPreferences!
     
     public var playlistService = PlaylistService()
     
@@ -14,11 +15,13 @@ public class CreatePlaylistController: UIViewController {
 
     @IBOutlet public weak var numberOfSongsSlider: UISlider!
     @IBOutlet public weak var numberOfSongsLabel: UILabel!
+    @IBOutlet public weak var favorPopularSwitch: UISwitch!
     @IBOutlet public weak var createPlaylistButton: UIButton!
 
     override public func viewDidLoad() {
         super.viewDidLoad()
         initializeNumberOfSongs()
+        initializeSongPreferences()
 
         // Do any additional setup after loading the view.
     }
@@ -28,6 +31,13 @@ public class CreatePlaylistController: UIViewController {
             numberOfSongs = 10
             numberOfSongsSlider.value = (Float(numberOfSongs - minNumberOfSongs) / Float(maxNumberOfSongs - minNumberOfSongs))
             numberOfSongsLabel.text = String(numberOfSongs)
+        }
+    }
+    
+    func initializeSongPreferences() {
+        if songPreferences == nil {
+            songPreferences = SongPreferences(favorPopular: true)
+            favorPopularSwitch.on = songPreferences.favorPopular
         }
     }
 
@@ -48,10 +58,14 @@ public class CreatePlaylistController: UIViewController {
         numberOfSongsLabel.text = String(numberOfSongs)
     }
     
+    @IBAction public func favorPopularStateChanged(sender: UISwitch) {
+        songPreferences.favorPopular = sender.on
+    }
+    
     @IBAction public func createPlaylistPressed(sender: AnyObject) {
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            self.playlistService.createPlaylist(numberOfSongs: self.numberOfSongs) {
+            self.playlistService.createPlaylist(numberOfSongs: self.numberOfSongs, songPreferences: self.songPreferences) {
                 playlistResult in
                 
                 dispatch_async(dispatch_get_main_queue()) {

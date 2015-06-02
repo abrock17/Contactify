@@ -20,9 +20,15 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Number of Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="y5E-JQ-5i5">
                                 <rect key="frame" x="16" y="84" width="250" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="4jn-1I-rWE">
+                                <rect key="frame" x="14" y="113" width="572" height="31"/>
+                                <connections>
+                                    <action selector="numberOfSongsValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="xwU-KV-PMc"/>
+                                </connections>
+                            </slider>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HeA-qY-xM1">
                                 <rect key="frame" x="16" y="538" width="568" height="42"/>
                                 <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -43,34 +49,45 @@
                                     <constraint firstAttribute="width" constant="32" id="8MV-E9-fuc"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="4jn-1I-rWE">
-                                <rect key="frame" x="272" y="80" width="270" height="31"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Favor More Popular Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wIA-kH-EhL">
+                                <rect key="frame" x="16" y="159" width="250" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jgY-qx-zeV">
+                                <rect key="frame" x="535" y="154" width="51" height="31"/>
                                 <connections>
-                                    <action selector="numberOfSongsValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="xwU-KV-PMc"/>
+                                    <action selector="favorPopularStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Ggu-x0-TAX"/>
                                 </connections>
-                            </slider>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="y5E-JQ-5i5" firstAttribute="centerY" secondItem="hbq-o6-8bp" secondAttribute="centerY" id="0cX-XE-cqY"/>
                             <constraint firstItem="y5E-JQ-5i5" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2eT-ED-cqu"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="HeA-qY-xM1" secondAttribute="bottom" constant="20" id="3LM-zo-t1k"/>
+                            <constraint firstItem="4jn-1I-rWE" firstAttribute="top" secondItem="hbq-o6-8bp" secondAttribute="bottom" constant="8" id="3c0-BM-Idj"/>
                             <constraint firstItem="y5E-JQ-5i5" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="4Qm-xY-aud"/>
-                            <constraint firstItem="y5E-JQ-5i5" firstAttribute="centerY" secondItem="4jn-1I-rWE" secondAttribute="centerY" id="59L-Ha-wc3"/>
+                            <constraint firstItem="wIA-kH-EhL" firstAttribute="top" secondItem="4jn-1I-rWE" secondAttribute="bottom" constant="16" id="50W-37-e0O"/>
                             <constraint firstItem="HeA-qY-xM1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="5Li-Sw-Ih5"/>
-                            <constraint firstItem="hbq-o6-8bp" firstAttribute="leading" secondItem="4jn-1I-rWE" secondAttribute="trailing" constant="8" id="Ewz-g6-Zbm"/>
                             <constraint firstItem="hbq-o6-8bp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="HL4-KR-bGu"/>
+                            <constraint firstItem="4jn-1I-rWE" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="RdP-eh-yek"/>
+                            <constraint firstItem="4jn-1I-rWE" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Sk1-7l-6eM"/>
+                            <constraint firstItem="jgY-qx-zeV" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Wc0-JG-eqK"/>
+                            <constraint firstItem="jgY-qx-zeV" firstAttribute="centerY" secondItem="wIA-kH-EhL" secondAttribute="centerY" id="fbt-QZ-Mrj"/>
                             <constraint firstItem="HeA-qY-xM1" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="hr8-oz-PrJ"/>
-                            <constraint firstItem="4jn-1I-rWE" firstAttribute="leading" secondItem="y5E-JQ-5i5" secondAttribute="trailing" constant="8" id="jJa-uf-fET"/>
+                            <constraint firstItem="wIA-kH-EhL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="usE-sV-1Z1"/>
                             <constraint firstItem="hbq-o6-8bp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="yz2-tu-ePb"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="New Playlist" id="FFN-9L-8gU"/>
                     <connections>
                         <outlet property="createPlaylistButton" destination="HeA-qY-xM1" id="A3O-oK-qk0"/>
+                        <outlet property="favorPopularSwitch" destination="jgY-qx-zeV" id="lkC-fU-SvR"/>
                         <outlet property="numberOfSongsLabel" destination="hbq-o6-8bp" id="Y8Q-HR-IFS"/>
                         <outlet property="numberOfSongsSlider" destination="4jn-1I-rWE" id="PsK-35-J9n"/>
                         <segue destination="197-cV-9aq" kind="show" identifier="CreatePlaylistSegue" id="RN0-Nu-pK0"/>
