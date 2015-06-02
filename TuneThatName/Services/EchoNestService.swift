@@ -26,7 +26,7 @@ public class EchoNestService {
     public func findSongs(#titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int, callback: (SongsResult) -> Void) {
         
         let urlString = buildSongSearchEndpointStringWithBucketParameters() as URLStringConvertible
-        let parameters = getParameters(titleSearchTerm: titleSearchTerm, desiredNumberOfSongs: desiredNumberOfSongs)
+        let parameters = getSongSearchParameters(titleSearchTerm: titleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)
         
         alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
             (request, response, data, error) in
@@ -124,14 +124,20 @@ public class EchoNestService {
         return NSError(domain: Constants.Error.Domain, code: 0, userInfo: [NSLocalizedDescriptionKey: message, NSLocalizedFailureReasonErrorKey: reason])
     }
     
-    func getParameters(#titleSearchTerm: String, desiredNumberOfSongs: Int) -> [String : AnyObject] {
-        return [
+    func getSongSearchParameters(#titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int) -> [String : AnyObject] {
+        var parameters: [String: AnyObject] = [
             "api_key": apiKey,
             "format": "json",
             "results": getResultParameter(desiredNumberOfSongs: desiredNumberOfSongs),
             "limit": "true",
             "title": titleSearchTerm
         ]
+        
+        if songPreferences.favorPopular {
+            parameters["sort"] = "song_hotttnesss-desc"
+        }
+        
+        return parameters
     }
     
     func getResultParameter(#desiredNumberOfSongs: Int) -> Int {

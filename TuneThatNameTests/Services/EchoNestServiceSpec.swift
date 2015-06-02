@@ -66,6 +66,15 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                 }
                 
+                context("when the song preferences favor popular songs") {
+                    it("creates a request that sorts by song hotttnesss descending") {
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(favorPopular: true), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+
+                        expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
+                            .toEventually(contain("sort=song_hotttnesss-desc"))
+                    }
+                }
+                
                 context("when the desired number of songs is greater than half the default search number") {
                     it("creates a request that contains a 'results' parameter double the necessary minimum") {
                         echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 26, callback: self.findSongsCallback)
