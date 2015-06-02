@@ -23,7 +23,7 @@ public class EchoNestService {
         self.alamoFireManager = alamoFireManager
     }
     
-    public func findSongs(#titleSearchTerm: String, desiredNumberOfSongs: Int, callback: (SongsResult) -> Void) {
+    public func findSongs(#titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int, callback: (SongsResult) -> Void) {
         
         let urlString = buildSongSearchEndpointStringWithBucketParameters() as URLStringConvertible
         let parameters = getParameters(titleSearchTerm: titleSearchTerm, desiredNumberOfSongs: desiredNumberOfSongs)

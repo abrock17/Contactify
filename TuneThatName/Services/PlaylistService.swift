@@ -26,7 +26,7 @@ public class PlaylistService {
                 if contactList.isEmpty {
                     callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.NoContactsCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.NoContactsMessage])))
                 } else {
-                    self.createPlaylistForContactList(contactList, numberOfSongs: numberOfSongs, callback: callback)
+                    self.createPlaylistForContactList(contactList, numberOfSongs: numberOfSongs, songPreferences: songPreferences, callback: callback)
                 }
             case .Failure(let error):
                 callback(.Failure(error))
@@ -34,7 +34,7 @@ public class PlaylistService {
         }
     }
     
-    func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, callback: PlaylistResult -> Void) {
+    func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, songPreferences: SongPreferences, callback: PlaylistResult -> Void) {
         let defaultName = "Tune That Name"
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).isEmpty})
         let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: numberOfSongs, numberOfContacts: searchableContacts.count)
@@ -50,7 +50,7 @@ public class PlaylistService {
                 let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
                 let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
                 contactsSearched.append(searchContact)
-                self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, desiredNumberOfSongs: searchNumber) {
+                self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, songPreferences: songPreferences, desiredNumberOfSongs: searchNumber) {
                     songsResult in
                     
                     switch (songsResult) {

@@ -64,6 +64,18 @@ class PlaylistServiceSpec: QuickSpec {
                         mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
                     }
                     
+                    it("always calls the echo nest service with the correct song preferences") {
+                        playlistService.createPlaylist(numberOfSongs: contactList.count, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                        
+                        expect(mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSongs]).toNot(beNil())
+                        if let findSongsParametersList = mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSongs] {
+                            
+                            for findSongsParameters in findSongsParametersList {
+                                expect(findSongsParameters[1] as? SongPreferences).to(equal(arbitrarySongPreferences))
+                            }
+                        }
+                    }
+                    
                     context("and the desired number of songs is the same as the number of contacts") {
                         let numberOfSongs = contactList.count
                         
@@ -93,7 +105,7 @@ class PlaylistServiceSpec: QuickSpec {
                     context("and the desired number of songs is more than the number of contacts") {
                         let numberOfSongs = contactList.count + 1
                         
-                        it("calls the echo nest services once for each contact") {
+                        it("calls the echo nest service once for each contact") {
                             playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService))
@@ -364,7 +376,7 @@ class PlaylistServiceSpec: QuickSpec {
             
             for parameters in findSongParameters {
                 if let titleSearchTerm = parameters[0] as? String where titleSearchTerm == name {
-                    number = (parameters[1] as! Int)
+                    number = (parameters[2] as! Int)
                 }
             }
         }
