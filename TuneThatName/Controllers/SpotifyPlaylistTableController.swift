@@ -294,7 +294,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didStartPlayingTrack trackUri: NSURL!) {
-        self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: Int(audioStreaming.currentTrackIndex), inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.Middle)
+        self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: Int(audioStreaming.currentTrackIndex), inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.None)
         spotifyAudioFacade.getTrackWithURI(trackUri, inSession: spotifyAuth.session) {
             spotifyTrackResult in
 

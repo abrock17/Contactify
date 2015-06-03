@@ -20,7 +20,7 @@ class EchoNestServiceSpec: QuickSpec {
     }
     
     let arbitrarySongTitleSearchTerm = "Susie"
-    let arbitrarySongPreferences = SongPreferences(favorPopular: false)
+    let arbitrarySongPreferences = SongPreferences(favorPopular: true)
 
     override func spec() {
         
@@ -58,6 +58,10 @@ class EchoNestServiceSpec: QuickSpec {
                             .toEventually(contain("bucket=tracks"))
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
                             .toEventually(contain("bucket=id:spotify"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
+                            .toEventually(contain("bucket=song_discovery"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
+                            .toEventually(contain("bucket=artist_discovery"))
                     }
                     
                     it("creates a request that contains the default 'results' parameter") {
@@ -215,20 +219,41 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                 }
 
-                context("when multiple songs are requested and found") {
-                    let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-multiple-songs", withExtension: "txt")
-                    let data = NSData(contentsOfURL: url!)
+                context("when multiple songs are requested ") {
+                    let numberOfSongs = 4
                     
-                    beforeEach() {
-                        MockURLProtocol.setMockResponseData(data)
+                    context("and are found") {
+                        let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-multiple-songs", withExtension: "txt")
+                        let data = NSData(contentsOfURL: url!)
+                        
+                        it("calls back with the requested number of songs") {
+                            MockURLProtocol.setMockResponseData(data)
+
+                            echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
+                            
+                            expect(self.callbackSongs.count).toEventually(equal(numberOfSongs))
+                            expect(self.callbackError).to(beNil())
+                        }
                     }
                     
-                    it("calls back with the requested number of songs") {
-                        let numberOfSongs = 3
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
+                    context("and song preferences do not favor popular songs") {
+                        let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-songs-with-discovery", withExtension: "txt")
+                        let data = NSData(contentsOfURL: url!)
+                        let songPreferences = SongPreferences(favorPopular: false)
                         
-                        expect(self.callbackSongs.count).toEventually(equal(numberOfSongs))
-                        expect(self.callbackError).to(beNil())
+                        it("calls back with songs sorted by a combination of song and artist discovery") {
+                            MockURLProtocol.setMockResponseData(data)
+                            
+                            echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
+                            
+                            let expectedSortedSongs = [
+                                Song(title: "Janet", artistName: "Just Paul", uri: NSURL(string: "spotify:track:3PJmjxPVW2Hv4voMmmceeI")!),
+                                Song(title: "Janet", artistName: "Katie Noonan", uri: NSURL(string: "spotify:track:7eFetxLmsMGRunBDTA3DG3")!),
+                                Song(title: "Janet", artistName: "Ned Collette", uri: NSURL(string: "spotify:track:0m21XB7kygO43mrmkPtazy")!),
+                                Song(title: "Janet", artistName: "Philip Catherine", uri: NSURL(string: "spotify:track:0UWGq0ddfPc2KDC3NDdJ8q")!),
+                                ]
+                            expect(self.callbackSongs).toEventually(equal(expectedSortedSongs))
+                        }
                     }
                 }
             }

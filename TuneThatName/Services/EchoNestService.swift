@@ -13,7 +13,7 @@ public class EchoNestService {
     let maxResultNumber = 100
     let apiKey = "GVZ7FFJUMMXBG58VQ"
     let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
-    let songSearchBuckets = ["tracks", "id:spotify-US"]
+    let songSearchBuckets = ["tracks", "id:spotify-US", "song_discovery", "artist_discovery"]
     
     let unexpectedResponseMessage = "Unexpected response from the Echo Nest."
     
@@ -30,10 +30,9 @@ public class EchoNestService {
         
         alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
             (request, response, data, error) in
-            println("request url : \(request.URL)")
-            println("response status code : \(response?.statusCode), headers : \(response?.allHeaderFields)")
             
             if let error = error {
+                println("request url : \(request.URL) \nresponse status code : \(response?.statusCode) \nheaders : \(response?.allHeaderFields)")
                 callback(.Failure(error))
             } else if let data: AnyObject = data {
                 let json = JSON(data)
@@ -41,25 +40,27 @@ public class EchoNestService {
                 let statusJSON = json["response"]["status"]
                 if let code = statusJSON["code"].int {
                     if code == 0 {
-                        callback(.Success(self.getValidSongsFromJSON(json, titleSearchTerm: titleSearchTerm, desiredNumberOfSongs: desiredNumberOfSongs)))
+                        callback(.Success(self.getValidSongsFromJSON(json, titleSearchTerm: titleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)))
                     } else {
                         callback(.Failure(self.errorForUnexpectedStatusJSON(statusJSON)))
                     }
                 } else {
-                    callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No status code in the response.")))
                     println("json : \(json.rawString())")
+                    callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No status code in the response.")))
                 }
             } else {
+                println("request url : \(request.URL) \nresponse status code : \(response?.statusCode) \nheaders : \(response?.allHeaderFields)")
                 callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No data in the response.")))
             }
         }
     }
     
-    func getValidSongsFromJSON(json: JSON, titleSearchTerm: String, desiredNumberOfSongs: Int) -> [Song] {
+    func getValidSongsFromJSON(json: JSON, titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int) -> [Song] {
         var songs = [Song]()
         
-        let jsonSongs = json["response"]["songs"]
-        for (index, songJSON: JSON) in jsonSongs {
+        let jsonSongs = json["response"]["songs"].arrayValue
+        let sortedSongs = sortForSongPreferences(jsonSongs, songPreferences: songPreferences)
+        for (songJSON: JSON) in sortedSongs {
             if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
                 if let uri = self.getValidURI(songJSON) {
                     songs.append(Song(title: title, artistName: songJSON["artist_name"].string, uri: uri))
@@ -71,6 +72,30 @@ public class EchoNestService {
         }
         
         return songs
+    }
+    
+    func sortForSongPreferences(jsonSongs: [JSON], songPreferences: SongPreferences) -> [JSON] {
+        let sortedJSONSongs: [JSON]
+        
+        if !songPreferences.favorPopular {
+            sortedJSONSongs = sorted(jsonSongs,
+                { self.combineSongAndArtistDiscoveryValue($0) > self.combineSongAndArtistDiscoveryValue($1) })
+        } else {
+            sortedJSONSongs = jsonSongs
+        }
+        
+        return sortedJSONSongs
+    }
+    
+    func combineSongAndArtistDiscoveryValue(songJSON: JSON) -> Float {
+        let discoveryValue: Float
+        if let songDiscovery = songJSON["song_discovery"].float, artistDiscovery = songJSON["artist_discovery"].float {
+            discoveryValue = songDiscovery * 250 + artistDiscovery
+        } else {
+            discoveryValue = 0
+        }
+
+        return discoveryValue
     }
     
     func getValidMatchingTitle(songJSON: JSON, titleSearchTerm: String!) -> String? {
