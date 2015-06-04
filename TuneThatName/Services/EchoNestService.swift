@@ -88,9 +88,12 @@ public class EchoNestService {
     }
     
     func combineSongAndArtistDiscoveryValue(songJSON: JSON) -> Float {
-        let discoveryValue: Float
-        if let songDiscovery = songJSON["song_discovery"].float, artistDiscovery = songJSON["artist_discovery"].float {
-            discoveryValue = songDiscovery * 250 + artistDiscovery
+        var discoveryValue: Float
+        if let songDiscovery = songJSON["song_discovery"].float {
+            discoveryValue = songDiscovery * 250
+            if let artistDiscovery = songJSON["artist_discovery"].float {
+                discoveryValue += artistDiscovery
+            }
         } else {
             discoveryValue = 0
         }
@@ -108,7 +111,8 @@ public class EchoNestService {
             let exclusionExpressions = [
                 "feat.*\(lowercaseSearchTerm)",
                 "\\(.*\(lowercaseSearchTerm).*\\)",
-                "-\\s.*\(lowercaseSearchTerm).*(remix|edit)"]
+                "-\\s.*\(lowercaseSearchTerm).*(remix|edit)",
+                "curated by.*\(lowercaseSearchTerm).*"]
             
             for regex in exclusionExpressions {
                 if lowercaseTitle.rangeOfString(regex, options: .RegularExpressionSearch) != nil {
