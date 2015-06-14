@@ -24,21 +24,7 @@ public class SpotifyService {
     }
     
     public func savePlaylist(playlist: Playlist!, session: SPTSession!, callback: (PlaylistResult) -> Void) {
-        SPTRequest.playlistsForUserInSession(session) {
-            (error, playlists) in
-
-            if error != nil {
-                callback(.Failure(error))
-            } else if let playlists = playlists as? SPTPlaylistList {
-                self.createPlaylist(playlist, inPlaylistList: playlists, withSession: session, callback: callback)
-            } else {
-                self.errorForMessage("Unable to retrieve users playlists", andFailureReason: "List of SPTPlaylists from Spotify was nil")
-            }
-        }
-    }
-    
-    func createPlaylist(playlist: Playlist!, inPlaylistList playlists: SPTPlaylistList!, withSession session: SPTSession!, callback: (PlaylistResult) -> Void) {
-        playlists.createPlaylistWithName(playlist.name, publicFlag: false, session: session) {
+        SPTPlaylistList.createPlaylistWithName(playlist.name, publicFlag: false, session: session) {
             (error, editablePlaylist) in
             
             if error != nil {

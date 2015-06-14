@@ -39,7 +39,6 @@
 		44AFD9B71B1722FC00E99FBF /* SpotifyTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AFD9B61B1722FC00E99FBF /* SpotifyTrack.swift */; };
 		44AFD9B91B18822900E99FBF /* yuck.png in Resources */ = {isa = PBXBuildFile; fileRef = 44AFD9B81B18822900E99FBF /* yuck.png */; };
 		44B2191C1AEA5C53002EA154 /* ControllerHelperSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B2191B1AEA5C53002EA154 /* ControllerHelperSpec.swift */; };
-		44BDFB091ABC4F720060BB25 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44BDFB081ABC4F720060BB25 /* Spotify.framework */; };
 		44BDFB0A1ABC4F720060BB25 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44BDFB081ABC4F720060BB25 /* Spotify.framework */; };
 		44BE53901AA76A1E0089BFCD /* SpotifyPlaylistTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE538F1AA76A1E0089BFCD /* SpotifyPlaylistTableController.swift */; };
 		44BE53921AA7ED9B0089BFCD /* CreatePlaylistController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BE53911AA7ED9A0089BFCD /* CreatePlaylistController.swift */; };
@@ -168,7 +167,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				443963951A9755FA00E0C385 /* AVFoundation.framework in Frameworks */,
-				44BDFB091ABC4F720060BB25 /* Spotify.framework in Frameworks */,
 				1626BD4B92B820EDC793B971 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

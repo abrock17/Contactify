@@ -9,8 +9,8 @@ class SpotifySpikeSpec: QuickSpec {
     override func spec() {
         xit("Retrieving tracks from the spotify service") {
             
-            SPTRequest.performSearchWithQuery("track:Clair%20year:1900-2000"
-                , queryType: .QueryTypeTrack, session: nil, //market: "US",
+            SPTSearch.performSearchWithQuery("track:Clair%20year:1900-2000"
+                , queryType: .QueryTypeTrack, accessToken: nil, //market: "US",
                 callback: { (error, list) -> Void in
                 if (error != nil) {
                     println("error : \(error)")

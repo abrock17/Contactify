@@ -120,7 +120,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     */
 
-    
     // MARK: - Navigation
 
     override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -133,8 +132,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
             }
         }
     }
-    
-    
     
     @IBAction public func savePlaylistPressed(sender: AnyObject) {
         if sessionIsValid() {
