@@ -47,9 +47,12 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
 
             describe("press the 'save to spotify' button") {
-                context("when there is no session") {
+                context("when there is no session and no token refresh service") {
+                    let spotifyAuth = self.getMockSpotifyAuth()
+                    spotifyAuth.tokenRefreshURL = nil
+                    
                     it("prompts the user to log in") {
-                        spotifyPlaylistTableController.spotifyAuth = self.getFakeSpotifyAuth()
+                        spotifyPlaylistTableController.spotifyAuth = spotifyAuth
                         
                         self.pressSaveButton(spotifyPlaylistTableController)
                         
@@ -59,9 +62,10 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                 }
                 
-                context("when the session is invalid") {
-                    let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: -60)
-
+                context("when the session is invalid and no token refresh service") {
+                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: -60)
+                    spotifyAuth.tokenRefreshURL = nil
+                    
                     it("prompts the user to log in") {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
                         
@@ -71,8 +75,50 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                 }
                 
+                context("when the session is invalid and has a token refresh service") {
+                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: -60)
+                    
+                    beforeEach() {
+                        spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                    }
+                    
+                    it("tries to renew the session") {
+                        self.pressSaveButton(spotifyPlaylistTableController)
+
+                        expect(spotifyAuth.mocker.getNthCallTo(MockSPTAuth.Method.renewSession, n: 0)?.first as? SPTSession).to(equal(spotifyAuth.session))
+                    }
+                    
+                    context("and the session renewal fails (no session in callback)") {
+                        it("prompts the user to log in") {
+                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.renewSession, returnValue: nil)
+
+                            self.pressSaveButton(spotifyPlaylistTableController)
+                            
+                            expect(spotifyPlaylistTableController.presentedViewController).toNot(beNil())
+                        }
+                    }
+
+                    context("and the session renewal succeeds") {
+                        beforeEach() {
+                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.renewSession, returnValue: SPTSession(userName: "user", accessToken: "token", expirationTimeInterval: 60))
+                            
+                            self.pressSaveButton(spotifyPlaylistTableController)
+                        }
+                        
+                        it("does not prompt the user to log in") {
+                            expect(spotifyPlaylistTableController.presentedViewController).to(beNil())
+                        }
+                        
+                        it("calls the service to save the playlist") {
+                            expect(mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)).toEventuallyNot(beEmpty())
+                            var playlistParameter = mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)?.first as? Playlist
+                            expect(playlistParameter).to(equal(playlist))
+                        }
+                    }
+                }
+                
                 context("when there is a valid session") {
-                    let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
 
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -143,7 +189,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
             
             describe("successful login") {
-                let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
                 
                 beforeEach() {
                     spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -151,7 +197,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
 
                 context("when post login action is SavePlaylist") {
                     it("calls the service to save the playlist") {
-                        spotifyPlaylistTableController.spotifyPostLoginAction = SpotifyPlaylistTableController.SpotifyPostLoginAction.SavePlaylist
+                        spotifyPlaylistTableController.spotifySessionAction = SpotifyPlaylistTableController.SpotifySessionAction.SavePlaylist
 
                         spotifyPlaylistTableController.authenticationViewController(SPTAuthViewController(), didLoginWithSession: spotifyAuth.session)
                         
@@ -162,13 +208,11 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 context("when the post login action is PlayPlaylist") {
                     let index = 1
                     it("plays the playlist from the given index") {
-                        spotifyPlaylistTableController.spotifyPostLoginAction = SpotifyPlaylistTableController.SpotifyPostLoginAction.PlayPlaylist(index: index)
+                        spotifyPlaylistTableController.spotifySessionAction = SpotifyPlaylistTableController.SpotifySessionAction.PlayPlaylist(index: index)
                         
                         spotifyPlaylistTableController.authenticationViewController(SPTAuthViewController(), didLoginWithSession: spotifyAuth.session)
                         
-                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).to(equal(playlist))
-                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).to(equal(index))
-                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).to(equal(spotifyAuth.session))
+                        self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: index, expectedSession: spotifyAuth.session)
                     }
                 }
             }
@@ -176,20 +220,39 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             describe("select a song") {
                 let indexPath = NSIndexPath(forRow: 1, inSection: 0)
                 
+                beforeEach() {
+                    mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
+                }
+                
+                afterEach() {
+                    spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)?.removeFromSuperview()
+                }
+                
                 context("when the session is invalid") {
-                    let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: -60)
+                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: -60)
+                    
+                    context("and the session renewal succeeds") {
+                        let newSession = SPTSession(userName: "user", accessToken: "token", expirationTimeInterval: 60)
+                        
+                        beforeEach() {
+                            spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.renewSession, returnValue: newSession)
 
-                    it("prompts the user to log in") {
-                        spotifyPlaylistTableController.spotifyAuth = spotifyAuth
-
-                        spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
-
-                        expect(spotifyPlaylistTableController.presentedViewController).toEventuallyNot(beNil())
+                            spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                        }
+                        
+                        it("does not prompt the user to log in") {
+                            expect(spotifyPlaylistTableController.presentedViewController).to(beNil())
+                        }
+                        
+                        it("calls to play the playlist from the given index") {
+                            self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: indexPath.row, expectedSession: newSession)
+                        }
                     }
                 }
 
                 context("when there is a valid session") {
-                    let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
                     
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -209,9 +272,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     it("calls to play the playlist from the given index") {
                         spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                         
-                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).to(equal(playlist))
-                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).to(equal(indexPath.row))
-                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).to(equal(spotifyAuth.session))
+                        self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: indexPath.row, expectedSession: spotifyAuth.session)
                     }
                     
                     it("requests the current spotify track") {
@@ -258,19 +319,32 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             
             describe("press the play/pause button") {
                 context("when the session is invalid") {
-                    let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: -60)
+                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: -60)
                     
-                    it("prompts the user to log in") {
+                    beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
-                        
+                    }
+                    
+                    it("tries to renew the session") {
                         self.pressPlayPauseButton(spotifyPlaylistTableController)
                         
-                        expect(spotifyPlaylistTableController.presentedViewController).toEventuallyNot(beNil())
+                        expect(spotifyAuth.mocker.getNthCallTo(MockSPTAuth.Method.renewSession, n: 0)?.first as? SPTSession).to(equal(spotifyAuth.session))
+                    }
+                    
+                    context("and the session renewal fails (no session in callback") {
+                        it("prompts the user to log in") {
+                            spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.renewSession, returnValue: nil)
+                            
+                            self.pressPlayPauseButton(spotifyPlaylistTableController)
+                            
+                            expect(spotifyPlaylistTableController.presentedViewController).toEventuallyNot(beNil())
+                        }
                     }
                 }
 
                 context("when there is a valid session") {
-                    let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
                     
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -280,9 +354,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         it("calls to play the playlist from the first index") {
                             self.pressPlayPauseButton(spotifyPlaylistTableController)
                             
-                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).to(equal(playlist))
-                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).to(equal(0))
-                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).to(equal(spotifyAuth.session))
+                            self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: 0, expectedSession: spotifyAuth.session)
                         }
                     }
                     
@@ -291,8 +363,8 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         
                         beforeEach() {
                             spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).to(equal(playlist))
-                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).to(equal(indexPath.row))
+
+                            self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: indexPath.row, expectedSession: spotifyAuth.session)
                             NSRunLoop.mainRunLoop().runUntilDate(NSDate())
                         }
 
@@ -320,7 +392,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
             
             describe("press the song view button") {
-                let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
                 
                 beforeEach() {
                     spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -359,7 +431,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
             
             describe("track starts playing") {
-                let spotifyAuth = self.getFakeSpotifyAuth(expiresIn: 60)
+                let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
                 let mockSpotifyAudioStreamingController = MockSPTAudioStreamingController(clientId: SpotifyService.clientID)
 
                 beforeEach() {
@@ -425,22 +497,22 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
         }
     }
     
-    func getFakeSpotifyAuth(#expiresIn: NSTimeInterval) -> SPTAuth {
-        let fakeSpotifyAuth = getFakeSpotifyAuth()
-        fakeSpotifyAuth.session = SPTSession(userName: "user", accessToken: "token", expirationDate: NSDate(timeIntervalSinceNow: expiresIn))
-        return fakeSpotifyAuth
+    func getMockSpotifyAuth(#expiresIn: NSTimeInterval) -> MockSPTAuth {
+        let mockSpotifyAuth = getMockSpotifyAuth()
+        mockSpotifyAuth.session = SPTSession(userName: "user", accessToken: "token", expirationDate: NSDate(timeIntervalSinceNow: expiresIn))
+        return mockSpotifyAuth
     }
     
-    func getFakeSpotifyAuth() -> SPTAuth {
-        let fakeSpotifyAuth = SPTAuth()
-        fakeSpotifyAuth.clientID = "clientID"
-        fakeSpotifyAuth.redirectURL = NSURL(string: "redirect://url")
-        fakeSpotifyAuth.tokenSwapURL = NSURL(string: "https://token/swap")
-        fakeSpotifyAuth.tokenRefreshURL = NSURL(string: "https://token/refresh")
+    func getMockSpotifyAuth() -> MockSPTAuth {
+        let mockSpotifyAuth = MockSPTAuth()
+        mockSpotifyAuth.clientID = "clientID"
+        mockSpotifyAuth.redirectURL = NSURL(string: "redirect://url")
+        mockSpotifyAuth.tokenSwapURL = NSURL(string: "https://token/swap")
+        mockSpotifyAuth.tokenRefreshURL = NSURL(string: "https://token/refresh")
 
-        return fakeSpotifyAuth
+        return mockSpotifyAuth
     }
-
+    
     func pressSaveButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
         let saveButton = spotifyPlaylistTableController.saveButton
         UIApplication.sharedApplication().sendAction(saveButton.action, to: saveButton.target, from: self, forEvent: nil)
@@ -484,6 +556,26 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     func getSongViewButtonBackgroundImageFromToolbar(spotifyPlaylistTableController: SpotifyPlaylistTableController) -> UIImage? {
         let saveViewButton = spotifyPlaylistTableController.navigationController?.toolbar.items?[0] as? UIBarButtonItem
         return (saveViewButton?.customView as? UIButton)?.currentBackgroundImage
+    }
+    
+    func verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade: MockSpotifyAudioFacade, expectedPlaylist: Playlist, expectedIndex: Int, expectedSession: SPTSession) {
+        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).toEventually(equal(expectedPlaylist))
+        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).toEventually(equal(expectedIndex))
+        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).toEventually(equal(expectedSession))
+    }
+}
+
+class MockSPTAuth: SPTAuth {
+    
+    let mocker = Mocker()
+    
+    struct Method {
+        static let renewSession = "renewSession"
+    }
+    
+    override func renewSession(session: SPTSession!, callback: SPTAuthCallback!) {
+        mocker.recordCall(Method.renewSession, parameters: session)
+        callback(nil, mocker.returnValueForCallTo(Method.renewSession) as? SPTSession)
     }
 }
 

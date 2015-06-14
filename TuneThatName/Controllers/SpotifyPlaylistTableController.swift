@@ -2,7 +2,7 @@ import UIKit
 
 public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewDelegate, SPTAudioStreamingPlaybackDelegate {
     
-    public enum SpotifyPostLoginAction {
+    public enum SpotifySessionAction {
         case PlayPlaylist(index: Int)
         case SavePlaylist
     }
@@ -12,7 +12,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     let songViewButtonWidth: CGFloat = 29
     
     public var playlist: Playlist!
-    public var spotifyPostLoginAction: SpotifyPostLoginAction!
+    public var spotifySessionAction: SpotifySessionAction!
     var played = false
     
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
@@ -137,7 +137,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         if sessionIsValid() {
             savePlaylist()
         } else {
-            openLogin(SpotifyPostLoginAction.SavePlaylist)
+            refreshSession(SpotifySessionAction.SavePlaylist)
         }
     }
     
@@ -145,9 +145,30 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         return spotifyAuth.session != nil && spotifyAuth.session.isValid()
     }
     
-    func openLogin(spotifyPostLoginAction: SpotifyPostLoginAction) {
-        self.spotifyPostLoginAction = spotifyPostLoginAction
+    
+    func refreshSession(spotifySessionAction: SpotifySessionAction) {
+        self.spotifySessionAction = spotifySessionAction
 
+        if spotifyAuth.hasTokenRefreshService {
+            spotifyAuth.renewSession(spotifyAuth.session) {
+                error, session in
+                
+                if error != nil {
+                    println("Error renewing session: \(error)")
+                }
+                if session != nil {
+                    self.spotifyAuth.session = session
+                    self.doSpotifySessionAction()
+                } else {
+                    self.openLogin()
+                }
+            }
+        } else {
+            self.openLogin()
+        }
+    }
+    
+    func openLogin() {
         spotifyAuthController = SPTAuthViewController.authenticationViewControllerWithAuth(spotifyAuth)
         spotifyAuthController.delegate = self
         spotifyAuthController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
@@ -165,7 +186,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
         println("Login succeeded... session: \(session)")
-        switch (spotifyPostLoginAction!) {
+        doSpotifySessionAction()
+    }
+    
+    func doSpotifySessionAction() {
+        switch (spotifySessionAction!) {
         case .PlayPlaylist(let index):
             playFromIndex(index)
         case .SavePlaylist:
@@ -241,7 +266,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                 ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
         } else {
-            openLogin(SpotifyPostLoginAction.PlayPlaylist(index: index))
+            refreshSession(SpotifySessionAction.PlayPlaylist(index: index))
         }
     }
     
