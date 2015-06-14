@@ -50,13 +50,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     override public func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setToolbarHidden(true, animated: animated)
-        
-        spotifyAudioFacade.stopPlay() {
-            error in
-            if error != nil {
-                print("Error stopping play: \(error)")
-            }
-        }
     }
     
     override public func didReceiveMemoryWarning() {
@@ -127,15 +120,20 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+        if segue.destinationViewController is CreatePlaylistController {
+            spotifyAudioFacade.stopPlay() {
+                error in
+                if error != nil {
+                    print("Error stopping play: \(error)")
+                }
+            }
+        }
     }
-    */
+    
     
     
     @IBAction public func savePlaylistPressed(sender: AnyObject) {

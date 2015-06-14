@@ -151,7 +151,13 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Playlist" id="s2o-ae-yiy"/>
+                    <navigationItem key="navigationItem" title="Playlist" id="s2o-ae-yiy">
+                        <barButtonItem key="leftBarButtonItem" title="New Playlist" id="TJd-yq-C39">
+                            <connections>
+                                <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistSegue" unwindAction="unwindToCreatePlaylist:" id="tZw-B4-PxU"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
                         <outlet property="playPauseButton" destination="MEa-qh-7JS" id="Qjv-DG-DoC"/>
@@ -160,6 +166,7 @@
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9zL-Pn-uq4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="49h-Wb-X4D" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1821" y="340"/>
         </scene>

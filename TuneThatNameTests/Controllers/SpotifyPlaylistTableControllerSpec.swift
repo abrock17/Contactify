@@ -413,9 +413,9 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
             }
             
-            describe("view will disappear") {
+            describe("unwind to create playlist") {
                 it("stops play") {
-                    navigationController.popToRootViewControllerAnimated(false)
+                    spotifyPlaylistTableController.performSegueWithIdentifier("UnwindToCreatePlaylistSegue", sender: nil)
                     NSRunLoop.mainRunLoop().runUntilDate(NSDate())
                     
                     expect(mockSpotifyAudioFacade.mocker.getCallCountFor(

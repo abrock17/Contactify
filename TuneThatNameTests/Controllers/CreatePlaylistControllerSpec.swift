@@ -61,7 +61,6 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         
                         createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
                         expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylist, n: 0)?[1] as? SongPreferences)?.favorPopular).toEventually(beFalse())
-                        self.mockSpotifyAudioFacadeAfterSegue(navigationController)
                     }
                 }
             }
@@ -71,8 +70,6 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
 
                     expect(mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylist, n: 0)?.first as? Int).toEventually(equal(10))
-                    
-                    self.mockSpotifyAudioFacadeAfterSegue(navigationController)
                 }
                 
                 context("when the playlist service calls back with an error") {
@@ -109,21 +106,10 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         expect(navigationController.topViewController).toEventually(beAnInstanceOf(SpotifyPlaylistTableController))
                         let spotifyPlaylistTableController = navigationController.topViewController as? SpotifyPlaylistTableController
                         expect(spotifyPlaylistTableController?.playlist).to(equal(expectedPlaylist))
-                        
-                        self.mockSpotifyAudioFacadeAfterSegue(navigationController)
                     }
                 }
             }
         }
-    }
-    
-    /* 
-    * doing this to keep from instantiating a real SPTAudioStreamingController
-    * which causes errors elsewhere in the tests
-    */
-    func mockSpotifyAudioFacadeAfterSegue(navigationController: UINavigationController) {
-        expect(navigationController.topViewController).toEventually(beAnInstanceOf(SpotifyPlaylistTableController))
-        (navigationController.topViewController as? SpotifyPlaylistTableController)?.spotifyAudioFacadeOverride = MockSpotifyAudioFacade()
     }
 }
 

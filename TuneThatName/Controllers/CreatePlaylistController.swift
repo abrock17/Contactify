@@ -87,4 +87,7 @@ public class CreatePlaylistController: UIViewController {
         self.playlist = playlist
         self.performSegueWithIdentifier("CreatePlaylistSegue", sender: sender)
     }
+    
+    @IBAction public func unwindToCreatePlaylist(sender: UIStoryboardSegue) {
+    }
 }
