@@ -145,7 +145,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         return spotifyAuth.session != nil && spotifyAuth.session.isValid()
     }
     
-    
     func refreshSession(spotifySessionAction: SpotifySessionAction) {
         self.spotifySessionAction = spotifySessionAction
 

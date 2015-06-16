@@ -219,20 +219,30 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                 }
 
-                context("when multiple songs are requested ") {
+                context("when multiple songs are requested") {
                     let numberOfSongs = 4
                     
                     context("and are found") {
                         let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-multiple-songs", withExtension: "txt")
                         let data = NSData(contentsOfURL: url!)
                         
-                        it("calls back with the requested number of songs") {
+                        beforeEach() {
                             MockURLProtocol.setMockResponseData(data)
-
-                            echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
                             
+                            echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
+                        }
+                        
+                        it("calls back with the requested number of songs") {
                             expect(self.callbackSongs.count).toEventually(equal(numberOfSongs))
                             expect(self.callbackError).to(beNil())
+                        }
+                        
+                        it("contains the expected artists (no duplicates)") {
+                            expect(self.callbackSongs.count).toEventually(equal(numberOfSongs))
+                            expect(self.callbackSongs[0].artistName).to(equal("La Vella Dixieland"))
+                            expect(self.callbackSongs[1].artistName).to(equal("Goulam S.K."))
+                            expect(self.callbackSongs[2].artistName).to(equal("Hy3rid"))
+                            expect(self.callbackSongs[3].artistName).to(equal("Raul Bercianos"))
                         }
                     }
                     

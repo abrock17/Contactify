@@ -57,15 +57,20 @@ public class EchoNestService {
     
     func getValidSongsFromJSON(json: JSON, titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int) -> [Song] {
         var songs = [Song]()
+        var artistIDs = [String]()
         
         let jsonSongs = json["response"]["songs"].arrayValue
         let sortedSongs = sortForSongPreferences(jsonSongs, songPreferences: songPreferences)
         for (songJSON: JSON) in sortedSongs {
             if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
-                if let uri = self.getValidURI(songJSON) {
-                    songs.append(Song(title: title, artistName: songJSON["artist_name"].string, uri: uri))
-                    if (songs.count == desiredNumberOfSongs) {
-                        break
+                let artistID = songJSON["artist_id"].stringValue
+                if !contains(artistIDs, artistID) {
+                    if let uri = self.getValidURI(songJSON) {
+                        songs.append(Song(title: title, artistName: songJSON["artist_name"].string, uri: uri))
+                        artistIDs.append(artistID)
+                        if (songs.count == desiredNumberOfSongs) {
+                            break
+                        }
                     }
                 }
             }
