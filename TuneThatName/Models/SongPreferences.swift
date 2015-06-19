@@ -1,8 +1,11 @@
 import Foundation
 
-public struct SongPreferences: Equatable {
+public struct SongPreferences: Equatable, Printable {
     
     public var favorPopular: Bool
+    public var description: String {
+        return "SongPreferences:[favorPopular:\(favorPopular)]"
+    }
     
     public init(favorPopular: Bool) {
         self.favorPopular = favorPopular

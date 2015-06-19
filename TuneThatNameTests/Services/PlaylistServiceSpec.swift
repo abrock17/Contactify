@@ -22,7 +22,7 @@ class PlaylistServiceSpec: QuickSpec {
             var playlistService:PlaylistService!
             var mockContactService: MockContactService!
             var mockEchoNestService: MockEchoNestService!
-            let arbitrarySongPreferences = SongPreferences(favorPopular: false)
+            var playlistPreferences = PlaylistPreferences(numberOfSongs: 1, filterContacts: false, songPreferences: SongPreferences(favorPopular: false))
             
             beforeEach() {
                 self.callbackPlaylistList.removeAll(keepCapacity: false)
@@ -35,7 +35,7 @@ class PlaylistServiceSpec: QuickSpec {
             
             describe("create a playlist") {
                 it("retrieves all contacts from the contact service") {
-                    playlistService.createPlaylist(numberOfSongs: 1, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                    playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
 
                     expect(mockContactService.mocker.getNthCallTo(MockContactService.Method.retrieveAllContacts, n: 0)).toNot(beNil())
                 }
@@ -46,7 +46,7 @@ class PlaylistServiceSpec: QuickSpec {
                     it("calls back with the same error") {
                         mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Failure(contactServiceError))
                         
-                        playlistService.createPlaylist(numberOfSongs: 1, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                        playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                         
                         expect(self.callbackErrorList.count).toEventually(equal(1))
                         expect(self.callbackErrorList[0]).toEventually(equal(contactServiceError))
@@ -65,13 +65,14 @@ class PlaylistServiceSpec: QuickSpec {
                     }
                     
                     it("always calls the echo nest service with the correct song preferences") {
-                        playlistService.createPlaylist(numberOfSongs: contactList.count, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                        playlistPreferences.numberOfSongs = contactList.count
+                        playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                         
                         expect(mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSongs]).toNot(beNil())
                         if let findSongsParametersList = mockEchoNestService.mocker.recordedParameters[MockEchoNestService.Method.findSongs] {
                             
                             for findSongsParameters in findSongsParametersList {
-                                expect(findSongsParameters[1] as? SongPreferences).to(equal(arbitrarySongPreferences))
+                                expect(findSongsParameters[1] as? SongPreferences).to(equal(playlistPreferences.songPreferences))
                             }
                         }
                     }
@@ -80,7 +81,8 @@ class PlaylistServiceSpec: QuickSpec {
                         let numberOfSongs = contactList.count
                         
                         it("calls the echo nest service once for each contact") {
-                            playlistService.createPlaylist(numberOfSongs: contactList.count, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistPreferences.numberOfSongs = numberOfSongs
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(numberOfSongs))
                             for contact in contactList {
@@ -91,9 +93,10 @@ class PlaylistServiceSpec: QuickSpec {
                     
                     context("and the desired number of songs is less than the number of contacts") {
                         let numberOfSongs = contactList.count - 1
-                        
+
                         it("calls the echo nest service only for a subset of unique contacts") {
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistPreferences.numberOfSongs = numberOfSongs
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(numberOfSongs))
                             for contact in contactList {
@@ -106,7 +109,8 @@ class PlaylistServiceSpec: QuickSpec {
                         let numberOfSongs = contactList.count + 1
                         
                         it("calls the echo nest service once for each contact") {
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistPreferences.numberOfSongs = numberOfSongs
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService))
                                 .toEventually(equal(contactList.count))
@@ -131,7 +135,7 @@ class PlaylistServiceSpec: QuickSpec {
                             }
                             
                             it("calls back with a playlist of the correct size with at least one song from each search result list") {
-                                playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                                playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                                 
                                 expect(self.callbackPlaylistList.count).toEventually(equal(1))
                                 let playlistSongs = self.callbackPlaylistList.first!.songs
@@ -159,11 +163,12 @@ class PlaylistServiceSpec: QuickSpec {
                             Song(title: "Frankie's Song", artistName: "artist 3", uri: NSURL(string: "uri3")!)]
                         
                         it("calls back with a playlist containing the songs") {
+                            playlistPreferences.numberOfSongs = numberOfSongs
                             for song in expectedSongs {
                                 mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: MockEchoNestService.SongsResult.Success([song]))
                             }
 
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.callbackPlaylistList.count).toEventually(equal(1))
                             expect(self.callbackPlaylistList[0].songs.count).toEventually(equal(numberOfSongs))
@@ -181,11 +186,12 @@ class PlaylistServiceSpec: QuickSpec {
                             .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2")!)])]
                         
                         it("retries with a different name") {
+                            playlistPreferences.numberOfSongs = numberOfSongs
                             for result in echoNestResults {
                                 mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                             }
 
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(numberOfSongs + 1))
                             for contact in contactList {
@@ -202,11 +208,12 @@ class PlaylistServiceSpec: QuickSpec {
                             .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2")!)])]
                         
                         it("retries with a different name") {
+                            playlistPreferences.numberOfSongs = numberOfSongs
                             for result in echoNestResults {
                                 mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                             }
                             
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(numberOfSongs + 1))
                             for contact in contactList {
@@ -224,11 +231,12 @@ class PlaylistServiceSpec: QuickSpec {
                             .Failure(lastError)]
                         
                         it("calls back with the last error of the three") {
+                            playlistPreferences.numberOfSongs = numberOfSongs
                             for result in echoNestResults {
                                 mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                             }
                             
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(contactList.count))
                             expect(self.callbackErrorList.count).toEventually(equal(1))
@@ -248,13 +256,14 @@ class PlaylistServiceSpec: QuickSpec {
                                 Song(title: "Johnny's Song 2", artistName: "artist 4", uri: NSURL(string: "uri4")!)]]
                         
                         beforeEach() {
+                            playlistPreferences.numberOfSongs = numberOfSongs
                             for songList in echoNestSongLists {
                                 mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success(songList))
                             }
                         }
                         
                         it("calls back with a playlist of the correct size with at least one unique song from each search result list") {
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.callbackPlaylistList.count).toEventually(equal(1))
                             let playlistSongs = self.callbackPlaylistList.first!.songs
@@ -268,10 +277,11 @@ class PlaylistServiceSpec: QuickSpec {
                     
                     context("and the desired number of songs requires more than half default echo nest search number parameter for each contact") {
                         let defaultSearchNumber = 20
-                        let numberOfSongs = contactList.count * (defaultSearchNumber / 2 + 1)
                         
                         it("calls the echo nest service for each contact with double the minimum necessary search number") {
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistPreferences.numberOfSongs = contactList.count * (defaultSearchNumber / 2 + 1)
+
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(contactList.count))
                             let expectedSearchNumber = (defaultSearchNumber / 2 + 1) * 2
@@ -301,11 +311,12 @@ class PlaylistServiceSpec: QuickSpec {
                             .Failure(lastError)]
                         
                         it("calls back only with the first error over 20%") {
+                            playlistPreferences.numberOfSongs = numberOfSongs
                             for result in echoNestResults {
                                 mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                             }
                             
-                            playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                            playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                             
                             expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(contactList.count))
                             expect(self.callbackErrorList.count).toEventually(equal(1))
@@ -327,9 +338,9 @@ class PlaylistServiceSpec: QuickSpec {
                     }
                     
                     it("only calls the echo nest service contacts that have a first name") {
-                        let numberOfSongs = contactList.count
+                        playlistPreferences.numberOfSongs = contactList.count
                         
-                        playlistService.createPlaylist(numberOfSongs: numberOfSongs, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                        playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                         
                         expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(1))
                         expect(self.numberOfTimesFindSongsWasCalledForName(contactList.first!.firstName!, mockEchoNestService: mockEchoNestService)).to(equal(1))
@@ -341,7 +352,7 @@ class PlaylistServiceSpec: QuickSpec {
                     it("calls back with an appropriate error") {
                         mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success([]))
                         
-                        playlistService.createPlaylist(numberOfSongs: 1, songPreferences: arbitrarySongPreferences, callback: self.playlistCallback)
+                        playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                         
                         expect(self.callbackErrorList.count).toEventually(equal(1))
                         expect(self.callbackErrorList.first).toEventually(equal(expectedError))

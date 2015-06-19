@@ -149,12 +149,14 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         self.spotifySessionAction = spotifySessionAction
 
         if spotifyAuth.hasTokenRefreshService {
+            ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
             spotifyAuth.renewSession(spotifyAuth.session) {
                 error, session in
                 
                 if error != nil {
                     println("Error renewing session: \(error)")
                 }
+                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                 if session != nil {
                     self.spotifyAuth.session = session
                     self.doSpotifySessionAction()

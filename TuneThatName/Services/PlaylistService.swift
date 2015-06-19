@@ -17,7 +17,7 @@ public class PlaylistService {
         self.echoNestService = echoNestService
     }
     
-    public func createPlaylist(#numberOfSongs: Int, songPreferences: SongPreferences, callback: PlaylistResult -> Void) {
+    public func createPlaylistWithPreferences(playlistPreferences: PlaylistPreferences, callback: PlaylistResult -> Void) {
         contactService.retrieveAllContacts() {
             contactListResult in
             
@@ -26,7 +26,7 @@ public class PlaylistService {
                 if contactList.isEmpty {
                     callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.NoContactsCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.NoContactsMessage])))
                 } else {
-                    self.createPlaylistForContactList(contactList, numberOfSongs: numberOfSongs, songPreferences: songPreferences, callback: callback)
+                    self.createPlaylistForContactList(contactList, playlistPreferences: playlistPreferences, callback: callback)
                 }
             case .Failure(let error):
                 callback(.Failure(error))
@@ -34,8 +34,9 @@ public class PlaylistService {
         }
     }
     
-    func createPlaylistForContactList(contactList: [Contact], numberOfSongs: Int, songPreferences: SongPreferences, callback: PlaylistResult -> Void) {
+    func createPlaylistForContactList(contactList: [Contact], playlistPreferences: PlaylistPreferences, callback: PlaylistResult -> Void) {
         let defaultName = "Tune That Name"
+        let numberOfSongs = playlistPreferences.numberOfSongs
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).isEmpty})
         let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: numberOfSongs, numberOfContacts: searchableContacts.count)
         var contactsToBeSearched = searchableContacts
@@ -50,7 +51,7 @@ public class PlaylistService {
                 let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
                 let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
                 contactsSearched.append(searchContact)
-                self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, songPreferences: songPreferences, desiredNumberOfSongs: searchNumber) {
+                self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, songPreferences: playlistPreferences.songPreferences, desiredNumberOfSongs: searchNumber) {
                     songsResult in
                     
                     switch (songsResult) {

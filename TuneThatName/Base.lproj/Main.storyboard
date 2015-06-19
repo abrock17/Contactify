@@ -52,14 +52,30 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Favor More Popular Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wIA-kH-EhL">
-                                <rect key="frame" x="16" y="159" width="250" height="21"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lEK-sa-zpd">
+                                <rect key="frame" x="16" y="159" width="113" height="33"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <state key="normal" title="Select Names">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="selectNamesPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eoO-rg-sgl"/>
+                                </connections>
+                            </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="P5d-Pz-Tpy">
+                                <rect key="frame" x="535" y="160" width="51" height="31"/>
+                                <connections>
+                                    <action selector="filterContactsStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="pl9-wS-hai"/>
+                                </connections>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Favor Popular Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wIA-kH-EhL">
+                                <rect key="frame" x="16" y="205" width="206" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jgY-qx-zeV">
-                                <rect key="frame" x="535" y="154" width="51" height="31"/>
+                                <rect key="frame" x="535" y="200" width="51" height="31"/>
                                 <connections>
                                     <action selector="favorPopularStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Ggu-x0-TAX"/>
                                 </connections>
@@ -72,30 +88,66 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="HeA-qY-xM1" secondAttribute="bottom" constant="20" id="3LM-zo-t1k"/>
                             <constraint firstItem="4jn-1I-rWE" firstAttribute="top" secondItem="hbq-o6-8bp" secondAttribute="bottom" constant="8" id="3c0-BM-Idj"/>
                             <constraint firstItem="y5E-JQ-5i5" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="4Qm-xY-aud"/>
-                            <constraint firstItem="wIA-kH-EhL" firstAttribute="top" secondItem="4jn-1I-rWE" secondAttribute="bottom" constant="16" id="50W-37-e0O"/>
                             <constraint firstItem="HeA-qY-xM1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="5Li-Sw-Ih5"/>
                             <constraint firstItem="hbq-o6-8bp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="HL4-KR-bGu"/>
+                            <constraint firstItem="lEK-sa-zpd" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="MRA-kN-C4e"/>
                             <constraint firstItem="4jn-1I-rWE" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="RdP-eh-yek"/>
                             <constraint firstItem="4jn-1I-rWE" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Sk1-7l-6eM"/>
                             <constraint firstItem="jgY-qx-zeV" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Wc0-JG-eqK"/>
                             <constraint firstItem="jgY-qx-zeV" firstAttribute="centerY" secondItem="wIA-kH-EhL" secondAttribute="centerY" id="fbt-QZ-Mrj"/>
                             <constraint firstItem="HeA-qY-xM1" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="hr8-oz-PrJ"/>
+                            <constraint firstItem="wIA-kH-EhL" firstAttribute="top" secondItem="lEK-sa-zpd" secondAttribute="bottom" constant="13" id="lfm-4G-PGQ"/>
+                            <constraint firstItem="P5d-Pz-Tpy" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="nSA-kh-Md6"/>
                             <constraint firstItem="wIA-kH-EhL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="usE-sV-1Z1"/>
+                            <constraint firstItem="P5d-Pz-Tpy" firstAttribute="centerY" secondItem="lEK-sa-zpd" secondAttribute="centerY" id="v7J-HD-g4Y"/>
+                            <constraint firstItem="lEK-sa-zpd" firstAttribute="top" secondItem="4jn-1I-rWE" secondAttribute="bottom" constant="16" id="wFO-WE-Fky"/>
                             <constraint firstItem="hbq-o6-8bp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="yz2-tu-ePb"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="New Playlist" id="FFN-9L-8gU"/>
+                    <navigationItem key="navigationItem" title="New Playlist" id="FFN-9L-8gU">
+                        <barButtonItem key="backBarButtonItem" title="Done" id="XbV-A9-SOg"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="createPlaylistButton" destination="HeA-qY-xM1" id="A3O-oK-qk0"/>
                         <outlet property="favorPopularSwitch" destination="jgY-qx-zeV" id="lkC-fU-SvR"/>
+                        <outlet property="filterContactsSwitch" destination="P5d-Pz-Tpy" id="IDy-SH-4WN"/>
                         <outlet property="numberOfSongsLabel" destination="hbq-o6-8bp" id="Y8Q-HR-IFS"/>
                         <outlet property="numberOfSongsSlider" destination="4jn-1I-rWE" id="PsK-35-J9n"/>
+                        <outlet property="selectNamesButton" destination="lEK-sa-zpd" id="Upz-Rd-1NW"/>
                         <segue destination="197-cV-9aq" kind="show" identifier="CreatePlaylistSegue" id="RN0-Nu-pK0"/>
+                        <segue destination="e4t-vv-Y0x" kind="show" identifier="SelectNamesSegue" id="Sv0-jm-PTS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1117" y="340"/>
+        </scene>
+        <!--Select Names-->
+        <scene sceneID="Ogf-1l-cc8">
+            <objects>
+                <tableViewController storyboardIdentifier="ContactFilterTableController" id="e4t-vv-Y0x" customClass="NameSelectionTableController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="eV2-a8-Wtf">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="QH2-e1-q57">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QH2-e1-q57" id="CZC-pt-xw1">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="e4t-vv-Y0x" id="md4-zf-Drg"/>
+                            <outlet property="delegate" destination="e4t-vv-Y0x" id="AZG-fq-9mr"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Select Names" id="XQ0-uD-Eij"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4Tu-oG-5Gf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1821" y="-397"/>
         </scene>
         <!--Playlist-->
         <scene sceneID="vfc-kJ-NwV">

@@ -5,9 +5,8 @@ public class CreatePlaylistController: UIViewController {
     let minNumberOfSongs = 1
     let maxNumberOfSongs = 100
     
+    var playlistPreferences: PlaylistPreferences!
     var playlist: Playlist?
-    var numberOfSongs: Int!
-    var songPreferences: SongPreferences!
     
     public var playlistService = PlaylistService()
     
@@ -15,32 +14,29 @@ public class CreatePlaylistController: UIViewController {
 
     @IBOutlet public weak var numberOfSongsSlider: UISlider!
     @IBOutlet public weak var numberOfSongsLabel: UILabel!
+    @IBOutlet public weak var filterContactsSwitch: UISwitch!
+    @IBOutlet public weak var selectNamesButton: UIButton!
     @IBOutlet public weak var favorPopularSwitch: UISwitch!
     @IBOutlet public weak var createPlaylistButton: UIButton!
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        initializeNumberOfSongs()
-        initializeSongPreferences()
+        updateForPlaylistPreferences()
 
         // Do any additional setup after loading the view.
     }
     
-    func initializeNumberOfSongs() {
-        if numberOfSongs == nil {
-            numberOfSongs = 10
-            numberOfSongsSlider.value = (Float(numberOfSongs - minNumberOfSongs) / Float(maxNumberOfSongs - minNumberOfSongs))
-            numberOfSongsLabel.text = String(numberOfSongs)
+    func updateForPlaylistPreferences() {
+        if playlistPreferences == nil {
+            playlistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true))
         }
+        numberOfSongsSlider.value = (Float(playlistPreferences.numberOfSongs - minNumberOfSongs) / Float(maxNumberOfSongs - minNumberOfSongs))
+        numberOfSongsLabel.text = String(playlistPreferences.numberOfSongs)
+        updateSelectNamesButtonForFilterContacts(playlistPreferences.filterContacts)
+        filterContactsSwitch.on = playlistPreferences.filterContacts
+        favorPopularSwitch.on = playlistPreferences.songPreferences.favorPopular
     }
     
-    func initializeSongPreferences() {
-        if songPreferences == nil {
-            songPreferences = SongPreferences(favorPopular: true)
-            favorPopularSwitch.on = songPreferences.favorPopular
-        }
-    }
-
     override public func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -49,23 +45,38 @@ public class CreatePlaylistController: UIViewController {
     // MARK: - Navigation
 
     override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        let spotifyPlaylistTableController = segue.destinationViewController as! SpotifyPlaylistTableController
-        spotifyPlaylistTableController.playlist = self.playlist
+        if let spotifyPlaylistTableController = segue.destinationViewController as? SpotifyPlaylistTableController {
+            spotifyPlaylistTableController.playlist = self.playlist
+        }
     }
     
     @IBAction public func numberOfSongsValueChanged(sender: UISlider) {
-        numberOfSongs = Int(round(sender.value * Float(maxNumberOfSongs - minNumberOfSongs))) + minNumberOfSongs
-        numberOfSongsLabel.text = String(numberOfSongs)
+        playlistPreferences.numberOfSongs = Int(round(sender.value * Float(maxNumberOfSongs - minNumberOfSongs))) + minNumberOfSongs
+        numberOfSongsLabel.text = String(playlistPreferences.numberOfSongs)
+    }
+    
+    @IBAction public func filterContactsStateChanged(sender: UISwitch) {
+        playlistPreferences.filterContacts = sender.on
+        updateSelectNamesButtonForFilterContacts(playlistPreferences.filterContacts)
+    }
+    
+    func updateSelectNamesButtonForFilterContacts(filterContacts: Bool) {
+        selectNamesButton.enabled = filterContacts
+        selectNamesButton.setTitle(filterContacts ? "Select Names" : "Select Names (Using All)", forState: UIControlState.Normal)
+    }
+    
+    @IBAction public func selectNamesPressed(sender: UIButton) {
+        self.performSegueWithIdentifier("SelectNamesSegue", sender: sender)
     }
     
     @IBAction public func favorPopularStateChanged(sender: UISwitch) {
-        songPreferences.favorPopular = sender.on
+        playlistPreferences.songPreferences.favorPopular = sender.on
     }
     
     @IBAction public func createPlaylistPressed(sender: AnyObject) {
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            self.playlistService.createPlaylist(numberOfSongs: self.numberOfSongs, songPreferences: self.songPreferences) {
+            self.playlistService.createPlaylistWithPreferences(self.playlistPreferences) {
                 playlistResult in
                 
                 dispatch_async(dispatch_get_main_queue()) {

@@ -42,6 +42,19 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 }
             }
             
+            describe("select names button") {
+                it("has the correct initial state") {
+                    expect(createPlaylistController.selectNamesButton.titleLabel?.text).to(equal("Select Names (Using All)"))
+                    expect(createPlaylistController.selectNamesButton.enabled).to(beFalse())
+                }
+            }
+            
+            describe("filter contacts switch") {
+                it("has the correct initial state") {
+                    expect(createPlaylistController.filterContactsSwitch.on).to(beFalse())
+                }
+            }
+            
             describe("number of songs slider value change") {
                 context("when value changes") {
                     it("updates the number of songs label accordingly") {
@@ -60,8 +73,36 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         createPlaylistController.favorPopularStateChanged(createPlaylistController.favorPopularSwitch)
                         
                         createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
-                        expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylist, n: 0)?[1] as? SongPreferences)?.favorPopular).toEventually(beFalse())
+                        expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.favorPopular).toEventually(beFalse())
                     }
+                }
+            }
+            
+            describe("filter contacts state change") {
+                context("when state changes") {
+                    
+                    beforeEach() {
+                        createPlaylistController.filterContactsSwitch.on = true
+                        createPlaylistController.filterContactsStateChanged(createPlaylistController.filterContactsSwitch)
+                    }
+                    
+                    it("updates the 'select names' button appropriately") {
+                        expect(createPlaylistController.selectNamesButton.titleLabel?.text).toEventually(equal("Select Names"))
+                        expect(createPlaylistController.selectNamesButton.enabled).toEventually(beTrue())
+                    }
+                    
+                    it("updates the filter contacts flag") {
+                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.filterContacts).toEventually(beTrue())
+                    }
+                }
+            }
+            
+            describe("press the 'select names' button") {
+                it("segues to the name selection view") {
+                    createPlaylistController.selectNamesButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+
+                    expect(navigationController.topViewController).toEventually(beAnInstanceOf(NameSelectionTableController))
                 }
             }
 
@@ -69,13 +110,13 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 it("calls the playlist service with the correct number of songs") {
                     createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
 
-                    expect(mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylist, n: 0)?.first as? Int).toEventually(equal(10))
+                    expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.numberOfSongs).toEventually(equal(10))
                 }
                 
                 context("when the playlist service calls back with an error") {
                     let expectedError = NSError(domain: "domain", code: 435, userInfo: [NSLocalizedDescriptionKey: "an error description"])
                     beforeEach() {
-                        mockPlaylistService.mocker.prepareForCallTo(MockPlaylistService.Method.createPlaylist, returnValue: PlaylistService.PlaylistResult.Failure(expectedError))
+                        mockPlaylistService.mocker.prepareForCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, returnValue: PlaylistService.PlaylistResult.Failure(expectedError))
                         
                         createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
                     }
@@ -96,7 +137,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 context("when the playlist service calls back with a playlist") {
                     let expectedPlaylist = Playlist(name: "playlist")
                     beforeEach() {
-                        mockPlaylistService.mocker.prepareForCallTo(MockPlaylistService.Method.createPlaylist, returnValue: PlaylistService.PlaylistResult.Success(expectedPlaylist))
+                        mockPlaylistService.mocker.prepareForCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, returnValue: PlaylistService.PlaylistResult.Success(expectedPlaylist))
                         
                         createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
                         NSRunLoop.mainRunLoop().runUntilDate(NSDate())
@@ -118,12 +159,12 @@ class MockPlaylistService: PlaylistService {
     let mocker = Mocker()
     
     struct Method {
-        static let createPlaylist = "createPlaylist"
+        static let createPlaylistWithPreferences = "createPlaylistWithPreferences"
     }
     
-    override func createPlaylist(#numberOfSongs: Int, songPreferences: SongPreferences, callback: PlaylistService.PlaylistResult -> Void) {
-        mocker.recordCall(Method.createPlaylist, parameters: numberOfSongs, songPreferences)
-        let mockedResult = mocker.returnValueForCallTo(Method.createPlaylist)
+    override func createPlaylistWithPreferences(playlistPreferences: PlaylistPreferences, callback: PlaylistService.PlaylistResult -> Void) {
+        mocker.recordCall(Method.createPlaylistWithPreferences, parameters: playlistPreferences)
+        let mockedResult = mocker.returnValueForCallTo(Method.createPlaylistWithPreferences)
         if let mockedResult = mockedResult as? PlaylistService.PlaylistResult {
             callback(mockedResult)
         } else {
