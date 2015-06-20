@@ -1,15 +1,60 @@
 import UIKit
 
 public class NameSelectionTableController: UITableViewController {
+    
+    var indexTitles: [String] = {
+        var indexTitles = (65...90).map({ String(UnicodeScalar($0)) })
+        indexTitles.append("#")
+        return indexTitles
+    }()
+    var contactSectionMap = [String:[Contact]]()
+
+    public var contactService = ContactService()
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+        contactService.retrieveAllContacts() {
+            contactListResult in
+            
+            switch(contactListResult) {
+            case .Success(let contacts):
+                self.buildContactSectionMap(contacts)
+            case .Failure(let error):
+                println("Error retrieving contacts: \(error)")
+            }
+        }
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+    }
+    
+    func buildContactSectionMap(contacts: [Contact]) {
+        for contact in contacts {
+            var added = false
+            for indexTitle in indexTitles {
+                if contact.fullName.uppercaseString.hasPrefix(indexTitle) {
+                    addToContactSectionMap(key: indexTitle, contact: contact)
+                    added = true
+                    break
+                }
+            }
+            if !added {
+                addToContactSectionMap(key: "#", contact: contact)
+            }
+        }
+        for key in contactSectionMap.keys {
+            contactSectionMap[key]!.sort({ $0.fullName < $1.fullName })
+        }
+    }
+    
+    func addToContactSectionMap(#key: String, contact: Contact) {
+        if contactSectionMap[key] == nil {
+            contactSectionMap[key] = [Contact]()
+        }
+        contactSectionMap[key]?.append(contact)
     }
 
     override public func didReceiveMemoryWarning() {
@@ -20,26 +65,42 @@ public class NameSelectionTableController: UITableViewController {
     // MARK: - Table view data source
 
     override public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
-        // Return the number of sections.
-        return 0
+        return indexTitles.count
     }
-
+    
+    override public func sectionIndexTitlesForTableView(tableView: UITableView) -> [AnyObject]! {
+        return indexTitles
+    }
+    
+    override public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let indexTitle = indexTitles[section]
+        return contains(contactSectionMap.keys, indexTitle) ? indexTitle : nil
+    }
+    
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete method implementation.
-        // Return the number of rows in the section.
-        return 0
+        let numberOfRows: Int
+        if let contacts = contactsForSection(section) {
+            numberOfRows = contacts.count
+        } else {
+            numberOfRows = 0
+        }
+        
+        return numberOfRows
     }
 
-    /*
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath) as! UITableViewCell
-
-        // Configure the cell...
+    override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("ContactNameTableCell", forIndexPath: indexPath) as! UITableViewCell
+        let contacts = contactsForSection(indexPath.section)
+        let contact = contacts![indexPath.row]
+        cell.textLabel?.text = contact.fullName
 
         return cell
     }
-    */
+    
+    func contactsForSection(section: Int) -> [Contact]? {
+        let sectionTitle = indexTitles[section]
+        return contactSectionMap[sectionTitle]
+    }
 
     /*
     // Override to support conditional editing of the table view.

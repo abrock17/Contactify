@@ -6,7 +6,7 @@ import Nimble
 class ControllerHelperSpec: QuickSpec {
     
     override func spec() {
-        describe("Controller Helper") {
+        describe("ControllerHelper") {
             let view = UIView()
             let activityIndicator = UIActivityIndicatorView()
 

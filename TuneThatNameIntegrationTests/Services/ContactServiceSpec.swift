@@ -41,6 +41,7 @@ class ContactServiceSpec: QuickSpec {
                     
                     expect(self.callbackContactList).toEventually(contain(contact))
                     expect(self.callbackError).to(beNil())
+                    expect(contact.fullName).to(equal("Casey Kasem"))
                 }
             }
         }
@@ -55,8 +56,9 @@ class ContactServiceSpec: QuickSpec {
         
         ABAddressBookAddRecord(addressBook, record, nil)
         ABAddressBookSave(addressBook, nil)
+        let fullName = ABRecordCopyCompositeName(record).takeRetainedValue() as String
 
-        return Contact(id: ABRecordGetRecordID(record), firstName: firstName, lastName: lastName)
+        return Contact(id: ABRecordGetRecordID(record), firstName: firstName, lastName: lastName, fullName: fullName)
     }
     
     func deleteContact(contact: Contact) {

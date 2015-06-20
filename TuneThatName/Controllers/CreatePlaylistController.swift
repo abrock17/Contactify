@@ -32,7 +32,7 @@ public class CreatePlaylistController: UIViewController {
         }
         numberOfSongsSlider.value = (Float(playlistPreferences.numberOfSongs - minNumberOfSongs) / Float(maxNumberOfSongs - minNumberOfSongs))
         numberOfSongsLabel.text = String(playlistPreferences.numberOfSongs)
-        updateSelectNamesButtonForFilterContacts(playlistPreferences.filterContacts)
+        selectNamesButton.enabled = playlistPreferences.filterContacts
         filterContactsSwitch.on = playlistPreferences.filterContacts
         favorPopularSwitch.on = playlistPreferences.songPreferences.favorPopular
     }
@@ -57,14 +57,12 @@ public class CreatePlaylistController: UIViewController {
     
     @IBAction public func filterContactsStateChanged(sender: UISwitch) {
         playlistPreferences.filterContacts = sender.on
-        updateSelectNamesButtonForFilterContacts(playlistPreferences.filterContacts)
+        selectNamesButton.enabled = playlistPreferences.filterContacts
+        if playlistPreferences.filterContacts {
+            self.performSegueWithIdentifier("SelectNamesSegue", sender: nil)
+        }
     }
-    
-    func updateSelectNamesButtonForFilterContacts(filterContacts: Bool) {
-        selectNamesButton.enabled = filterContacts
-        selectNamesButton.setTitle(filterContacts ? "Select Names" : "Select Names (Using All)", forState: UIControlState.Normal)
-    }
-    
+        
     @IBAction public func selectNamesPressed(sender: UIButton) {
         self.performSegueWithIdentifier("SelectNamesSegue", sender: sender)
     }

@@ -6,7 +6,7 @@ import UIKit
 class CreatePlaylistControllerSpec: QuickSpec {
     
     override func spec() {
-        describe("The CreatePlaylistController") {
+        describe("CreatePlaylistController") {
             var navigationController: UINavigationController!
             var createPlaylistController: CreatePlaylistController!
             var mockPlaylistService: MockPlaylistService!
@@ -44,7 +44,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
             
             describe("select names button") {
                 it("has the correct initial state") {
-                    expect(createPlaylistController.selectNamesButton.titleLabel?.text).to(equal("Select Names (Using All)"))
+                    expect(createPlaylistController.selectNamesButton.titleLabel?.text).to(equal("Select Names"))
                     expect(createPlaylistController.selectNamesButton.enabled).to(beFalse())
                 }
             }
@@ -79,7 +79,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
             }
             
             describe("filter contacts state change") {
-                context("when state changes") {
+                context("to true") {
                     
                     beforeEach() {
                         createPlaylistController.filterContactsSwitch.on = true
@@ -87,13 +87,36 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     }
                     
                     it("updates the 'select names' button appropriately") {
-                        expect(createPlaylistController.selectNamesButton.titleLabel?.text).toEventually(equal("Select Names"))
                         expect(createPlaylistController.selectNamesButton.enabled).toEventually(beTrue())
                     }
                     
                     it("updates the filter contacts flag") {
                         createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
                         expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.filterContacts).toEventually(beTrue())
+                    }
+                    
+                    it("segues to the name selection view") {
+                        expect(navigationController.topViewController).toEventually(beAnInstanceOf(NameSelectionTableController))
+                    }
+                }
+                
+                context("to false") {
+                    beforeEach() {
+                        createPlaylistController.filterContactsSwitch.on = false
+                        createPlaylistController.filterContactsStateChanged(createPlaylistController.filterContactsSwitch)
+                    }
+                    
+                    it("updates the 'select names' button appropriately") {
+                        expect(createPlaylistController.selectNamesButton.enabled).toEventually(beFalse())
+                    }
+                    
+                    it("updates the filter contacts flag") {
+                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.filterContacts).toEventually(beFalse())
+                    }
+
+                    it("does not segue") {
+                        expect(navigationController.topViewController).toEventually(beAnInstanceOf(CreatePlaylistController))
                     }
                 }
             }
