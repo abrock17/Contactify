@@ -8,6 +8,7 @@ public class NameSelectionTableController: UITableViewController {
         return indexTitles
     }()
     var contactSectionMap = [String:[Contact]]()
+    var filteredContacts = Set<Contact>()
 
     public var contactService = ContactService()
 
@@ -90,18 +91,39 @@ public class NameSelectionTableController: UITableViewController {
 
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ContactNameTableCell", forIndexPath: indexPath) as! UITableViewCell
-        let contacts = contactsForSection(indexPath.section)
-        let contact = contacts![indexPath.row]
+        let contact = contactForIndexPath(indexPath)
         cell.textLabel?.text = contact.fullName
+        if filteredContacts.contains(contact) {
+            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryType.None
+        }
 
         return cell
     }
     
+    override public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        let contact = contactForIndexPath(indexPath)
+        if filteredContacts.contains(contact) {
+            filteredContacts.remove(contact)
+        } else {
+            filteredContacts.insert(contact)
+        }
+        
+        tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+    }
+
     func contactsForSection(section: Int) -> [Contact]? {
         let sectionTitle = indexTitles[section]
         return contactSectionMap[sectionTitle]
     }
-
+    
+    func contactForIndexPath(indexPath: NSIndexPath) -> Contact {
+        let contacts = contactsForSection(indexPath.section)
+        return contacts![indexPath.row]
+    }
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {

@@ -86,6 +86,33 @@ class NameSelectionTableControllerSpec: QuickSpec {
                         }
                     }
                 }
+                
+                describe("select a name") {
+                    context("when the name has not been selected") {
+                        let indexPath = NSIndexPath(forRow: 0, inSection: 1)
+                        
+                        beforeEach() {
+                            nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                        }
+                        
+                        it("is has the checkmark accessory") {
+                            expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType).to(equal(UITableViewCellAccessoryType.Checkmark))
+                        }
+                    }
+
+                    context("when the name has been selected") {
+                        let indexPath = NSIndexPath(forRow: 0, inSection: 1)
+                        
+                        beforeEach() {
+                            nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                            nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                        }
+                        
+                        it("is has the 'none' accessory") {
+                            expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType).to(equal(UITableViewCellAccessoryType.None))
+                        }
+                    }
+                }
             }
         }
     }
