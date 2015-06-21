@@ -487,7 +487,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             
             describe("unwind to create playlist") {
                 it("stops play") {
-                    spotifyPlaylistTableController.performSegueWithIdentifier("UnwindToCreatePlaylistSegue", sender: nil)
+                    spotifyPlaylistTableController.performSegueWithIdentifier("UnwindToCreatePlaylistFromPlaylistTableSegue", sender: nil)
                     NSRunLoop.mainRunLoop().runUntilDate(NSDate())
                     
                     expect(mockSpotifyAudioFacade.mocker.getCallCountFor(

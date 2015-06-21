@@ -31,8 +31,27 @@ public class NameSelectionTableController: UITableViewController {
             case .Success(let contacts):
                 self.buildContactSectionMap(contacts)
             case .Failure(let error):
-                println("Error retrieving contacts: \(error)")
+                println("Error retrieving all contacts: \(error)")
             }
+        }
+
+        contactService.retrieveFilteredContacts() {
+            contactListResult in
+            
+            switch(contactListResult) {
+            case .Success(let contacts):
+                self.filteredContacts = Set<Contact>(contacts)
+            case .Failure(let error):
+                println("Error retrieving filtered contacts: \(error)")
+            }
+        }
+        
+        if filteredContacts.isEmpty {
+            var allContacts = [Contact]()
+            for contacts in contactSectionMap.values {
+                allContacts += contacts
+            }
+            filteredContacts = Set<Contact>(allContacts)
         }
     }
     
@@ -163,14 +182,15 @@ public class NameSelectionTableController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        contactService.saveFilteredContacts(Array<Contact>(filteredContacts))
         // Get the new view controller using [segue destinationViewController].
         // Pass the selected object to the new view controller.
     }
-    */
+
 
 }

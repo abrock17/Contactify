@@ -21,7 +21,7 @@ class NameSelectionTableControllerSpec: QuickSpec {
                 nameSelectionTableController.contactService = mockContactService
             }
             
-            context("contacts load successfully") {
+            describe("table view") {
                 var contactList = [
                     Contact(id: 1, firstName: "Johnny", lastName: "Knoxville", fullName: "Johnny Knoxville"),
                     Contact(id: 2, firstName: "Billy", lastName: "Joe Armstrong", fullName: "Billy Joe Armstrong"),
@@ -30,26 +30,27 @@ class NameSelectionTableControllerSpec: QuickSpec {
                     Contact(id: 5, firstName: "$mitty", lastName: "Smith", fullName: "$mitty Smith")
                 ]
                 
+                var expectedTitleHeaders: [String?] = Array(0...26).map({ _ in nil })
+                expectedTitleHeaders[1] = "B"
+                expectedTitleHeaders[5] = "F"
+                expectedTitleHeaders[9] = "J"
+                expectedTitleHeaders[26] = "#"
+                
+                var expectedSectionRowText: [[String]] = Array(0...26).map({ _ in [String]() })
+                expectedSectionRowText[1] = [contactList[1].fullName]
+                expectedSectionRowText[5] = [contactList[2].fullName]
+                expectedSectionRowText[9] = [contactList[3].fullName, contactList[0].fullName]
+                expectedSectionRowText[26] = [contactList[4].fullName]
+                
                 beforeEach() {
                     mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
-                    navigationController.pushViewController(nameSelectionTableController, animated: false)
-                    UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
-                    NSRunLoop.mainRunLoop().runUntilDate(NSDate())
                 }
                 
-                describe("table view") {
-                    var expectedTitleHeaders: [String?] = Array(0...26).map({ _ in nil })
-                    expectedTitleHeaders[1] = "B"
-                    expectedTitleHeaders[5] = "F"
-                    expectedTitleHeaders[9] = "J"
-                    expectedTitleHeaders[26] = "#"
+                context("contacts load successfully") {
+                    beforeEach() {
+                        self.loadView(navigationController: navigationController, viewController: nameSelectionTableController)
+                    }
                     
-                    var expectedSectionRowText: [[String]] = Array(0...26).map({ _ in [String]() })
-                    expectedSectionRowText[1] = [contactList[1].fullName]
-                    expectedSectionRowText[5] = [contactList[2].fullName]
-                    expectedSectionRowText[9] = [contactList[3].fullName, contactList[0].fullName]
-                    expectedSectionRowText[26] = [contactList[4].fullName]
-
                     it("has expected number of sections") {
                         expect(nameSelectionTableController.numberOfSectionsInTableView(nameSelectionTableController.tableView))
                             .to(equal(27))
@@ -87,33 +88,86 @@ class NameSelectionTableControllerSpec: QuickSpec {
                     }
                 }
                 
-                describe("select a name") {
+                context("when no contacts are filtered") {
+                    let filteredContactList = [Contact]()
+                    
+                    beforeEach() {
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Success(filteredContactList))
+                        self.loadView(navigationController: navigationController, viewController: nameSelectionTableController)
+                    }
+                    
+                    it("adds a checkmark for all rows") {
+                        for section in (0...26) {
+                            for (rowIndex, text) in enumerate(expectedSectionRowText[section]) {
+                                let indexPath = NSIndexPath(forRow: rowIndex, inSection: section)
+                                let expectedAccessoryType: UITableViewCellAccessoryType = .Checkmark
+                                expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType.rawValue).to(equal(expectedAccessoryType.rawValue))
+                            }
+                        }
+                    }
+                    
+                    describe("select a name") {
+                        context("when the name has been selected") {
+                            let indexPath = NSIndexPath(forRow: 0, inSection: 1)
+                            
+                            beforeEach() {
+                                nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                            }
+                            
+                            it("has no accessory") {
+                                expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType).to(equal(UITableViewCellAccessoryType.None))
+                            }
+                        }
+                    }
+                    
                     context("when the name has not been selected") {
                         let indexPath = NSIndexPath(forRow: 0, inSection: 1)
                         
                         beforeEach() {
                             nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                            nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
                         }
                         
-                        it("is has the checkmark accessory") {
+                        it("has the checkmark accessory") {
                             expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType).to(equal(UITableViewCellAccessoryType.Checkmark))
                         }
                     }
-
-                    context("when the name has been selected") {
-                        let indexPath = NSIndexPath(forRow: 0, inSection: 1)
-                        
-                        beforeEach() {
-                            nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                            nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                }
+                
+                context("when contacts are filtered") {
+                    let filteredContactList = [contactList[2]]
+                    
+                    beforeEach() {
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Success(filteredContactList))
+                        self.loadView(navigationController: navigationController, viewController: nameSelectionTableController)
+                    }
+                    
+                    it("adds a checkmark accessory only for the filtered contact row") {
+                        for section in (0...26) {
+                            for (rowIndex, text) in enumerate(expectedSectionRowText[section]) {
+                                let indexPath = NSIndexPath(forRow: rowIndex, inSection: section)
+                                let expectedAccessoryType: UITableViewCellAccessoryType = indexPath.section == 5 && indexPath.row == 0 ? .Checkmark : .None
+                                expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType.rawValue).to(equal(expectedAccessoryType.rawValue))
+                            }
                         }
-                        
-                        it("is has the 'none' accessory") {
-                            expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType).to(equal(UITableViewCellAccessoryType.None))
+                    }
+                    
+                    describe("unwind to create playlist") {
+                        it("saves filtered contacts") {
+                            nameSelectionTableController.performSegueWithIdentifier("UnwindToCreatePlaylistFromNameSelectionSegue", sender: nil)
+                            NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+                            
+                            expect(mockContactService.mocker.getNthCallTo(MockContactService.Method.saveFilteredContacts, n: 0)?.first as? [Contact]).to(equal(filteredContactList))
                         }
                     }
                 }
             }
         }
+    }
+    
+    func loadView(#navigationController: UINavigationController, viewController: UIViewController) {
+        navigationController.pushViewController(viewController, animated: false)
+        UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
+        NSRunLoop.mainRunLoop().runUntilDate(NSDate())
     }
 }

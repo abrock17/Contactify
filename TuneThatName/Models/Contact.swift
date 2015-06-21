@@ -1,6 +1,6 @@
 import Foundation
 
-public class Contact: NSObject, NSCoding, Equatable {
+public class Contact: NSObject, NSCoding, Equatable, Hashable {
     
     public let id: Int32
     public let firstName: String?

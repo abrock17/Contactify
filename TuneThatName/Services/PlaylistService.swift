@@ -18,9 +18,7 @@ public class PlaylistService {
     }
     
     public func createPlaylistWithPreferences(playlistPreferences: PlaylistPreferences, callback: PlaylistResult -> Void) {
-        contactService.retrieveAllContacts() {
-            contactListResult in
-            
+        func handleContactListResult(contactListResult: ContactService.ContactListResult) {
             switch (contactListResult) {
             case .Success(let contactList):
                 if contactList.isEmpty {
@@ -31,6 +29,12 @@ public class PlaylistService {
             case .Failure(let error):
                 callback(.Failure(error))
             }
+        }
+        
+        if playlistPreferences.filterContacts {
+            contactService.retrieveFilteredContacts(handleContactListResult)
+        } else {
+            contactService.retrieveAllContacts(handleContactListResult)
         }
     }
     

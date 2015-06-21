@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ldX-ZI-ufm">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ldX-ZI-ufm">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -143,9 +143,16 @@
                             <outlet property="delegate" destination="e4t-vv-Y0x" id="AZG-fq-9mr"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Select Names" id="XQ0-uD-Eij"/>
+                    <navigationItem key="navigationItem" title="Select Names" id="XQ0-uD-Eij">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="1ic-nb-QO4">
+                            <connections>
+                                <segue destination="v52-ur-g2E" kind="unwind" identifier="UnwindToCreatePlaylistFromNameSelectionSegue" unwindAction="unwindToCreatePlaylist:" id="7Sg-x6-dPk"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Tu-oG-5Gf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="v52-ur-g2E" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1821" y="-397"/>
         </scene>
@@ -206,7 +213,7 @@
                     <navigationItem key="navigationItem" title="Playlist" id="s2o-ae-yiy">
                         <barButtonItem key="leftBarButtonItem" title="New Playlist" id="TJd-yq-C39">
                             <connections>
-                                <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistSegue" unwindAction="unwindToCreatePlaylist:" id="tZw-B4-PxU"/>
+                                <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistFromPlaylistTableSegue" unwindAction="unwindToCreatePlaylist:" id="tZw-B4-PxU"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
