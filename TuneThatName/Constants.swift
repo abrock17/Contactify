@@ -14,4 +14,8 @@ public struct Constants {
         public static let PlaylistGeneralErrorCode = 20
         public static let PlaylistGeneralErrorMessage = "Unable to build your playlist."
     }
+    
+    public struct StorageKeys {
+        public static let filteredContacts = "TuneThatName.contacts.filtered"
+    }
 }

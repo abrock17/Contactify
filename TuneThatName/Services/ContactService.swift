@@ -8,10 +8,13 @@ public class ContactService {
         case Failure(NSError)
     }
     
-    let addressBook: AddressBookWrapper!
+    let addressBook: AddressBookWrapper
+    let userDefaults: NSUserDefaults
     
-    public init(addressBook: AddressBookWrapper = AddressBookWrapper()) {
+    public init(addressBook: AddressBookWrapper = AddressBookWrapper(),
+        userDefaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()) {
         self.addressBook = addressBook
+        self.userDefaults = userDefaults
     }
     
     public func retrieveAllContacts(callback: ContactListResult -> Void) {
@@ -64,6 +67,35 @@ public class ContactService {
             domain: Constants.Error.Domain,
             code: Constants.Error.AddressBookNoAccessCode,
             userInfo: [NSLocalizedDescriptionKey: Constants.Error.AddressBookNoAccessMessage])
+    }
+    
+    public func retrieveFilteredContacts(callback: ContactListResult -> Void) {
+        var filteredContacts = [Contact]()
+        if let contactDataArray = userDefaults.arrayForKey(Constants.StorageKeys.filteredContacts) as? [NSData] {
+            retrieveAllContacts() {
+                contactListResult in
+                
+                switch contactListResult {
+                case .Success(let contacts):
+                    let archivedFilteredContacts = contactDataArray.map({ NSKeyedUnarchiver.unarchiveObjectWithData($0) as! Contact })
+                    for filteredContact in archivedFilteredContacts {
+                        let matchingContacts = contacts.filter({ $0 == filteredContact })
+                        filteredContacts += matchingContacts
+                    }
+                    callback(.Success(filteredContacts))
+                case .Failure(let error):
+                    println("Error retrieving all contacts for filtering : \(filteredContacts)")
+                    callback(.Failure(error))
+                }
+            }
+        } else {
+            callback(.Success(filteredContacts))
+        }
+    }
+    
+    public func saveFilteredContacts(contacts: [Contact]) {
+        let contactDataArray = contacts.map({ NSKeyedArchiver.archivedDataWithRootObject($0) })
+        userDefaults.setObject(contactDataArray, forKey: Constants.StorageKeys.filteredContacts)
     }
 }
 

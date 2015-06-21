@@ -21,27 +21,52 @@ class ContactServiceSpec: QuickSpec {
     override func spec() {
         describe("The Contact Service") {
             var contactService: ContactService!
-            var contact: Contact!
+            var addressBookContact: Contact!
             
             beforeEach() {
                 self.callbackContactList = nil
                 self.callbackError = nil
                 contactService = ContactService()
-                contact = self.saveNewContact(firstName: "Casey", lastName: "Kasem")
+                addressBookContact = self.saveNewContact(firstName: "Casey", lastName: "Kasem")
             }
             
             afterEach() {
-                self.deleteContact(contact)
+                self.deleteContact(addressBookContact)
             }
             
             describe("retrieve all contacts") {
                 it("calls back with a list containing an expected contact") {
-                    
                     contactService.retrieveAllContacts(self.contactListCallback)
                     
-                    expect(self.callbackContactList).toEventually(contain(contact))
-                    expect(self.callbackError).to(beNil())
-                    expect(contact.fullName).to(equal("Casey Kasem"))
+                    let matchingRetrievedContacts = self.callbackContactList?.filter({ $0 == addressBookContact })
+                    expect(matchingRetrievedContacts?.count).to(equal(1))
+                    let retrievedContact = matchingRetrievedContacts?.first
+                    expect(retrievedContact?.id).to(equal(addressBookContact.id))
+                    expect(retrievedContact?.firstName).to(equal(addressBookContact.firstName))
+                    expect(retrievedContact?.lastName).to(equal(addressBookContact.lastName))
+                    expect(retrievedContact?.fullName).to(equal(addressBookContact.fullName))
+                }
+            }
+            
+            describe("retrieve filtered contacts") {
+                fcontext("when a contact is saved as a filtered contact") {
+                    var filteredContact: Contact!
+                    beforeEach() {
+                        filteredContact = Contact(id: addressBookContact.id, firstName: addressBookContact.firstName, lastName: "Jones")
+                        contactService.saveFilteredContacts([filteredContact])
+                    }
+                    
+                    it("calls back with the corresponding contact from the address book") {
+                        contactService.retrieveFilteredContacts(self.contactListCallback)
+
+                        let matchingRetrievedContacts = self.callbackContactList?.filter({ $0 == addressBookContact })
+                        expect(matchingRetrievedContacts?.count).to(equal(1))
+                        let retrievedContact = matchingRetrievedContacts?.first
+                        expect(retrievedContact?.id).to(equal(addressBookContact.id))
+                        expect(retrievedContact?.firstName).to(equal(addressBookContact.firstName))
+                        expect(retrievedContact?.lastName).to(equal(addressBookContact.lastName))
+                        expect(retrievedContact?.fullName).to(equal(addressBookContact.fullName))
+                    }
                 }
             }
         }

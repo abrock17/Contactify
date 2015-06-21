@@ -24,12 +24,14 @@ class ContactServiceSpec: QuickSpec {
         describe("The Contact Service") {
             var contactService: ContactService!
             var mockAddressBook: MockAddressBookWrapper!
+            var mockUserDefaults: MockUserDefaults!
             
             beforeEach() {
                 self.callbackContactList = nil
                 self.callbackError = nil
                 mockAddressBook = MockAddressBookWrapper()
-                contactService = ContactService(addressBook: mockAddressBook)
+                mockUserDefaults = MockUserDefaults()
+                contactService = ContactService(addressBook: mockAddressBook, userDefaults: mockUserDefaults)
             }
             
             describe("retrieve all contacts") {
@@ -116,6 +118,63 @@ class ContactServiceSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("retrieve filtered contacts") {
+                context("when there are no filtered contacts") {
+                    it("calls back with an empty list") {
+                        mockUserDefaults.mocker.prepareForCallTo(MockUserDefaults.Method.arrayForKey, returnValue: nil)
+                        
+                        contactService.retrieveFilteredContacts(self.contactListCallback)
+                        
+                        expect(self.callbackContactList).toEventually(equal([]))
+                        expect(self.callbackError).to(beNil())
+                    }
+                }
+            
+                context("when there are filtered contacts") {
+                    let addressBookContactList = [Contact(id: 1, firstName: "billy", lastName: "johnson", fullName: "billy johnson"), Contact(id: 2, firstName: "johnny", lastName: "billson", fullName: "johnny billson")]
+                    let filteredContact = Contact(id: 98765, firstName: addressBookContactList.last?.firstName, lastName: addressBookContactList.last?.lastName)
+                    let filteredContactDataList = [NSKeyedArchiver.archivedDataWithRootObject(filteredContact)]
+
+                    beforeEach() {
+                        mockUserDefaults.mocker.prepareForCallTo(MockUserDefaults.Method.arrayForKey, returnValue: filteredContactDataList)
+                    }
+                    
+                    context("and access to the address book is denied") {
+                        it("calls back with the no access error") {
+                            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.Denied)
+                            
+                            contactService.retrieveFilteredContacts(self.contactListCallback)
+                            
+                            expect(self.callbackError).toEventually(equal(self.expectedNoAccessError))
+                            expect(self.callbackContactList).to(beNil())
+                        }
+                    }
+                    
+                    context("and address book contact retrieval is successful") {
+                        beforeEach() {
+                            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.Authorized)
+                            
+                            self.prepareMockAddressBook(mockAddressBook, withExpectedContactList: addressBookContactList)
+                        }
+                        
+                        it("calls back with the same contact from the address book") {
+                            contactService.retrieveFilteredContacts(self.contactListCallback)
+                            
+                            expect(self.callbackContactList?.count).toEventually(equal(1))
+                            expect(self.callbackContactList?.first?.id)
+                                .to(equal(addressBookContactList.last?.id))
+                            expect(self.callbackContactList?.first?.firstName)
+                                .to(equal(addressBookContactList.last?.firstName))
+                            expect(self.callbackContactList?.first?.lastName)
+                                .to(equal(addressBookContactList.last?.lastName))
+                            expect(self.callbackContactList?.first?.fullName)
+                                .to(equal(addressBookContactList.last?.fullName))
+                            expect(self.callbackError).to(beNil())
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -198,5 +257,18 @@ class MockAddressBookWrapper: AddressBookWrapper {
     
     override func RecordCopyCompositeName(record: ABRecord!) -> Unmanaged<CFString> {
         return mocker.mockCallTo(Method.RecordCopyCompositeName) as! Unmanaged<CFString>!
+    }
+}
+
+class MockUserDefaults: NSUserDefaults {
+    
+    struct Method {
+        static let arrayForKey = "arrayForKey"
+    }
+    
+    let mocker = Mocker()
+    
+    override func arrayForKey(defaultName: String) -> [AnyObject]? {
+        return mocker.mockCallTo(Method.arrayForKey, parameters: defaultName) as! [NSData]?
     }
 }

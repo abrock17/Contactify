@@ -14,6 +14,16 @@ public class NameSelectionTableController: UITableViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+        populateContacts()
+
+        // Uncomment the following line to preserve selection between presentations
+        // self.clearsSelectionOnViewWillAppear = false
+
+        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+    }
+    
+    func populateContacts() {
         contactService.retrieveAllContacts() {
             contactListResult in
             
@@ -24,12 +34,6 @@ public class NameSelectionTableController: UITableViewController {
                 println("Error retrieving contacts: \(error)")
             }
         }
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
     func buildContactSectionMap(contacts: [Contact]) {
