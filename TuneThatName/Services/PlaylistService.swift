@@ -39,7 +39,6 @@ public class PlaylistService {
     }
     
     func createPlaylistForContactList(contactList: [Contact], playlistPreferences: PlaylistPreferences, callback: PlaylistResult -> Void) {
-        let defaultName = "Tune That Name"
         let numberOfSongs = playlistPreferences.numberOfSongs
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).isEmpty})
         let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: numberOfSongs, numberOfContacts: searchableContacts.count)
@@ -68,7 +67,7 @@ public class PlaylistService {
                         
                         if contactSongsResultMap.count == numberOfSongs {
                             calledBack = true
-                            callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
+                            callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, numberOfSongs: numberOfSongs)))
                         }
                     case .Failure(let error):
                         searchErrorCount++
@@ -87,13 +86,13 @@ public class PlaylistService {
                     searchCallbackCount++
                     if !calledBack && searchCallbackCount == searchableContacts.count {
                         calledBack = true
-                        callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
+                        callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, numberOfSongs: numberOfSongs)))
                     }
                 }
             } else if !calledBack {
                 calledBack = true
                 if !contactSongsResultMap.isEmpty {
-                callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, withName: defaultName, numberOfSongs: numberOfSongs)))
+                callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, numberOfSongs: numberOfSongs)))
                 } else {
                     callback(.Failure(self.generalError()))
                 }
@@ -117,7 +116,7 @@ public class PlaylistService {
         return searchNumber
     }
     
-    func buildPlaylistFromContactSongsResultMap(contactSongsResultMap: [Contact: [Song]], withName name: String, numberOfSongs: Int) -> Playlist {
+    func buildPlaylistFromContactSongsResultMap(contactSongsResultMap: [Contact: [Song]], numberOfSongs: Int) -> Playlist {
         var playlistSongs = [Song]()
         var exhaustedContacts = [Contact]()
         
@@ -142,7 +141,7 @@ public class PlaylistService {
             }
         }
     
-        return Playlist(name: name, uri: nil, songs: playlistSongs)
+        return Playlist(name: nil, uri: nil, songs: playlistSongs)
     }
     
     func generalError() -> NSError {

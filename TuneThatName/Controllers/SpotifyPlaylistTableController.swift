@@ -206,27 +206,64 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
     }
     
+    func promptForPlaylistName() {
+        let playlistNamePromptController = UIAlertController(title: "Name Your Playlist", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
+        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) {
+            alertAction in
+            
+            self.playlist.name = (playlistNamePromptController.textFields?.first as! UITextField).text
+            self.savePlaylist()
+        }
+        okAction.enabled = false
+        playlistNamePromptController.addTextFieldWithConfigurationHandler() {
+            textField in
+            
+            textField.placeholder = "Playlist Name"
+            textField.addTarget(self, action: "playlistNameTextFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
+        }
+        
+        playlistNamePromptController.addAction(cancelAction)
+        playlistNamePromptController.addAction(okAction)
+        
+        presentViewController(playlistNamePromptController, animated: true, completion: nil)
+    }
+    
+    func playlistNameTextFieldDidChange(sender: UITextField) {
+        let presentedViewController = self.presentedViewController as? UIAlertController
+        if let playlistNamePromptController = presentedViewController,
+            let okAction = playlistNamePromptController.actions.last as? UIAlertAction,
+            let playlistNameTextField = playlistNamePromptController.textFields?.first as? UITextField {
+            okAction.enabled = !playlistNameTextField.text.isEmpty
+        }
+    }
+    
     func savePlaylist() {
-        updateSaveButtonForPlaylistSaveInProgress()
-        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-        let session = spotifyAuth.session
-        println("access token: \(session?.accessToken)")
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            self.spotifyService.savePlaylist(self.playlist, session: session) {
-                playlistResult in
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    switch (playlistResult) {
-                    case .Success(let playlist):
-                        self.playlist = playlist
-                        self.updateSaveButtonAfterPlaylistSaved()
-                    case .Failure(let error):
-                        println("Error saving playlist: \(error)")
-                        ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andError: error, onController: self)
+        if playlist.name != nil {
+            updateSaveButtonForPlaylistSaveInProgress()
+            ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
+            let session = spotifyAuth.session
+            println("access token: \(session?.accessToken)")
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                self.spotifyService.savePlaylist(self.playlist, session: session) {
+                    playlistResult in
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        switch (playlistResult) {
+                        case .Success(let playlist):
+                            self.playlist = playlist
+                            self.updateSaveButtonAfterPlaylistSaved()
+                        case .Failure(let error):
+                            println("Error saving playlist: \(error)")
+                            ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andError: error, onController: self)
+                            self.updateSaveButtonForUnsavedPlaylist()
+                        }
+                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                     }
-                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                 }
             }
+        } else {
+            promptForPlaylistName()
         }
     }
     
