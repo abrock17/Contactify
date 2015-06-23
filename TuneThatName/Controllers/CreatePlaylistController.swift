@@ -14,6 +14,8 @@ public class CreatePlaylistController: UIViewController {
 
     @IBOutlet public weak var numberOfSongsSlider: UISlider!
     @IBOutlet public weak var numberOfSongsLabel: UILabel!
+    @IBOutlet public weak var incrementNumberOfSongsButton: UIButton!
+    @IBOutlet public weak var decrementNumberOfSongsButton: UIButton!
     @IBOutlet public weak var filterContactsSwitch: UISwitch!
     @IBOutlet public weak var selectNamesButton: UIButton!
     @IBOutlet public weak var favorPopularSwitch: UISwitch!
@@ -22,16 +24,13 @@ public class CreatePlaylistController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         updateForPlaylistPreferences()
-
-        // Do any additional setup after loading the view.
     }
     
     func updateForPlaylistPreferences() {
         if playlistPreferences == nil {
             playlistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true))
         }
-        numberOfSongsSlider.value = (Float(playlistPreferences.numberOfSongs - minNumberOfSongs) / Float(maxNumberOfSongs - minNumberOfSongs))
-        numberOfSongsLabel.text = String(playlistPreferences.numberOfSongs)
+        numberOfSongsChanged()
         selectNamesButton.enabled = playlistPreferences.filterContacts
         filterContactsSwitch.on = playlistPreferences.filterContacts
         favorPopularSwitch.on = playlistPreferences.songPreferences.favorPopular
@@ -48,6 +47,25 @@ public class CreatePlaylistController: UIViewController {
         if let spotifyPlaylistTableController = segue.destinationViewController as? SpotifyPlaylistTableController {
             spotifyPlaylistTableController.playlist = self.playlist
         }
+    }
+    
+    @IBAction func incrementNumberOfSongsPressed(sender: UIButton) {
+        if playlistPreferences.numberOfSongs < maxNumberOfSongs {
+            playlistPreferences.numberOfSongs++
+            numberOfSongsChanged()
+        }
+    }
+    
+    @IBAction func decrementNumberOfSongsPressed(sender: UIButton) {
+        if playlistPreferences.numberOfSongs > minNumberOfSongs {
+            playlistPreferences.numberOfSongs--
+            numberOfSongsChanged()
+        }
+    }
+    
+    func numberOfSongsChanged() {
+        numberOfSongsSlider.value = (Float(playlistPreferences.numberOfSongs - minNumberOfSongs) / Float(maxNumberOfSongs - minNumberOfSongs))
+        numberOfSongsLabel.text = String(playlistPreferences.numberOfSongs)
     }
     
     @IBAction public func numberOfSongsValueChanged(sender: UISlider) {

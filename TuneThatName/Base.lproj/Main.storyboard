@@ -17,14 +17,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Number of Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="y5E-JQ-5i5">
-                                <rect key="frame" x="16" y="84" width="250" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Number of Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="y5E-JQ-5i5">
+                                <rect key="frame" x="16" y="84" width="135" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="4jn-1I-rWE">
-                                <rect key="frame" x="14" y="113" width="572" height="31"/>
+                            <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="4jn-1I-rWE">
+                                <rect key="frame" x="14" y="112" width="572" height="31"/>
                                 <connections>
                                     <action selector="numberOfSongsValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="xwU-KV-PMc"/>
                                 </connections>
@@ -43,16 +43,13 @@
                                     <action selector="createPlaylistPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y5J-wG-RA3"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="000" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hbq-o6-8bp">
-                                <rect key="frame" x="552" y="84" width="32" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="32" id="8MV-E9-fuc"/>
-                                </constraints>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hbq-o6-8bp">
+                                <rect key="frame" x="517" y="84" width="29" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lEK-sa-zpd">
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lEK-sa-zpd">
                                 <rect key="frame" x="16" y="159" width="113" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Select Names">
@@ -62,46 +59,68 @@
                                     <action selector="selectNamesPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eoO-rg-sgl"/>
                                 </connections>
                             </button>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="P5d-Pz-Tpy">
-                                <rect key="frame" x="535" y="160" width="51" height="31"/>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="P5d-Pz-Tpy">
+                                <rect key="frame" x="535" y="159" width="51" height="31"/>
                                 <connections>
                                     <action selector="filterContactsStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="pl9-wS-hai"/>
                                 </connections>
                             </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Favor Popular Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wIA-kH-EhL">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Favor Popular Songs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wIA-kH-EhL">
                                 <rect key="frame" x="16" y="205" width="206" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jgY-qx-zeV">
-                                <rect key="frame" x="535" y="200" width="51" height="31"/>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jgY-qx-zeV">
+                                <rect key="frame" x="535" y="199" width="51" height="31"/>
                                 <connections>
                                     <action selector="favorPopularStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Ggu-x0-TAX"/>
                                 </connections>
                             </switch>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3uB-hS-GmW">
+                                <rect key="frame" x="554" y="76" width="30" height="35"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <state key="normal" title="&gt;">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="incrementNumberOfSongsPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3gI-Gc-VOL"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JK9-5F-GeH">
+                                <rect key="frame" x="479" y="76" width="30" height="35"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <state key="normal" title="&lt;">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="decrementNumberOfSongsPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5qP-Cv-4bI"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="y5E-JQ-5i5" firstAttribute="centerY" secondItem="hbq-o6-8bp" secondAttribute="centerY" id="0cX-XE-cqY"/>
                             <constraint firstItem="y5E-JQ-5i5" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2eT-ED-cqu"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="HeA-qY-xM1" secondAttribute="bottom" constant="20" id="3LM-zo-t1k"/>
-                            <constraint firstItem="4jn-1I-rWE" firstAttribute="top" secondItem="hbq-o6-8bp" secondAttribute="bottom" constant="8" id="3c0-BM-Idj"/>
+                            <constraint firstItem="3uB-hS-GmW" firstAttribute="baseline" secondItem="y5E-JQ-5i5" secondAttribute="baseline" id="4HW-Ll-DgO"/>
                             <constraint firstItem="y5E-JQ-5i5" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="4Qm-xY-aud"/>
                             <constraint firstItem="HeA-qY-xM1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="5Li-Sw-Ih5"/>
-                            <constraint firstItem="hbq-o6-8bp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="HL4-KR-bGu"/>
+                            <constraint firstItem="3uB-hS-GmW" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="7do-ck-qiT"/>
                             <constraint firstItem="lEK-sa-zpd" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="MRA-kN-C4e"/>
                             <constraint firstItem="4jn-1I-rWE" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="RdP-eh-yek"/>
                             <constraint firstItem="4jn-1I-rWE" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Sk1-7l-6eM"/>
                             <constraint firstItem="jgY-qx-zeV" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Wc0-JG-eqK"/>
+                            <constraint firstItem="hbq-o6-8bp" firstAttribute="centerY" secondItem="y5E-JQ-5i5" secondAttribute="centerY" id="c2i-aQ-eiK"/>
                             <constraint firstItem="jgY-qx-zeV" firstAttribute="centerY" secondItem="wIA-kH-EhL" secondAttribute="centerY" id="fbt-QZ-Mrj"/>
+                            <constraint firstItem="3uB-hS-GmW" firstAttribute="leading" secondItem="hbq-o6-8bp" secondAttribute="trailing" constant="8" id="hLA-YR-yn3"/>
                             <constraint firstItem="HeA-qY-xM1" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="hr8-oz-PrJ"/>
                             <constraint firstItem="wIA-kH-EhL" firstAttribute="top" secondItem="lEK-sa-zpd" secondAttribute="bottom" constant="13" id="lfm-4G-PGQ"/>
                             <constraint firstItem="P5d-Pz-Tpy" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="nSA-kh-Md6"/>
+                            <constraint firstItem="y5E-JQ-5i5" firstAttribute="baseline" secondItem="JK9-5F-GeH" secondAttribute="baseline" id="rkh-TF-3EU"/>
                             <constraint firstItem="wIA-kH-EhL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="usE-sV-1Z1"/>
                             <constraint firstItem="P5d-Pz-Tpy" firstAttribute="centerY" secondItem="lEK-sa-zpd" secondAttribute="centerY" id="v7J-HD-g4Y"/>
                             <constraint firstItem="lEK-sa-zpd" firstAttribute="top" secondItem="4jn-1I-rWE" secondAttribute="bottom" constant="16" id="wFO-WE-Fky"/>
-                            <constraint firstItem="hbq-o6-8bp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="yz2-tu-ePb"/>
+                            <constraint firstItem="hbq-o6-8bp" firstAttribute="leading" secondItem="JK9-5F-GeH" secondAttribute="trailing" constant="8" id="x1s-f8-S4b"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="New Playlist" id="FFN-9L-8gU">
@@ -109,8 +128,10 @@
                     </navigationItem>
                     <connections>
                         <outlet property="createPlaylistButton" destination="HeA-qY-xM1" id="A3O-oK-qk0"/>
+                        <outlet property="decrementNumberOfSongsButton" destination="JK9-5F-GeH" id="iBD-qO-tFy"/>
                         <outlet property="favorPopularSwitch" destination="jgY-qx-zeV" id="lkC-fU-SvR"/>
                         <outlet property="filterContactsSwitch" destination="P5d-Pz-Tpy" id="IDy-SH-4WN"/>
+                        <outlet property="incrementNumberOfSongsButton" destination="3uB-hS-GmW" id="ysI-Q5-Jei"/>
                         <outlet property="numberOfSongsLabel" destination="hbq-o6-8bp" id="Y8Q-HR-IFS"/>
                         <outlet property="numberOfSongsSlider" destination="4jn-1I-rWE" id="PsK-35-J9n"/>
                         <outlet property="selectNamesButton" destination="lEK-sa-zpd" id="Upz-Rd-1NW"/>

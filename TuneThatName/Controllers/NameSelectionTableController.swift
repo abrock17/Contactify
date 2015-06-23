@@ -11,9 +11,13 @@ public class NameSelectionTableController: UITableViewController {
     var filteredContacts = Set<Contact>()
 
     public var contactService = ContactService()
+    
+    public var selectAllButton: UIBarButtonItem!
+    public var selectNoneButton: UIBarButtonItem!
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+        addMassSelectionButtons()
         populateContacts()
 
         // Uncomment the following line to preserve selection between presentations
@@ -47,11 +51,7 @@ public class NameSelectionTableController: UITableViewController {
         }
         
         if filteredContacts.isEmpty {
-            var allContacts = [Contact]()
-            for contacts in contactSectionMap.values {
-                allContacts += contacts
-            }
-            filteredContacts = Set<Contact>(allContacts)
+            selectAllPressed(selectAllButton)
         }
     }
     
@@ -79,6 +79,12 @@ public class NameSelectionTableController: UITableViewController {
             contactSectionMap[key] = [Contact]()
         }
         contactSectionMap[key]?.append(contact)
+    }
+
+    func addMassSelectionButtons() {
+        selectAllButton = UIBarButtonItem(title: "All", style: UIBarButtonItemStyle.Plain, target: self, action: "selectAllPressed:")
+        selectNoneButton = UIBarButtonItem(title: "None", style: UIBarButtonItemStyle.Plain, target: self, action: "selectNonePressed:")
+        navigationItem.rightBarButtonItems = [selectNoneButton, selectAllButton]
     }
 
     override public func didReceiveMemoryWarning() {
@@ -191,6 +197,18 @@ public class NameSelectionTableController: UITableViewController {
         // Get the new view controller using [segue destinationViewController].
         // Pass the selected object to the new view controller.
     }
-
-
+    
+    func selectAllPressed(sender: UIBarButtonItem) {
+        var allContacts = [Contact]()
+        for contacts in contactSectionMap.values {
+            allContacts += contacts
+        }
+        filteredContacts = Set<Contact>(allContacts)
+        tableView.reloadData()
+    }
+    
+    func selectNonePressed(sender: UIBarButtonItem) {
+        filteredContacts.removeAll(keepCapacity: false)
+        tableView.reloadData()
+    }
 }

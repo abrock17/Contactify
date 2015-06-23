@@ -66,6 +66,35 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 }
             }
             
+            describe("increment number of songs pressed") {
+                beforeEach() {
+                    createPlaylistController.incrementNumberOfSongsButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                }
+                
+                it("updates the number of songs label accordingly") {
+                    expect(createPlaylistController.numberOfSongsLabel.text).to(equal("11"))
+                }
+                
+                it("updates the number of songs slider accordingly") {
+                    expect(createPlaylistController.numberOfSongsSlider.value).to(beCloseTo(0.1010, within: 0.0001))
+                }
+            }
+            
+            describe("decrement number of songs pressed") {
+                beforeEach() {
+                    createPlaylistController.decrementNumberOfSongsButton
+                        .sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                }
+                
+                it("updates the number of songs label accordingly") {
+                    expect(createPlaylistController.numberOfSongsLabel.text).to(equal("9"))
+                }
+                
+                it("updates the number of songs slider accordingly") {
+                    expect(createPlaylistController.numberOfSongsSlider.value).to(beCloseTo(0.0808, within: 0.0001))
+                }
+            }
+            
             describe("favor popular songs switch state change") {
                 context("when state changes") {
                     it("updates the favor popular flag") {
