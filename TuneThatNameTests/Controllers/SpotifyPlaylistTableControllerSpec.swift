@@ -85,7 +85,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     it("tries to renew the session") {
                         self.pressSaveButton(spotifyPlaylistTableController)
 
-                        expect(spotifyAuth.mocker.getNthCallTo(MockSPTAuth.Method.renewSession, n: 0)?.first as? SPTSession).to(equal(spotifyAuth.session))
+                        expect(spotifyAuth.mocker.getNthCallTo(MockSPTAuth.Method.renewSession, n: 0)?.first as? SPTSession).toEventually(equal(spotifyAuth.session))
                     }
                     
                     context("and the session renewal fails (no session in callback)") {
@@ -94,7 +94,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
 
                             self.pressSaveButton(spotifyPlaylistTableController)
                             
-                            expect(spotifyPlaylistTableController.presentedViewController).toNot(beNil())
+                            expect(spotifyPlaylistTableController.presentedViewController).toEventuallyNot(beNil())
                         }
                     }
 
@@ -278,7 +278,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     it("requests the current spotify track") {
                         spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                         
-                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession, n: 0)?.first as? SPTSession).to(equal(spotifyAuth.session))
+                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession, n: 0)?.first as? SPTSession).toEventually(equal(spotifyAuth.session))
                     }
                     
                     context("and current spotify track calls back successfully") {
@@ -328,7 +328,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     it("tries to renew the session") {
                         self.pressPlayPauseButton(spotifyPlaylistTableController)
                         
-                        expect(spotifyAuth.mocker.getNthCallTo(MockSPTAuth.Method.renewSession, n: 0)?.first as? SPTSession).to(equal(spotifyAuth.session))
+                        expect(spotifyAuth.mocker.getNthCallTo(MockSPTAuth.Method.renewSession, n: 0)?.first as? SPTSession).toEventually(equal(spotifyAuth.session))
                     }
                     
                     context("and the session renewal fails (no session in callback") {
@@ -372,7 +372,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             self.pressPlayPauseButton(spotifyPlaylistTableController)
                             
                             expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
-                                MockSpotifyAudioFacade.Method.togglePlay)).to(equal(1))
+                                MockSpotifyAudioFacade.Method.togglePlay)).toEventually(equal(1))
                         }
                         
                         context("and upon failing to toggle play") {
@@ -538,9 +538,8 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     }
     
     func assertSongViewDisplayedOnController(spotifyPlaylistTableController: SpotifyPlaylistTableController, forSpotifyTrack spotifyTrack: SpotifyTrack, andImage image: UIImage) {
-        let view = spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)
-        expect(view).toEventuallyNot(beNil())
-        if let songView = view as? SongView {
+        expect(spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)).toEventuallyNot(beNil())
+        if let songView = spotifyPlaylistTableController.view.viewWithTag(self.songViewTag) as? SongView {
             expect(songView.title.text).to(equal(spotifyTrack.name))
             expect(songView.artist.text).to(equal(spotifyTrack.artistNames.first))
             expect(songView.album.text).to(equal(spotifyTrack.albumName))

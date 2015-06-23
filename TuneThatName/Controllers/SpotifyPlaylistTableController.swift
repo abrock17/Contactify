@@ -150,18 +150,22 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
 
         if spotifyAuth.hasTokenRefreshService {
             ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-            spotifyAuth.renewSession(spotifyAuth.session) {
-                error, session in
-                
-                if error != nil {
-                    println("Error renewing session: \(error)")
-                }
-                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
-                if session != nil {
-                    self.spotifyAuth.session = session
-                    self.doSpotifySessionAction()
-                } else {
-                    self.openLogin()
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                self.spotifyAuth.renewSession(self.spotifyAuth.session) {
+                    error, session in
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if error != nil {
+                            println("Error renewing session: \(error)")
+                        }
+                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                        if session != nil {
+                            self.spotifyAuth.session = session
+                            self.doSpotifySessionAction()
+                        } else {
+                            self.openLogin()
+                        }
+                    }
                 }
             }
         } else {
@@ -207,19 +211,21 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         let session = spotifyAuth.session
         println("access token: \(session?.accessToken)")
-        dispatch_async(dispatch_get_main_queue()) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             self.spotifyService.savePlaylist(self.playlist, session: session) {
                 playlistResult in
                 
-                switch (playlistResult) {
-                case .Success(let playlist):
-                    self.playlist = playlist
-                    self.updateSaveButtonAfterPlaylistSaved()
-                case .Failure(let error):
-                    println("Error saving playlist: \(error)")
-                    ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andError: error, onController: self)
+                dispatch_async(dispatch_get_main_queue()) {
+                    switch (playlistResult) {
+                    case .Success(let playlist):
+                        self.playlist = playlist
+                        self.updateSaveButtonAfterPlaylistSaved()
+                    case .Failure(let error):
+                        println("Error saving playlist: \(error)")
+                        ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andError: error, onController: self)
+                    }
+                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                 }
-                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
         }
     }
@@ -256,15 +262,20 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         if sessionIsValid() {
             ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
             
-            spotifyAudioFacade.playPlaylist(self.playlist, fromIndex: index, inSession: spotifyAuth.session) {
-                error in
-                if error != nil {
-                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
-                } else {
-                    self.played = true
-                    self.displaySongView()
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                self.spotifyAudioFacade.playPlaylist(self.playlist, fromIndex: index, inSession: self.spotifyAuth.session) {
+                    error in
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if error != nil {
+                            ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
+                        } else {
+                            self.played = true
+                            self.displaySongView()
+                        }
+                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                    }
                 }
-                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
             }
         } else {
             refreshSession(SpotifySessionAction.PlayPlaylist(index: index))
