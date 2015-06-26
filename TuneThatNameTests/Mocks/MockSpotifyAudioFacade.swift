@@ -6,6 +6,7 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
     
     struct Method {
         static let playPlaylist = "playPlaylist"
+        static let updatePlaylist = "updatePlaylist"
         static let togglePlay = "togglePlay"
         static let stopPlay = "stopPlay"
         static let getTrackWithURI = "getTrackWithURI"
@@ -17,6 +18,11 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
         callback(getMockedError(Method.playPlaylist))
     }
     
+    func updatePlaylist(playlist: Playlist, withIndex index: Int32, callback: SPTErrorableOperationCallback) {
+        mocker.recordCall(Method.updatePlaylist, parameters: playlist, index)
+        callback(getMockedError(Method.updatePlaylist))
+    }
+
     func togglePlay(callback: SPTErrorableOperationCallback) {
         mocker.recordCall(Method.togglePlay)
         callback(getMockedError(Method.togglePlay))

@@ -34,10 +34,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
         played = false
-        
-         self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
         updateSaveButtonForUnsavedPlaylist()
     }
@@ -88,7 +87,33 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     override public func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         if !editing {
-            // update song playlist with spotify
+            // figure out what withIndex actually does!
+            spotifyAudioFacade.updatePlaylist(playlist, withIndex: 1) {
+                error in
+                
+                if error != nil {
+                    println("Error updating playlist: \(error)")
+                } else {
+                    println("updated")
+                }
+            }
+            
+            // this appears to be working - don't mess with it!
+            self.spotifyAudioFacade.getCurrentTrackInSession(self.spotifyAuth.session) {
+                spotifyTrackResult in
+                
+                switch spotifyTrackResult {
+                case .Success(let spotifyTrack):
+                    for (index, song) in enumerate(self.playlist.songs) {
+                        if song.uri == spotifyTrack.uri {
+                            self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.None)
+                            break
+                        }
+                    }
+                case .Failure(let error):
+                    println("Error getting track : \(error)")
+                }
+            }
         }
     }
     
