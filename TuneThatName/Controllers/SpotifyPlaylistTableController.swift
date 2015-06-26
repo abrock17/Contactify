@@ -37,8 +37,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         
         played = false
         
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+         self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
         updateSaveButtonForUnsavedPlaylist()
     }
@@ -86,6 +85,13 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         playFromIndex(indexPath.row)
     }
     
+    override public func setEditing(editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        if !editing {
+            // update song playlist with spotify
+        }
+    }
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -106,20 +112,15 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     */
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
+    override public func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
+        let song = playlist.songs.removeAtIndex(fromIndexPath.row)
+        playlist.songs.insert(song, atIndex: toIndexPath.row)
     }
-    */
 
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override public func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // Return NO if you do not want the item to be re-orderable.
         return true
     }
-    */
 
     // MARK: - Navigation
 

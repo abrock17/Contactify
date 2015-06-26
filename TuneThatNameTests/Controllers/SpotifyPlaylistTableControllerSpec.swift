@@ -510,6 +510,26 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
             }
             
+            describe("edit the table") {
+                describe("reorder songs") {
+                    context("when song position changes") {
+                        it("updates the table to reflect the change") {
+                            let firstIndexPath = NSIndexPath(forRow: 0, inSection: 0)
+                            let secondIndexPath = NSIndexPath(forRow: 1, inSection: 0)
+                            let firstCellTextPreEdit = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).textLabel?.text
+                            let secondCellTextPreEdit = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: secondIndexPath).textLabel?.text
+
+                            spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, moveRowAtIndexPath: firstIndexPath, toIndexPath: secondIndexPath)
+                            
+                            let firstCellTextPostEdit = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).textLabel?.text
+                            let secondCellTextPostEdit = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: secondIndexPath).textLabel?.text
+                            expect(firstCellTextPostEdit).to(equal(secondCellTextPreEdit))
+                            expect(firstCellTextPreEdit).to(equal(secondCellTextPostEdit))
+                        }
+                    }
+                }
+            }
+            
             describe("unwind to create playlist") {
                 it("stops play") {
                     spotifyPlaylistTableController.performSegueWithIdentifier("UnwindToCreatePlaylistFromPlaylistTableSegue", sender: nil)
