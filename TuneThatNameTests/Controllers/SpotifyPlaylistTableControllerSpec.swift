@@ -507,7 +507,6 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 it("displays the current name in the playlist name entry view") {
                     let textField = (spotifyPlaylistTableController.presentedViewController as? PlaylistNameEntryController)?.textFields?.first as? UITextField
                     expect(textField?.text).to(equal(playlist.name))
-                    
                 }
             }
             
