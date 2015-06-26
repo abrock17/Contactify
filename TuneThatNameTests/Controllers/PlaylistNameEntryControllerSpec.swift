@@ -33,9 +33,17 @@ class PlaylistNameEntryControllerSpec: QuickSpec {
             }
 
             context("when the name is populated") {
+                let playlistName = "i got a name"
+                beforeEach() {
+                    playlistNameEntryController = PlaylistNameEntryController(currentName: playlistName, completionHandler: self.playlistNameEntryCompletionHandler)
+                }
+                
+                it("the name is set in the text field") {
+                    let textField = playlistNameEntryController.textFields!.first as! UITextField
+                    expect(textField.text).to(equal(playlistName))
+                }
+                
                 it("the OK action is enabled") {
-                    playlistNameEntryController = PlaylistNameEntryController(currentName: "i got a name", completionHandler: self.playlistNameEntryCompletionHandler)
-                    
                     expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beTrue())
                 }
 

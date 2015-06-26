@@ -501,7 +501,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 it("presents the playlist name entry view") {
-                    expect(spotifyPlaylistTableController.presentedViewController).to(beAnInstanceOf(PlaylistNameEntryController))
+                    expect(spotifyPlaylistTableController.presentedViewController).toEventually(beAnInstanceOf(PlaylistNameEntryController))
                 }
                 
                 it("displays the current name in the playlist name entry view") {
