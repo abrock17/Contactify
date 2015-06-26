@@ -2,7 +2,7 @@ import Foundation
 
 public struct Playlist: Equatable, Printable {
     
-    public var name: String!
+    public var name: String?
     public var uri: NSURL?
     public var songs = [Song]()
     public var songURIs: [NSURL] {

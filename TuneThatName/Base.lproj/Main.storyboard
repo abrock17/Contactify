@@ -177,7 +177,7 @@
             </objects>
             <point key="canvasLocation" x="1821" y="-397"/>
         </scene>
-        <!--Playlist-->
+        <!--Spotify Playlist Table Controller-->
         <scene sceneID="vfc-kJ-NwV">
             <objects>
                 <tableViewController storyboardIdentifier="SpotifyPlaylistTableController" id="197-cV-9aq" customClass="SpotifyPlaylistTableController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
@@ -231,16 +231,29 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Playlist" id="s2o-ae-yiy">
-                        <barButtonItem key="leftBarButtonItem" title="New Playlist" id="TJd-yq-C39">
+                    <navigationItem key="navigationItem" id="s2o-ae-yiy">
+                        <nil key="title"/>
+                        <barButtonItem key="leftBarButtonItem" title="New" id="TJd-yq-C39">
                             <connections>
                                 <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistFromPlaylistTableSegue" unwindAction="unwindToCreatePlaylist:" id="tZw-B4-PxU"/>
                             </connections>
                         </barButtonItem>
+                        <button key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="kO6-zi-WbG">
+                            <rect key="frame" x="180" y="7" width="240" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <state key="normal" title="Playlist">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="playlistNamePressed:" destination="197-cV-9aq" eventType="touchUpInside" id="8KB-ND-mYW"/>
+                            </connections>
+                        </button>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
                         <outlet property="playPauseButton" destination="MEa-qh-7JS" id="Qjv-DG-DoC"/>
+                        <outlet property="playlistNameButton" destination="kO6-zi-WbG" id="qyd-dR-Etd"/>
                         <outlet property="saveButton" destination="kyd-NY-KvY" id="7Cy-NB-X9a"/>
                         <outlet property="songViewButton" destination="vZD-FT-x7g" id="dYO-ld-fQl"/>
                     </connections>

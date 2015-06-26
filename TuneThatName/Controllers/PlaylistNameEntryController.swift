@@ -1,19 +1,11 @@
 import UIKit
 
-public protocol PlaylistNamePromptCompletionDelegate {
-    
-    func completedSuccessfullyWithPlaylistName(playlistName: String)
-}
+public class PlaylistNameEntryController: UIAlertController {
 
-public class PlaylistNamePromptController: UIAlertController {
-
-    var completionDelegate: PlaylistNamePromptCompletionDelegate?
-    
-    public convenience init(completionDelegate: PlaylistNamePromptCompletionDelegate) {
+    public convenience init(currentName: String?, completionHandler: String -> Void) {
         self.init()
         self.init(title: "Name Your Playlist", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
-        self.completionDelegate = completionDelegate
-        addActionsAndTextField()
+        addTextFieldWithName(currentName, andActionsWithHandler: completionHandler)
     }
 
     override public func viewDidLoad() {
@@ -27,22 +19,25 @@ public class PlaylistNamePromptController: UIAlertController {
         // Dispose of any resources that can be recreated.
     }
     
-    func addActionsAndTextField() {
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
-        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) {
-            (alertAction) in
-            
-            self.completionDelegate?.completedSuccessfullyWithPlaylistName((self.textFields?.first as! UITextField).text)
-        }
-        okAction.enabled = false
+    func addTextFieldWithName(name: String?, andActionsWithHandler completionHandler: String -> Void) {
         addTextFieldWithConfigurationHandler() {
             textField in
             
+            textField.text = name
             textField.placeholder = "Playlist Name"
+            textField.clearButtonMode = UITextFieldViewMode.WhileEditing
             textField.addTarget(self, action: "playlistNameTextFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
         }
-        
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
         addAction(cancelAction)
+
+        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) {
+            alertAction in
+            
+            completionHandler((self.textFields?.first as! UITextField).text)
+        }
+        okAction.enabled = (name != nil)
         addAction(okAction)
     }
     

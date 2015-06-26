@@ -8,7 +8,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     
     override func spec() {
         describe("SpotifyPlaylistTableController") {
-            let playlist = Playlist(name: "name", uri: nil, songs:
+            let playlist = Playlist(name: "about to DROP", uri: nil, songs:
                 [Song(title: "Me And Bobby McGee", artistName: "Janis Joplin", uri: NSURL(string: "spotify:track:3RpndSyVypRVcN38z98MvU")!),
                     Song(title: "Bobby Brown Goes Down", artistName: "Frank Zappa", uri: NSURL(string: "spotify:album:4hBKoHOpEvQ6g4CQFsEAdU")!)])
             let spotifyTrack = SpotifyTrack(
@@ -47,6 +47,16 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
 
             describe("press the 'save to spotify' button") {
+                context("when the playlist does not have a name") {
+                    it("presents the playlist name entry view") {
+                        spotifyPlaylistTableController.playlist.name = nil
+
+                        self.pressSaveButton(spotifyPlaylistTableController)
+
+                        expect(spotifyPlaylistTableController.presentedViewController).to(beAnInstanceOf(PlaylistNameEntryController))
+                    }
+                }
+                
                 context("when there is no session and no token refresh service") {
                     let spotifyAuth = self.getMockSpotifyAuth()
                     spotifyAuth.tokenRefreshURL = nil
@@ -482,6 +492,22 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         expect(spotifyPlaylistTableController.view.viewWithTag(self.songViewTag))
                             .toEventually(beNil())
                     }
+                }
+            }
+            
+            describe("playlist name pressed") {
+                beforeEach() {
+                    spotifyPlaylistTableController.playlistNameButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                }
+                
+                it("presents the playlist name entry view") {
+                    expect(spotifyPlaylistTableController.presentedViewController).to(beAnInstanceOf(PlaylistNameEntryController))
+                }
+                
+                it("displays the current name in the playlist name entry view") {
+                    let textField = (spotifyPlaylistTableController.presentedViewController as? PlaylistNameEntryController)?.textFields?.first as? UITextField
+                    expect(textField?.text).to(equal(playlist.name))
+                    
                 }
             }
             

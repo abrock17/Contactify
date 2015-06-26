@@ -1,6 +1,6 @@
 import UIKit
 
-public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewDelegate, SPTAudioStreamingPlaybackDelegate, PlaylistNamePromptCompletionDelegate {
+public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewDelegate, SPTAudioStreamingPlaybackDelegate {
     
     public enum SpotifySessionAction {
         case PlayPlaylist(index: Int)
@@ -27,6 +27,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
 
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.tableView)
     
+    @IBOutlet public weak var playlistNameButton: UIButton!
     @IBOutlet public weak var saveButton: UIBarButtonItem!
     @IBOutlet public weak var playPauseButton: UIBarButtonItem!
     @IBOutlet public weak var songViewButton: UIBarButtonItem!
@@ -206,23 +207,23 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
     }
     
-    func promptForPlaylistName() {
-        let playlistNamePromptController = PlaylistNamePromptController(completionDelegate: self)
-        presentViewController(playlistNamePromptController, animated: true, completion: nil)
+    @IBAction func playlistNamePressed(sender: UIButton) {
+        presentPlaylistNameEntry(updatePlaylistName)
     }
     
-    public func completedSuccessfullyWithPlaylistName(playlistName: String) {
+    func presentPlaylistNameEntry(completionHandler: String -> Void) {
+        let playlistNameEntryController = PlaylistNameEntryController(currentName: playlist.name, completionHandler: completionHandler)
+        presentViewController(playlistNameEntryController, animated: true, completion: nil)
+    }
+    
+    func updatePlaylistName(playlistName: String) {
         playlist.name = playlistName
-        savePlaylist()
+        playlistNameButton.setTitle(playlist.name, forState: UIControlState.Normal)
     }
     
-    func playlistNameTextFieldDidChange(sender: UITextField) {
-        let presentedViewController = self.presentedViewController as? UIAlertController
-        if let playlistNamePromptController = presentedViewController,
-            let okAction = playlistNamePromptController.actions.last as? UIAlertAction,
-            let playlistNameTextField = playlistNamePromptController.textFields?.first as? UITextField {
-            okAction.enabled = !playlistNameTextField.text.isEmpty
-        }
+    func updatePlaylistNameAndSave(playlistName: String) {
+        updatePlaylistName(playlistName)
+        savePlaylist()
     }
     
     func savePlaylist() {
@@ -250,7 +251,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                 }
             }
         } else {
-            promptForPlaylistName()
+            presentPlaylistNameEntry(updatePlaylistNameAndSave)
         }
     }
     
