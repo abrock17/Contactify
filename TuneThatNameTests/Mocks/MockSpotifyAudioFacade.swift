@@ -18,7 +18,7 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
         callback(getMockedError(Method.playPlaylist))
     }
     
-    func updatePlaylist(playlist: Playlist, withIndex index: Int32, callback: SPTErrorableOperationCallback) {
+    func updatePlaylist(playlist: Playlist, withIndex index: Int, callback: SPTErrorableOperationCallback) {
         mocker.recordCall(Method.updatePlaylist, parameters: playlist, index)
         callback(getMockedError(Method.updatePlaylist))
     }

@@ -4,7 +4,7 @@ public protocol SpotifyAudioFacade {
     
     func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback)
     
-    func updatePlaylist(playlist: Playlist, withIndex index: Int32, callback: SPTErrorableOperationCallback)
+    func updatePlaylist(playlist: Playlist, withIndex index: Int, callback: SPTErrorableOperationCallback)
     
     func togglePlay(callback: SPTErrorableOperationCallback)
     
@@ -84,8 +84,8 @@ public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
         }
     }
     
-    public func updatePlaylist(playlist: Playlist, withIndex index: Int32, callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.replaceURIs(playlist.songURIs, withCurrentTrack: index, callback: callback)
+    public func updatePlaylist(playlist: Playlist, withIndex index: Int, callback: SPTErrorableOperationCallback) {
+        spotifyAudioController.replaceURIs(playlist.songURIs, withCurrentTrack: Int32(index), callback: callback)
     }
     
     public func togglePlay(callback: SPTErrorableOperationCallback) {

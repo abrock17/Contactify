@@ -83,6 +83,20 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                 }
             }
             
+            describe("update playlist") {
+                let index = 1
+
+                it("calls the audio streaming controller replacing the desired song URIs and index") {
+                    spotifyAudioFacade.updatePlaylist(self.playlist, withIndex: index, callback: self.errorCallback)
+                    
+                    expect(self.callbackErrors.isEmpty).toEventually(beFalse())
+                    let replaceURIsParameters = mockAudioStreamingController.mocker.getNthCallTo(MockSPTAudioStreamingController.Method.replaceURIsWithCurrentTrack, n: 0)!
+                    expect(replaceURIsParameters[0] as? [NSURL]).to(equal(self.playlist.songURIs))
+                    expect(replaceURIsParameters[1] as? Int32).to(equal(Int32(index)))
+                }
+                
+            }
+            
             describe("toggle play") {
                 it("calls back") {
                     spotifyAudioFacade.togglePlay(self.errorCallback)
@@ -152,6 +166,7 @@ class MockSPTAudioStreamingController: SPTAudioStreamingController {
     struct Method {
         static let loginWithSession = "loginWithSession"
         static let playURIsFromIndex = "playURIsFromIndex"
+        static let replaceURIsWithCurrentTrack = "replaceURIsWithCurrentTrack"
         static let setIsPlaying = "setIsPlaying"
         static let stop = "stop"
     }
@@ -164,6 +179,11 @@ class MockSPTAudioStreamingController: SPTAudioStreamingController {
     override func playURIs(uris: [AnyObject]!, fromIndex index: Int32, callback block: SPTErrorableOperationCallback!) {
         mocker.recordCall(Method.playURIsFromIndex, parameters: uris as! [NSURL], index)
         block(mocker.returnValueForCallTo(Method.playURIsFromIndex) as! NSError!)
+    }
+    
+    override func replaceURIs(uris: [AnyObject]!, withCurrentTrack index: Int32, callback block: SPTErrorableOperationCallback!) {
+        mocker.recordCall(Method.replaceURIsWithCurrentTrack, parameters: uris as! [NSURL], index)
+        block(mocker.returnValueForCallTo(Method.replaceURIsWithCurrentTrack) as! NSError!)
     }
     
     override func setIsPlaying(playing: Bool, callback block: SPTErrorableOperationCallback!) {
