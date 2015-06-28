@@ -511,6 +511,10 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
             
             describe("edit the table") {
+                beforeEach() {
+                    self.pressEditButton(spotifyPlaylistTableController)
+                }
+                
                 describe("reorder songs") {
                     context("when song position changes") {
                         it("updates the table to reflect the change") {
@@ -525,6 +529,57 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             let secondCellTextPostEdit = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: secondIndexPath).textLabel?.text
                             expect(firstCellTextPostEdit).to(equal(secondCellTextPreEdit))
                             expect(firstCellTextPreEdit).to(equal(secondCellTextPostEdit))
+                        }
+                    }
+                }
+                
+                context("when editing complete") {
+                    context("and playlist has not previously played") {
+                        it("does not get the current track from the spotify audio facade") {
+                            self.pressEditButton(spotifyPlaylistTableController)
+                            
+                            expect(mockSpotifyAudioFacade.mocker.getCallCountFor(MockSpotifyAudioFacade.Method.getCurrentTrackInSession)).to(equal(0))
+                        }
+                    }
+
+                    context("and playlist has previously played") {
+                        let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+                        let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+                        beforeEach() {
+                            spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                            spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
+
+                            self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: indexPath.row, expectedSession: spotifyAuth.session)
+                            NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+                            mockSpotifyAudioFacade.mocker.clearRecordedCallsTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession)
+                            
+                        }
+                        
+                        it("gets the current track from the spotify audio facade") {
+                            self.pressEditButton(spotifyPlaylistTableController)
+                            
+                            expect(mockSpotifyAudioFacade.mocker.getCallCountFor(MockSpotifyAudioFacade.Method.getCurrentTrackInSession)).toEventually(equal(1))
+                        }
+                        
+                        context("and the current track is retrieved successfully") {
+                            let expectedIndex = 1
+                            beforeEach() {
+                                mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession, returnValue: SpotifyTrackResult.Success(spotifyTrack))
+                            }
+                            
+                            it("updates the selected track in the table") {
+                                self.pressEditButton(spotifyPlaylistTableController)
+                                
+                                expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                                    .toEventually(equal(expectedIndex))
+                            }
+                            
+                            it("updates the playlist with the spotify audio facade") {
+                                self.pressEditButton(spotifyPlaylistTableController)
+
+                                expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.updatePlaylist, n: 0)?[0] as? Playlist).toEventually(equal(playlist))
+                                expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.updatePlaylist, n: 0)?[1] as? Int32).toEventually(equal(Int32(expectedIndex)))
+                            }
                         }
                     }
                 }
@@ -571,6 +626,11 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     func pressSongViewButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
         let songViewButton = spotifyPlaylistTableController.songViewButton
         UIApplication.sharedApplication().sendAction(songViewButton.action, to: songViewButton.target, from: self, forEvent: nil)
+    }
+    
+    func pressEditButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
+        let editButton = spotifyPlaylistTableController.editButtonItem()
+        UIApplication.sharedApplication().sendAction(editButton.action, to: editButton.target, from: self, forEvent: nil)
     }
     
     func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {

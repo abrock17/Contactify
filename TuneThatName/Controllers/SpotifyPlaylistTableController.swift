@@ -86,35 +86,55 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     override public func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
+        
         if !editing {
-            // figure out what withIndex actually does!
-            spotifyAudioFacade.updatePlaylist(playlist, withIndex: 1) {
+//            updateSaveButtonForUnsavedPlaylist()
+            if played {
+                syncEditedPlaylist()
+            }
+        }
+    }
+    
+    func syncEditedPlaylist() {
+        self.spotifyAudioFacade.getCurrentTrackInSession(self.spotifyAuth.session) {
+            spotifyTrackResult in
+
+            var currentTrackIndex: Int?
+            switch spotifyTrackResult {
+            case .Success(let spotifyTrack):
+                currentTrackIndex = self.getIndexForSpotifyTrack(spotifyTrack, inPlaylist: self.playlist)
+            case .Failure(let error):
+                println("Error getting track : \(error)")
+            }
+        
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
+            dispatch_after(delayTime, dispatch_get_main_queue()) {
+                if let index = currentTrackIndex {
+                    self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.None)
+//                } else if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
+//                    self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: false)
+                }
+            }
+
+            self.spotifyAudioFacade.updatePlaylist(self.playlist, withIndex: Int32(currentTrackIndex ?? 0)) {
                 error in
                 
                 if error != nil {
-                    println("Error updating playlist: \(error)")
-                } else {
-                    println("updated")
-                }
-            }
-            
-            // this appears to be working - don't mess with it!
-            self.spotifyAudioFacade.getCurrentTrackInSession(self.spotifyAuth.session) {
-                spotifyTrackResult in
-                
-                switch spotifyTrackResult {
-                case .Success(let spotifyTrack):
-                    for (index, song) in enumerate(self.playlist.songs) {
-                        if song.uri == spotifyTrack.uri {
-                            self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.None)
-                            break
-                        }
-                    }
-                case .Failure(let error):
-                    println("Error getting track : \(error)")
+                    println("Error updating queue: \(error)")
                 }
             }
         }
+    }
+    
+    func getIndexForSpotifyTrack(spotifyTrack: SpotifyTrack, inPlaylist playlist: Playlist) -> Int? {
+        var indexForSpotifyTrack: Int?
+        for (index, song) in enumerate(self.playlist.songs) {
+            if song.uri == spotifyTrack.uri {
+                indexForSpotifyTrack = index
+            }
+        }
+        
+        return indexForSpotifyTrack
     }
     
     /*

@@ -63,7 +63,7 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
         } else {
             spotifyTrackResult = SpotifyTrackResult.Success(
                 SpotifyTrack(
-                    uri: nil,
+                    uri: NSURL(string: "un_important_mocked_uri")!,
                     name: "unimportant mocked track",
                     artistNames: [],
                     albumName: nil,

@@ -62,6 +62,7 @@ public class PlaylistService {
                         if !songs.isEmpty {
                             contactSongsResultMap[searchContact] = songs
                         } else {
+                            println("No songs found for \(searchContact)")
                             findSongsForRandomName()
                         }
                         

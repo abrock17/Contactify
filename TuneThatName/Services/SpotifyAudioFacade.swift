@@ -115,6 +115,10 @@ public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
     }
     
     public func getCurrentTrackInSession(session: SPTSession, callback: SpotifyTrackResult -> Void) {
-        getTrackWithURI(self.spotifyAudioController.currentTrackURI, inSession: session, callback: callback)
+        if spotifyAudioController.currentTrackURI != nil {
+            getTrackWithURI(self.spotifyAudioController.currentTrackURI, inSession: session, callback: callback)
+        } else {
+            callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.SpotifyNoCurrentTrackCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.SpotifyNoCurrentTrackMessage])))
+        }
     }
 }

@@ -61,4 +61,8 @@ class Mocker {
         
         return nthCallParameters
     }
+    
+    func clearRecordedCallsTo(methodName: String) {
+        recordedParameters[methodName]?.removeAll(keepCapacity: false)
+    }
 }
