@@ -10,6 +10,10 @@ public protocol SpotifyAudioFacade {
     
     func stopPlay(callback: SPTErrorableOperationCallback)
     
+    func toNextTrack(callback: SPTErrorableOperationCallback)
+    
+    func toPreviousTrack(callback: SPTErrorableOperationCallback)
+    
     func getTrackWithURI(uri: NSURL, inSession session: SPTSession, callback: SpotifyTrackResult -> Void)
     
     func getCurrentTrackInSession(session: SPTSession, callback: SpotifyTrackResult -> Void)
@@ -89,17 +93,19 @@ public class SpotifyAudioFacadeImpl: SpotifyAudioFacade {
     }
     
     public func togglePlay(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying) {
-            error in
-            callback(error)
-        }
+        spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying, callback: callback)
     }
     
     public func stopPlay(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.stop() {
-            error in
-            callback(error)
-        }
+        spotifyAudioController.stop(callback)
+    }
+    
+    public func toNextTrack(callback: SPTErrorableOperationCallback) {
+        spotifyAudioController.skipNext(callback)
+    }
+    
+    public func toPreviousTrack(callback: SPTErrorableOperationCallback) {
+        spotifyAudioController.skipPrevious(callback)
     }
     
     public func getTrackWithURI(uri: NSURL, inSession session: SPTSession, callback: SpotifyTrackResult -> Void) {
