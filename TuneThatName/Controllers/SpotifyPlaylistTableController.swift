@@ -148,12 +148,16 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         if played {
             self.syncEditedPlaylist()
             if currentSpotifyTrackURI == deletedSong.uri {
-                self.spotifyAudioFacade.stopPlay() {
-                    error in
-                    if error != nil {
-                        print("Error stopping play: \(error)")
-                    }
-                }
+                self.stopPlay()
+            }
+        }
+    }
+    
+    func stopPlay() {
+        self.spotifyAudioFacade.stopPlay() {
+            error in
+            if error != nil {
+                print("Error stopping play: \(error)")
             }
         }
     }
@@ -187,12 +191,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
 
     override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.destinationViewController is CreatePlaylistController {
-            spotifyAudioFacade.stopPlay() {
-                error in
-                if error != nil {
-                    print("Error stopping play: \(error)")
-                }
-            }
+            stopPlay()
         }
     }
     

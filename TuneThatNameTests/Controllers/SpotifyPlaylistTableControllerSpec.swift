@@ -532,22 +532,89 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             expect(firstCellTextPostEdit).to(equal(secondCellTextPreEdit))
                             expect(firstCellTextPreEdit).to(equal(secondCellTextPostEdit))
                         }
+                        
+                        context("and play has not yet started") {
+                            it("does not update the playlist with the spotify audio facade") {
+                                spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, moveRowAtIndexPath: firstIndexPath, toIndexPath: secondIndexPath)
+                                
+                                expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                                    MockSpotifyAudioFacade.Method.updatePlaylist)).toEventually(equal(0))
+                            }
+                        }
+
+                        context("and play has already started") {
+                            let expectedNewIndex = 0
+                            
+                            beforeEach() {
+                                spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
+                            }
+                            
+                            it("updates the selected track in the table") {
+                                spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, moveRowAtIndexPath: firstIndexPath, toIndexPath: secondIndexPath)
+                                
+                                expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                                    .toEventually(equal(expectedNewIndex))
+                            }
+                            
+                            it("updates the playlist with the spotify audio facade") {
+                                spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, moveRowAtIndexPath: firstIndexPath, toIndexPath: secondIndexPath)
+                                
+                                self.verifyCallToUpdatePlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: spotifyPlaylistTableController.playlist, expectedIndex: expectedNewIndex)
+                            }
+                        }
                     }
                 }
                 
                 describe("delete song") {
-                    beforeEach() {
-                        spotifyPlaylistTableController.handleDeleteRow(deleteAction, indexPath: firstIndexPath)
-                    }
-                    
                     it("removes the row from the table") {
+                        spotifyPlaylistTableController.handleDeleteRow(deleteAction, indexPath: firstIndexPath)
+
                         expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, numberOfRowsInSection: 0)).to(equal(1))
                         expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).textLabel?.text).to(equal(playlist.songs[1].title))
+                    }
+                    
+                    context("and play has not yet started") {
+                        it("does not update the playlist with the spotify audio facade") {
+                            spotifyPlaylistTableController.handleDeleteRow(deleteAction, indexPath: firstIndexPath)
+                            
+                            expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                                MockSpotifyAudioFacade.Method.updatePlaylist)).toEventually(equal(0))
+                        }
+                    }
+                    
+                    context("and play has already started") {
+                        let expectedNewIndex = 0
+                        
+                        beforeEach() {
+                            spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
+                        }
+                        
+                        it("updates the selected track in the table") {
+                            spotifyPlaylistTableController.handleDeleteRow(deleteAction, indexPath: firstIndexPath)
+                            
+                            expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                                .toEventually(equal(expectedNewIndex))
+                        }
+                        
+                        it("updates the playlist with the spotify audio facade") {
+                            spotifyPlaylistTableController.handleDeleteRow(deleteAction, indexPath: firstIndexPath)
+                            
+                            self.verifyCallToUpdatePlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: spotifyPlaylistTableController.playlist, expectedIndex: expectedNewIndex)
+                        }
+                        
+                        context("and the deleted song is playing") {
+                            it("stops play") {
+                                spotifyPlaylistTableController.handleDeleteRow(deleteAction, indexPath: secondIndexPath)
+                                
+                                expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                                    MockSpotifyAudioFacade.Method.stopPlay)).to(equal(1))
+                            }
+                        }
                     }
                 }
                 
                 context("when editing complete") {
-                    context("and playlist has not previously played") {
+                    context("and play has not yet started") {
                         it("does not update the playlist with the spotify audio facade") {
                             self.pressEditButton(spotifyPlaylistTableController)
 
@@ -556,9 +623,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         }
                     }
                     
-                    context("and playlist has previously played") {
-                        let expectedIndex = 1
-                        
+                    context("and play has already started") {
                         beforeEach() {
                             spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
                         }
@@ -567,14 +632,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             self.pressEditButton(spotifyPlaylistTableController)
                             
                             expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
-                                .toEventually(equal(expectedIndex))
-                        }
-                        
-                        it("updates the playlist with the spotify audio facade") {
-                            self.pressEditButton(spotifyPlaylistTableController)
-                            
-                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.updatePlaylist, n: 0)?[0] as? Playlist).toEventually(equal(playlist))
-                            expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.updatePlaylist, n: 0)?[1] as? Int).toEventually(equal(expectedIndex))
+                                .toEventually(equal(1))
                         }
                         
                         context("and current track was deleted") {
@@ -672,6 +730,11 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).toEventually(equal(expectedPlaylist))
         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).toEventually(equal(expectedIndex))
         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).toEventually(equal(expectedSession))
+    }
+    
+    func verifyCallToUpdatePlaylistOn(mockSpotifyAudioFacade: MockSpotifyAudioFacade, expectedPlaylist: Playlist, expectedIndex: Int) {
+        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.updatePlaylist, n: 0)?[0] as? Playlist).toEventually(equal(expectedPlaylist))
+        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.updatePlaylist, n: 0)?[1] as? Int).toEventually(equal(expectedIndex))
     }
 }
 
