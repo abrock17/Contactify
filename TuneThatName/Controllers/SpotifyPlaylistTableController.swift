@@ -89,12 +89,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     override public func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
-        if !editing {
-//            updateSaveButtonForUnsavedPlaylist()
-            if played {
-                let currentTrackIndex = getSongIndexForURI(currentSpotifyTrackURI, inPlaylist: playlist)
-                adjustSelectedRow(currentTrackIndex)
-            }
+        if played {
+            let currentTrackIndex = getSongIndexForURI(currentSpotifyTrackURI, inPlaylist: playlist)
+            adjustSelectedRow(currentTrackIndex)
         }
     }
     
@@ -355,7 +352,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                     dispatch_async(dispatch_get_main_queue()) {
                         if error != nil {
                             ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
-                        } else {
+                        } else if !self.editing {
                             self.displaySongView()
                         }
                         ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
@@ -389,7 +386,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                 self.updateSongView(songView, forTrack: spotifyTrack)
             case .Failure(let error):
                 println("Error getting track : \(error)")
-                self.updateSongViewButtonForImage(nil)                
             }
         }
     }
@@ -413,20 +409,23 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didStartPlayingTrack trackUri: NSURL!) {
         currentSpotifyTrackURI = trackUri
         self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: Int(audioStreaming.currentTrackIndex), inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.None)
-        spotifyAudioFacade.getTrackWithURI(trackUri, inSession: spotifyAuth.session) {
-            spotifyTrackResult in
-
-            switch (spotifyTrackResult) {
-            case .Success(let spotifyTrack):
-                self.updateSongViewButtonForTrack(spotifyTrack)
-                if let songView = self.getExistingSongView() {
-                    self.updateSongView(songView, forTrack: spotifyTrack)
+        if trackUri != nil {
+            spotifyAudioFacade.getTrackWithURI(trackUri, inSession: spotifyAuth.session) {
+                spotifyTrackResult in
+                
+                switch (spotifyTrackResult) {
+                case .Success(let spotifyTrack):
+                    self.updateSongViewButtonForTrack(spotifyTrack)
+                    if let songView = self.getExistingSongView() {
+                        self.updateSongView(songView, forTrack: spotifyTrack)
+                    }
+                case .Failure(let error):
+                    println("Error getting track : \(error)")
+                    self.updateSongViewAndButtonForNilTrack()
                 }
-            case .Failure(let error):
-                println("Error getting track : \(error)")
-                self.getExistingSongView()?.removeFromSuperview()
-                self.updateSongViewButtonForImage(nil)
             }
+        } else {
+            self.updateSongViewAndButtonForNilTrack()
         }
     }
     
@@ -465,5 +464,10 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                 songView.image.image = image
             }
         }
+    }
+    
+    func updateSongViewAndButtonForNilTrack() {
+        self.getExistingSongView()?.removeFromSuperview()
+        self.updateSongViewButtonForImage(nil)
     }
 }
