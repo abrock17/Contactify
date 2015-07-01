@@ -89,6 +89,12 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     override public func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
+        if editing {
+            updateSaveButtonForPlaylistEditInProgress()
+        } else {
+            updateSaveButtonForUnsavedPlaylist()
+        }
+        
         if played {
             let currentTrackIndex = getSongIndexForURI(currentSpotifyTrackURI, inPlaylist: playlist)
             adjustSelectedRow(currentTrackIndex)
@@ -277,6 +283,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     func updatePlaylistName(playlistName: String) {
         playlist.name = playlistName
         playlistNameButton.setTitle(playlist.name, forState: UIControlState.Normal)
+        updateSaveButtonForUnsavedPlaylist()
     }
     
     func updatePlaylistNameAndSave(playlistName: String) {
@@ -325,6 +332,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     func updateSaveButtonAfterPlaylistSaved() {
         self.saveButton.title = "Playlist Saved"
+        self.saveButton.enabled = false
+    }
+    
+    func updateSaveButtonForPlaylistEditInProgress() {
+        self.saveButton.title = "Editing Playlist"
         self.saveButton.enabled = false
     }
     

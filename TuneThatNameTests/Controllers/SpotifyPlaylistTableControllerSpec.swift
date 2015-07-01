@@ -555,21 +555,37 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
             }
             
-            describe("edit the table") {
-                let firstIndexPath = NSIndexPath(forRow: 0, inSection: 0)
-                let secondIndexPath = NSIndexPath(forRow: 1, inSection: 0)
-                var deleteAction: UITableViewRowAction!
+            describe("edit pressed") {
+                it("updates the save button text") {
+                    self.pressEditButton(spotifyPlaylistTableController)
+                    
+                    expect(spotifyPlaylistTableController.saveButton.title).to(equal("Editing Playlist"))
+                }
                 
-                context("play has already started") {
+                it("disables the save button") {
+                    spotifyPlaylistTableController.saveButton.enabled = true
+                    
+                    self.pressEditButton(spotifyPlaylistTableController)
+                    
+                    expect(spotifyPlaylistTableController.saveButton.enabled).toNot(beTrue())
+                }
+                
+                context("when play has already started") {
                     it("retains the selected song in the table") {
                         spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
-
-                        self.pressEditButton(spotifyPlaylistTableController)
                         
+                        self.pressEditButton(spotifyPlaylistTableController)
+
                         expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
                             .toEventually(equal(1))
                     }
                 }
+            }
+            
+            describe("edit the table") {
+                let firstIndexPath = NSIndexPath(forRow: 0, inSection: 0)
+                let secondIndexPath = NSIndexPath(forRow: 1, inSection: 0)
+                var deleteAction: UITableViewRowAction!
                 
                 beforeEach() {
                     deleteAction = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, editActionsForRowAtIndexPath: firstIndexPath)!.first as! UITableViewRowAction
@@ -672,6 +688,20 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 context("when editing complete") {
+                    it("updates the save button text") {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.saveButton.title).to(equal("Save to Spotify"))
+                    }
+                    
+                    it("enables the save button") {
+                        spotifyPlaylistTableController.saveButton.enabled = false
+                        
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.saveButton.enabled).to(beTrue())
+                    }
+                    
                     context("and play has already started") {
                         beforeEach() {
                             spotifyPlaylistTableController.audioStreaming(mockSpotifyAudioStreamingController, didStartPlayingTrack: spotifyTrack.uri)
