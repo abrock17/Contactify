@@ -182,7 +182,7 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     it("has the expected artist name") {
                         expect(self.callbackSongs.count).toEventually(equal(1))
-                        expect(self.callbackSongs[0].artistName).to(equal("Creedence Clearwater Revival"))
+                        expect(self.callbackSongs[0].displayArtistName).to(equal("Creedence Clearwater Revival"))
                     }
                     
                     it("has the expected uri") {
@@ -239,10 +239,10 @@ class EchoNestServiceSpec: QuickSpec {
                         
                         it("contains the expected artists (no duplicates)") {
                             expect(self.callbackSongs.count).toEventually(equal(numberOfSongs))
-                            expect(self.callbackSongs[0].artistName).to(equal("La Vella Dixieland"))
-                            expect(self.callbackSongs[1].artistName).to(equal("Goulam S.K."))
-                            expect(self.callbackSongs[2].artistName).to(equal("Hy3rid"))
-                            expect(self.callbackSongs[3].artistName).to(equal("Raul Bercianos"))
+                            expect(self.callbackSongs[0].displayArtistName).to(equal("La Vella Dixieland"))
+                            expect(self.callbackSongs[1].displayArtistName).to(equal("Goulam S.K."))
+                            expect(self.callbackSongs[2].displayArtistName).to(equal("Hy3rid"))
+                            expect(self.callbackSongs[3].displayArtistName).to(equal("Raul Bercianos"))
                         }
                     }
                     

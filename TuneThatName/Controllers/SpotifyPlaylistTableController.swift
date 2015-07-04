@@ -77,7 +77,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
 
         let song = playlist.songs[indexPath.row]
         cell.textLabel?.text = song.title
-        cell.detailTextLabel?.text = song.artistName
+        cell.detailTextLabel?.text = song.displayArtistName
 
         return cell
     }

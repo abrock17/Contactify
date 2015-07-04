@@ -1,5 +1,4 @@
 import TuneThatName
-import Foundation
 import AddressBook
 import Quick
 import Nimble
@@ -49,7 +48,7 @@ class ContactServiceSpec: QuickSpec {
             }
             
             describe("retrieve filtered contacts") {
-                fcontext("when a contact is saved as a filtered contact") {
+                context("when a contact is saved as a filtered contact") {
                     var filteredContact: Contact!
                     beforeEach() {
                         filteredContact = Contact(id: addressBookContact.id, firstName: addressBookContact.firstName, lastName: "Jones")

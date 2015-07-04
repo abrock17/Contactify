@@ -24,5 +24,19 @@ class SongSpec: QuickSpec {
                     .to(equal(Song(title: "x", artistName: "artist2", uri: self.arbitraryURI)))
             }
         }
+        
+        describe("display artist name") {
+            it("has the expected format for one artist") {
+                expect(Song(title: "x", artistNames: ["artist"], uri: self.arbitraryURI).displayArtistName).to(equal("artist"))
+            }
+            
+            it("has the expected format for two artists") {
+                expect(Song(title: "x", artistNames: ["artist", "artist 2"], uri: self.arbitraryURI).displayArtistName).to(equal("artist and artist 2"))
+            }
+
+            it("has the expected format for three artists") {
+                expect(Song(title: "x", artistNames: ["artist", "artist 2", "artist 3"], uri: self.arbitraryURI).displayArtistName).to(equal("artist, artist 2 and artist 3"))
+            }
+        }
     }
 }

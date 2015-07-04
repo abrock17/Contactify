@@ -8,7 +8,7 @@ public class SpotifyService {
     }
     
     public static let clientID = "02b72a9ba42742acbebb0d3277c9996f"
-    let trackMaxBatchSize = 100
+    let trackMaxBatchSize = 34
     
     public init() {
     }
@@ -23,60 +23,155 @@ public class SpotifyService {
         auth.sessionUserDefaultsKey = "SpotifySessionData"
     }
     
-    public func savePlaylist(playlist: Playlist!, session: SPTSession!, callback: (PlaylistResult) -> Void) {
-        SPTPlaylistList.createPlaylistWithName(playlist.name, publicFlag: false, session: session) {
-            (error, editablePlaylist) in
-            
-            if error != nil {
-                callback(.Failure(error))
-            } else {
-                var trackURIs = [NSURL]()
-                for song in playlist.songs {
-                    trackURIs.append(song.uri)
-                }
-                SPTTrack.tracksWithURIs(trackURIs, session: session) {
-                    (error, tracks) in
-                    
-                    if error != nil {
-                        callback(.Failure(error))
-                    } else if let tracks = tracks as? [SPTTrack] {
-                        self.addTracks(tracks, startingAtIndex: 0, toPlaylistSnapshot: editablePlaylist, withSession: session, callback: callback)
-                    }
+    public func savePlaylist(playlist: Playlist, session: SPTSession, callback: (PlaylistResult) -> Void) {
+        if let uri = playlist.uri {
+            SPTPlaylistSnapshot.playlistWithURI(uri, session: session) {
+                (error, result) in
+                
+                if error != nil {
+                    callback(.Failure(error))
+                } else if let spotifyPlaylistSnapshot = result as? SPTPlaylistSnapshot {
+                    self.updatePlaylistName(playlist.name!, forPlaylistSnapshot: spotifyPlaylistSnapshot, inSession: session)
+                    self.replaceTracksForURIs(playlist.songURIs,
+                        inSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
+                        andResultPlaylist: Playlist(name: playlist.name, uri: playlist.uri),
+                        withSession: session,
+                        callback: callback)
+                } else {
+                    callback(.Failure(self.errorForMessage("Unable to retrieve existing playlist", andFailureReason: "Playlist snapshot was nil")))
                 }
             }
-        }
-    }
-    
-    func addTracks(tracks: [SPTTrack], startingAtIndex startIndex: Int, toPlaylistSnapshot playlistSnapshot: SPTPlaylistSnapshot, withSession session: SPTSession, callback: (PlaylistResult) -> Void) {
-        
-        if moreTracksToAdd(trackIndex: startIndex, tracks: tracks) {
-            let endIndex = (startIndex + trackMaxBatchSize) < tracks.endIndex ? startIndex + trackMaxBatchSize : tracks.endIndex
-            let tracksSlice = tracks[startIndex..<endIndex]
-            
-            playlistSnapshot.addTracksToPlaylist(Array(tracksSlice), withSession: session) {
-                error in
+        } else {
+            SPTPlaylistList.createPlaylistWithName(playlist.name, publicFlag: false, session: session) {
+                (error, spotifyPlaylistSnapshot) in
                 
                 if error != nil {
                     callback(.Failure(error))
                 } else {
-                    self.addTracks(tracks, startingAtIndex: endIndex, toPlaylistSnapshot: playlistSnapshot, withSession: session, callback: callback)
+                    self.addTracksForURIs(playlist.songURIs,
+                        toSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
+                        andResultPlaylist: Playlist(name: spotifyPlaylistSnapshot.name, uri: spotifyPlaylistSnapshot.uri),
+                        withSession: session,
+                        callback: callback)
                 }
             }
-        } else {
-            callback(.Success(buildPlaylistFromTracks(tracks, playlistSnapshot: playlistSnapshot)))
+            
         }
     }
     
-    func moreTracksToAdd(#trackIndex: Int, tracks: [SPTTrack]) -> Bool {
-        return trackIndex < tracks.endIndex
+    func addTracksForURIs(uris: [NSURL],
+        toSpotifyPlaylistSnapshot spotifyPlaylistSnapshot: SPTPlaylistSnapshot,
+        var andResultPlaylist resultPlaylist: Playlist,
+        withSession session: SPTSession,
+        callback: (PlaylistResult) -> Void) {
+            
+            SPTTrack.tracksWithURIs(getURIsToAdd(uris), session: session) {
+                (error, tracks) in
+                
+                if error != nil {
+                    callback(.Failure(error))
+                } else if let tracks = tracks as? [SPTTrack] {
+                    
+                    spotifyPlaylistSnapshot.addTracksToPlaylist(tracks, withSession: session) {
+                        error in
+                        
+                        if error != nil {
+                            callback(.Failure(error))
+                        } else {
+                            resultPlaylist.songs += self.songsFromSPTTracks(tracks)
+                            let remainingURIs = self.getRemainingURIS(uris)
+                            if remainingURIs.isEmpty {
+                                callback(.Success(resultPlaylist))
+                            } else {
+                                self.addTracksForURIs(remainingURIs,
+                                    toSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
+                                    andResultPlaylist: resultPlaylist,
+                                    withSession: session,
+                                    callback: callback)
+                            }
+                        }
+                    }
+                } else {
+                    callback(.Failure(self.errorForNilTracks()))
+                }
+            }
     }
     
-    func buildPlaylistFromTracks(tracks: [SPTTrack], playlistSnapshot: SPTPlaylistSnapshot) -> Playlist {
-        var songs = [Song]()
-        for track in tracks {
-            songs.append(Song(title: track.name, artistName: buildArtistNameString(track.artists), uri: track.uri))
+    func replaceTracksForURIs(uris: [NSURL],
+        inSpotifyPlaylistSnapshot spotifyPlaylistSnapshot: SPTPlaylistSnapshot,
+        var andResultPlaylist resultPlaylist: Playlist,
+        withSession session: SPTSession,
+        callback: (PlaylistResult) -> Void) {
+            
+            SPTTrack.tracksWithURIs(getURIsToAdd(uris), session: session) {
+                (error, tracks) in
+                
+                if error != nil {
+                    callback(.Failure(error))
+                } else if let tracks = tracks as? [SPTTrack] {
+                    
+                    spotifyPlaylistSnapshot.replaceTracksInPlaylist(tracks, withAccessToken: session.accessToken) {
+                        error in
+                        
+                        if error != nil {
+                            callback(.Failure(error))
+                        } else {
+                            resultPlaylist.songs += self.songsFromSPTTracks(tracks)
+                            let remainingURIs = self.getRemainingURIS(uris)
+                            if remainingURIs.isEmpty {
+                                callback(.Success(resultPlaylist))
+                            } else {
+                                self.addTracksForURIs(remainingURIs,
+                                    toSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
+                                    andResultPlaylist: resultPlaylist,
+                                    withSession: session,
+                                    callback: callback)
+                            }
+                        }
+                    }
+                } else {
+                    callback(.Failure(self.errorForNilTracks()))
+                }
+            }
+    }
+    
+    func getURIsToAdd(uris: [NSURL]) -> [NSURL] {
+        return Array(uris[0..<min(uris.count, trackMaxBatchSize)])
+    }
+    
+    func getRemainingURIS(uris: [NSURL]) -> [NSURL] {
+        return Array(uris[min(uris.count, trackMaxBatchSize)..<uris.count])
+    }
+    
+    func songsFromSPTTracks(tracks: [SPTTrack]) -> [Song] {
+        return tracks.map({ Song(title: $0.name, artistNames: self.getArtistNamesFromTrack($0), uri: $0.uri) })
+    }
+    
+    func errorForNilTracks() -> NSError {
+        return errorForMessage("Unable to retrieve tracks to save playlist", andFailureReason: "Retrieved tracks were nil")
+    }
+    
+    func updatePlaylistName(name: String, forPlaylistSnapshot playlistSnapshot: SPTPlaylistSnapshot, inSession session: SPTSession) {
+        playlistSnapshot.changePlaylistDetails([SPTPlaylistSnapshotNameKey: name], withAccessToken: session.accessToken) {
+            error in
+            
+            if error != nil {
+                println("Error updating playlist name: \(error)")
+            }
         }
-        return Playlist(name: playlistSnapshot.name, uri: playlistSnapshot.uri, songs: songs)
+    }
+    
+    public func unfollowPlaylistURI(playlistURI: NSURL, inSession session: SPTSession) {
+        let request = SPTFollow.createRequestForUnfollowingPlaylist(playlistURI, withAccessToken: session.accessToken, error: nil)
+        SPTRequest.sharedHandler().performRequest(request) {
+            (error, response, data) in
+            
+            if error != nil {
+                println("Error unfollowing playlist: \(error)")
+            } else if (response as? NSHTTPURLResponse)?.statusCode != 200 {
+                println("Bad response code trying to un-follow playlist: \((response as? NSHTTPURLResponse)?.statusCode)")
+            }
+        }
     }
     
     public func retrievePlaylist(uri: NSURL!, session: SPTSession!, callback: (PlaylistResult) -> Void) {
@@ -96,7 +191,7 @@ public class SpotifyService {
     func completePlaylistRetrieval(var playlist: Playlist!, withPlaylistSnapshotPage page: SPTListPage!, withSession session: SPTSession!, callback: (PlaylistResult) -> Void) {
         if let tracks = page.items {
             for track in tracks {
-                playlist.songs.append(Song(title: track.name, artistName: buildArtistNameString(track.artists), uri: track.uri))
+                playlist.songs.append(Song(title: track.name, artistNames: getArtistNamesFromTrack(track as! SPTTrack), uri: track.uri))
             }
         }
         
@@ -116,15 +211,8 @@ public class SpotifyService {
         }
     }
     
-    func buildArtistNameString(artists: [AnyObject]) -> String? {
-        var artistNames = [String]()
-        for artist in artists {
-            if let artistName = (artist as? SPTPartialArtist)?.name {
-                artistNames.append(artistName)
-            }
-        }
-        
-        return ", ".join(artistNames)
+    func getArtistNamesFromTrack(sptTrack: SPTTrack) -> [String] {
+        return sptTrack.artists.map({ $0.name })
     }
     
     func errorForMessage(message: String, andFailureReason reason: String) -> NSError {
