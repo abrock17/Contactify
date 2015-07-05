@@ -259,16 +259,3 @@ class MockAddressBookWrapper: AddressBookWrapper {
         return mocker.mockCallTo(Method.RecordCopyCompositeName) as! Unmanaged<CFString>!
     }
 }
-
-class MockUserDefaults: NSUserDefaults {
-    
-    struct Method {
-        static let arrayForKey = "arrayForKey"
-    }
-    
-    let mocker = Mocker()
-    
-    override func arrayForKey(defaultName: String) -> [AnyObject]? {
-        return mocker.mockCallTo(Method.arrayForKey, parameters: defaultName) as! [NSData]?
-    }
-}

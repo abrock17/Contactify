@@ -1,11 +1,11 @@
 import Foundation
 
-public struct PlaylistPreferences: Equatable, Printable {
+public class PlaylistPreferences: NSObject, NSCoding, Equatable {
     
     public var numberOfSongs: Int
     public var filterContacts: Bool
     public var songPreferences: SongPreferences
-    public var description: String {
+    public override var description: String {
         return "PlaylistPreferences:[numberOfSongs:\(numberOfSongs), filterContacts:\(filterContacts), songPreferences:\(songPreferences)]"
     }
     
@@ -13,6 +13,19 @@ public struct PlaylistPreferences: Equatable, Printable {
         self.numberOfSongs = numberOfSongs
         self.filterContacts = filterContacts
         self.songPreferences = songPreferences
+    }
+    
+    public required convenience init(coder decoder: NSCoder) {
+        let numberOfSongs = Int(decoder.decodeIntForKey("numberOfSongs"))
+        let filterContacts = decoder.decodeBoolForKey("filterContacts")
+        let songPreferences = decoder.decodeObjectForKey("songPreferences") as! SongPreferences
+        self.init(numberOfSongs: numberOfSongs, filterContacts: filterContacts, songPreferences: songPreferences)
+    }
+    
+    public func encodeWithCoder(coder: NSCoder) {
+        coder.encodeInt(Int32(self.numberOfSongs), forKey: "numberOfSongs")
+        coder.encodeBool(self.filterContacts, forKey: "filterContacts")
+        coder.encodeObject(self.songPreferences, forKey: "songPreferences")
     }
 }
 

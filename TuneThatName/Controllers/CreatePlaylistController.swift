@@ -9,6 +9,7 @@ public class CreatePlaylistController: UIViewController {
     var playlist: Playlist?
     
     public var playlistService = PlaylistService()
+    public var preferencesService = PreferencesService()
     
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.view)
 
@@ -26,6 +27,11 @@ public class CreatePlaylistController: UIViewController {
         updateForPlaylistPreferences()
     }
     
+    override public func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        preferencesService.savePlaylistPreferences(playlistPreferences)
+    }
+
     func updateForPlaylistPreferences() {
         if playlistPreferences == nil {
             playlistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true))

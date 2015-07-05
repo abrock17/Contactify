@@ -20,5 +20,6 @@ public struct Constants {
     
     public struct StorageKeys {
         public static let filteredContacts = "TuneThatName.contacts.filtered"
+        public static let playlistPreferences = "TuneThatName.playlist.preferences"
     }
 }

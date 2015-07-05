@@ -10,6 +10,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
             var navigationController: UINavigationController!
             var createPlaylistController: CreatePlaylistController!
             var mockPlaylistService: MockPlaylistService!
+            var mockPreferencesService: MockPreferencesService!
+            let expectedDefaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true))
             
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -18,6 +20,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 
                 mockPlaylistService = MockPlaylistService()
                 createPlaylistController.playlistService = mockPlaylistService
+                mockPreferencesService = MockPreferencesService()
+                createPlaylistController.preferencesService = mockPreferencesService
 
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
                 NSRunLoop.mainRunLoop().runUntilDate(NSDate())
@@ -32,13 +36,15 @@ class CreatePlaylistControllerSpec: QuickSpec {
             
             describe("number of songs label") {
                 it("has the correct initial text") {
-                    expect(createPlaylistController.numberOfSongsLabel.text).to(equal("10"))
+                    expect(createPlaylistController.numberOfSongsLabel.text).to(
+                        equal(String(expectedDefaultPlaylistPreferences.numberOfSongs)))
                 }
             }
             
             describe("favor popular songs switch") {
                 it("has the correct initial state") {
-                    expect(createPlaylistController.favorPopularSwitch.on).to(beTrue())
+                    expect(createPlaylistController.favorPopularSwitch.on).to(
+                        equal(expectedDefaultPlaylistPreferences.songPreferences.favorPopular))
                 }
             }
             
@@ -51,7 +57,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
             
             describe("filter contacts switch") {
                 it("has the correct initial state") {
-                    expect(createPlaylistController.filterContactsSwitch.on).to(beFalse())
+                    expect(createPlaylistController.filterContactsSwitch.on).to(
+                        equal(expectedDefaultPlaylistPreferences.filterContacts))
                 }
             }
             
@@ -151,10 +158,17 @@ class CreatePlaylistControllerSpec: QuickSpec {
             }
             
             describe("press the 'select names' button") {
-                it("segues to the name selection view") {
+                beforeEach() {
                     createPlaylistController.selectNamesButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                }
 
+                it("segues to the name selection view") {
                     expect(navigationController.topViewController).toEventually(beAnInstanceOf(NameSelectionTableController))
+                }
+                
+                it("saves playlist preferences") {
+                    expect(mockPreferencesService.mocker.getNthCallTo(
+                        MockPreferencesService.Method.savePlaylistPreferences, n: 0)?.first as? PlaylistPreferences).toEventually(equal(expectedDefaultPlaylistPreferences))
                 }
             }
 
@@ -162,7 +176,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 it("calls the playlist service with the correct number of songs") {
                     createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
 
-                    expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.numberOfSongs).toEventually(equal(10))
+                    expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.numberOfSongs).toEventually(equal(expectedDefaultPlaylistPreferences.numberOfSongs))
                 }
                 
                 context("when the playlist service calls back with an error") {
@@ -196,9 +210,15 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     }
                     
                     it("segues to the playlist table view passing the playlist") {
-                        expect(navigationController.topViewController).toEventually(beAnInstanceOf(SpotifyPlaylistTableController))
+                        expect(navigationController.topViewController).toEventually(
+                            beAnInstanceOf(SpotifyPlaylistTableController))
                         let spotifyPlaylistTableController = navigationController.topViewController as? SpotifyPlaylistTableController
                         expect(spotifyPlaylistTableController?.playlist).to(equal(expectedPlaylist))
+                    }
+                    
+                    it("saves playlist preferences") {
+                        expect(mockPreferencesService.mocker.getNthCallTo(
+                            MockPreferencesService.Method.savePlaylistPreferences, n: 0)?.first as? PlaylistPreferences).toEventually(equal(expectedDefaultPlaylistPreferences))
                     }
                 }
             }
