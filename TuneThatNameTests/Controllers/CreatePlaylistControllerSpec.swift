@@ -25,7 +25,10 @@ class CreatePlaylistControllerSpec: QuickSpec {
 
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
                 NSRunLoop.mainRunLoop().runUntilDate(NSDate())
-                createPlaylistController.viewDidLoad()
+            }
+            
+            it("loads playlist preferences from preferences service") {
+                expect(mockPreferencesService.mocker.getCallCountFor(MockPreferencesService.Method.retrievePlaylistPreferences)).toEventually(equal(1))
             }
             
             describe("number of songs slider") {

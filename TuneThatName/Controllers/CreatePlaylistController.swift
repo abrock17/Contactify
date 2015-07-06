@@ -10,6 +10,7 @@ public class CreatePlaylistController: UIViewController {
     
     public var playlistService = PlaylistService()
     public var preferencesService = PreferencesService()
+    public var notificationCenter = NSNotificationCenter.defaultCenter()
     
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.view)
 
@@ -27,12 +28,24 @@ public class CreatePlaylistController: UIViewController {
         updateForPlaylistPreferences()
     }
     
+    override public func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        notificationCenter.addObserver(self, selector: "savePlaylistPreferences", name: UIApplicationWillResignActiveNotification, object: nil)
+        notificationCenter.addObserver(self, selector: "savePlaylistPreferences", name: UIApplicationWillTerminateNotification, object: nil)
+    }
+    
     override public func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        savePlaylistPreferences()
+        notificationCenter.removeObserver(self)
+    }
+    
+    func savePlaylistPreferences() {
         preferencesService.savePlaylistPreferences(playlistPreferences)
     }
 
     func updateForPlaylistPreferences() {
+        playlistPreferences = preferencesService.retrievePlaylistPreferences()
         if playlistPreferences == nil {
             playlistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true))
         }
