@@ -391,9 +391,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                     songView = existingView
                 } else {
                     songView = (NSBundle.mainBundle().loadNibNamed("SongView", owner: self, options: nil).first as! SongView)
-                    songView.frame = self.view.bounds
                     songView.tag = self.songViewTag
-                    self.view.addSubview(songView)
+                    songView.frame = self.navigationController!.view.bounds
+                    self.navigationController!.view.addSubview(songView)
                 }
                 self.updateSongView(songView, forTrack: spotifyTrack)
             case .Failure(let error):
@@ -403,7 +403,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     func getExistingSongView() -> SongView? {
-        return self.view.viewWithTag(songViewTag) as? SongView
+        return self.navigationController?.view.viewWithTag(songViewTag) as? SongView
     }
     
     public func audioStreaming(audioStreaming: SPTAudioStreamingController!,

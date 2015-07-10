@@ -238,7 +238,8 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 afterEach() {
-                    spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)?.removeFromSuperview()
+                    spotifyPlaylistTableController.navigationController!.view.viewWithTag(
+                        self.songViewTag)?.removeFromSuperview()
                 }
                 
                 context("when the session is invalid") {
@@ -273,7 +274,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                     
                     afterEach() {
-                        spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)?.removeFromSuperview()
+                        spotifyPlaylistTableController.navigationController!.view.viewWithTag(self.songViewTag)?.removeFromSuperview()
                     }
                     
                     it("does not prompt the user to log in") {
@@ -310,7 +311,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             
                             spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                             
-                            let view = spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)
+                            let view = spotifyPlaylistTableController.navigationController!.view.viewWithTag(self.songViewTag)
                             expect(view).toEventually(beNil())
                         }
                     }
@@ -339,7 +340,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                                 NSThread.sleepForTimeInterval(0.1)
                                 done()
                             }
-                            expect(spotifyPlaylistTableController.view.viewWithTag(self.songViewTag))
+                            expect(spotifyPlaylistTableController.navigationController!.view.viewWithTag(self.songViewTag))
                                 .toEventually(beNil())
                         }
                     }
@@ -426,7 +427,8 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 afterEach() {
-                    spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)?.removeFromSuperview()
+                    spotifyPlaylistTableController.navigationController!.view.viewWithTag(
+                        self.songViewTag)?.removeFromSuperview()
                 }
 
                 it("displays the current track in the song view") {
@@ -498,7 +500,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentTrackInSession, returnValue: SpotifyTrackResult.Success(spotifyTrack))
                             self.pressSongViewButton(spotifyPlaylistTableController)
                         
-                            expect(spotifyPlaylistTableController.view.viewWithTag(self.songViewTag))
+                            expect(spotifyPlaylistTableController.navigationController!.view.viewWithTag(self.songViewTag))
                                 .toEventuallyNot(beNil())
                             
                             mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getTrackWithURI, returnValue: SpotifyTrackResult.Failure(NSError(domain: "domain", code: 87, userInfo: nil)))
@@ -507,7 +509,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         }
                         
                         it("closes the song view") {
-                            expect(spotifyPlaylistTableController.view.viewWithTag(self.songViewTag))
+                            expect(spotifyPlaylistTableController.navigationController!.view.viewWithTag(self.songViewTag))
                                 .toEventually(beNil())
                         }
                     }
@@ -786,8 +788,8 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     }
     
     func assertSongViewDisplayedOnController(spotifyPlaylistTableController: SpotifyPlaylistTableController, forSpotifyTrack spotifyTrack: SpotifyTrack, andImage image: UIImage) {
-        expect(spotifyPlaylistTableController.view.viewWithTag(self.songViewTag)).toEventuallyNot(beNil())
-        if let songView = spotifyPlaylistTableController.view.viewWithTag(self.songViewTag) as? SongView {
+        expect(spotifyPlaylistTableController.navigationController!.view.viewWithTag(self.songViewTag)).toEventuallyNot(beNil())
+        if let songView = spotifyPlaylistTableController.navigationController!.view.viewWithTag(self.songViewTag) as? SongView {
             expect(songView.title.text).to(equal(spotifyTrack.name))
             expect(songView.artist.text).to(equal(spotifyTrack.artistNames.first))
             expect(songView.album.text).to(equal(spotifyTrack.albumName))

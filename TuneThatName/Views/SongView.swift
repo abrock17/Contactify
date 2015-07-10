@@ -14,7 +14,7 @@ public class SongView: UIView {
     @IBOutlet public weak var title: UILabel!
     @IBOutlet public weak var artist: UILabel!
     @IBOutlet public weak var album: UILabel!
-    @IBOutlet public weak var closeButton: UIButton!
+    @IBOutlet public weak var closeButton: UIBarButtonItem!
     
     @IBAction func close(sender: AnyObject) {
         self.removeFromSuperview()
