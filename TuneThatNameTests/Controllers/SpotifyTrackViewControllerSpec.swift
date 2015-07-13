@@ -101,12 +101,41 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                         MockSpotifyAudioFacade.Method.togglePlay)).toEventually(equal(1))
                 }
             }
+            
+            describe("press the next track button") {
+                it("skips to next track") {
+                    self.pressNextTrackButton(spotifyTrackViewController)
+                    
+                    expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                        MockSpotifyAudioFacade.Method.toNextTrack)).to(equal(1))
+                }
+            }
+            
+            describe("press the previous track button") {
+                it("skips to previous track") {
+                    self.pressPreviousTrackButton(spotifyTrackViewController)
+                    
+                    expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                        MockSpotifyAudioFacade.Method.toPreviousTrack)).to(equal(1))
+                }
+            }
         }
     }
     
     func pressPlayPauseButton(spotifyTrackViewController: SpotifyTrackViewController) {
-        let playPauseButton = spotifyTrackViewController.playPauseButton
-        UIApplication.sharedApplication().sendAction(playPauseButton.action, to: playPauseButton.target, from: self, forEvent: nil)
+        pressBarButtonItem(spotifyTrackViewController.playPauseButton)
+    }
+    
+    func pressNextTrackButton(spotifyTrackViewController: SpotifyTrackViewController) {
+        pressBarButtonItem(spotifyTrackViewController.nextTrackButton)
+    }
+    
+    func pressPreviousTrackButton(spotifyTrackViewController: SpotifyTrackViewController) {
+        pressBarButtonItem(spotifyTrackViewController.previousTrackButton)
+    }
+    
+    func pressBarButtonItem(barButtonItem: UIBarButtonItem) {
+        UIApplication.sharedApplication().sendAction(barButtonItem.action, to: barButtonItem.target, from: self, forEvent: nil)
     }
 
     func assertCorrectLabelTextOnSpotifyTrackViewController(spotifyTrackViewController: SpotifyTrackViewController, forSpotifyTrack spotifyTrack: SpotifyTrack) {

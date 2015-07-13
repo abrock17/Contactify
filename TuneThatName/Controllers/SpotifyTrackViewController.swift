@@ -2,6 +2,8 @@ import UIKit
 
 public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelegate {
     
+    let playbackErrorTitle = "Unable to control playback"
+    
     public var spotifyAudioFacade: SpotifyAudioFacade!
     public var controllerHelper = ControllerHelper()
     
@@ -69,14 +71,26 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         spotifyAudioFacade.togglePlay() {
             error in
             if error != nil {
-                ControllerHelper.displaySimpleAlertForTitle("Unable to control playback", andError: error, onController: self)
+                ControllerHelper.displaySimpleAlertForTitle(self.playbackErrorTitle, andError: error, onController: self)
             }
         }
     }
     
     @IBAction func nextTrackButtonPressed(sender: UIBarButtonItem) {
+        spotifyAudioFacade.toNextTrack() {
+            error in
+            if error != nil {
+                ControllerHelper.displaySimpleAlertForTitle(self.playbackErrorTitle, andError: error, onController: self)
+            }
+        }
     }
     
     @IBAction func previousTrackButtonPressed(sender: UIBarButtonItem) {
+        spotifyAudioFacade.toPreviousTrack() {
+            error in
+            if error != nil {
+                ControllerHelper.displaySimpleAlertForTitle(self.playbackErrorTitle, andError: error, onController: self)
+            }
+        }
     }
 }
