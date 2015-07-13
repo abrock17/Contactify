@@ -1,18 +1,47 @@
 import TuneThatName
 
-class MockSpotifyAudioFacade: SpotifyAudioFacade {
+class MockSpotifyAudioFacade: NSObject, SpotifyAudioFacade {
     
     let mocker = Mocker()
     
     struct Method {
+        static let getPlaybackDelegate = "getPlaybackDelegate"
+        static let setPlaybackDelegate = "setPlaybackDelegate"
+        static let getIsPlaying = "getIsPlaying"
+        static let getCurrentSpotifyTrack = "getCurrentSpotifyTrack"
         static let playPlaylist = "playPlaylist"
         static let updatePlaylist = "updatePlaylist"
         static let togglePlay = "togglePlay"
         static let stopPlay = "stopPlay"
         static let toNextTrack = "toNextTrack"
         static let toPreviousTrack = "toPreviousTrack"
-        static let getTrackWithURI = "getTrackWithURI"
-        static let getCurrentTrackInSession = "getCurrentTrackInSession"
+    }
+    
+    var playbackDelegate: SpotifyPlaybackDelegate {
+        get {
+            if let mockedResult = mocker.mockCallTo(Method.getPlaybackDelegate) as? SpotifyPlaybackDelegate {
+                return mockedResult
+            } else {
+                return MockSpotifyPlaybackDelegate()
+            }
+        }
+        set {
+            mocker.recordCall(Method.setPlaybackDelegate, parameters: newValue)
+        }
+    }
+    var isPlaying: Bool {
+        get {
+            if let mockedResult = mocker.mockCallTo(Method.getIsPlaying) as? Bool {
+                return mockedResult
+            } else {
+                return false
+            }
+        }
+    }
+    var currentSpotifyTrack: SpotifyTrack? {
+        get {
+            return mocker.mockCallTo(Method.getCurrentSpotifyTrack) as? SpotifyTrack
+        }
     }
     
     func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback) {
@@ -57,16 +86,6 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
         return error
     }
     
-    func getTrackWithURI(uri: NSURL, inSession session: SPTSession, callback: SpotifyTrackResult -> Void) {
-        mocker.recordCall(Method.getTrackWithURI, parameters: uri, session)
-        callback(getMockedSpotifyTrackResult(Method.getTrackWithURI))
-    }
-    
-    func getCurrentTrackInSession(session: SPTSession, callback: SpotifyTrackResult -> Void) {
-        mocker.recordCall(Method.getCurrentTrackInSession, parameters: session)
-        callback(getMockedSpotifyTrackResult(Method.getCurrentTrackInSession))
-    }
-    
     func getMockedSpotifyTrackResult(method: String) -> SpotifyTrackResult {
         let spotifyTrackResult: SpotifyTrackResult
         let mockedResult = mocker.returnValueForCallTo(method)
@@ -86,3 +105,4 @@ class MockSpotifyAudioFacade: SpotifyAudioFacade {
         return spotifyTrackResult
     }
 }
+

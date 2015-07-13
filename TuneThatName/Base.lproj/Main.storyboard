@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ldX-ZI-ufm">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -233,6 +234,7 @@
                     </toolbarItems>
                     <navigationItem key="navigationItem" id="s2o-ae-yiy">
                         <nil key="title"/>
+                        <barButtonItem key="backBarButtonItem" title=" " id="1P6-2k-tea"/>
                         <barButtonItem key="leftBarButtonItem" title="New" id="TJd-yq-C39">
                             <connections>
                                 <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistFromPlaylistTableSegue" unwindAction="unwindToCreatePlaylist:" id="tZw-B4-PxU"/>
@@ -256,12 +258,94 @@
                         <outlet property="playlistNameButton" destination="kO6-zi-WbG" id="qyd-dR-Etd"/>
                         <outlet property="saveButton" destination="kyd-NY-KvY" id="7Cy-NB-X9a"/>
                         <outlet property="songViewButton" destination="vZD-FT-x7g" id="dYO-ld-fQl"/>
+                        <segue destination="njU-17-JH3" kind="presentation" identifier="ShowSpotifyTrackSegue" id="thZ-EL-OxA"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9zL-Pn-uq4" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="49h-Wb-X4D" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1821" y="340"/>
+        </scene>
+        <!--Spotify Track View Controller-->
+        <scene sceneID="mKm-au-cJ4">
+            <objects>
+                <viewController storyboardIdentifier="SpotifyTrackViewController" id="njU-17-JH3" customClass="SpotifyTrackViewController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="2Uh-YI-clu"/>
+                        <viewControllerLayoutGuide type="bottom" id="rHm-eE-H8v"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="lyg-un-FjL">
+                        <rect key="frame" x="0.0" y="64" width="400" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cjq-1l-EBm">
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="400"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Cjq-1l-EBm" secondAttribute="height" multiplier="1:1" id="2Su-aq-K2S"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.70000000000000018" translatesAutoresizingMaskIntoConstraints="NO" id="vlL-tc-JA8">
+                                <rect key="frame" x="16" y="408" width="368" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Artist" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="jc7-p1-t9r">
+                                <rect key="frame" x="16" y="436" width="368" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Album" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pjz-d6-2Vz">
+                                <rect key="frame" x="16" y="465" width="368" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0ao-tI-YGQ">
+                                <rect key="frame" x="0.0" y="556" width="400" height="44"/>
+                                <items>
+                                    <barButtonItem systemItem="stop" id="Zcz-CM-isw">
+                                        <connections>
+                                            <segue destination="J8s-tk-W5r" kind="unwind" unwindAction="unwindToSpotifyPlaylistTable:" id="dsa-DN-hd4"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="jc7-p1-t9r" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leadingMargin" id="BTx-Qe-5g1"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="vlL-tc-JA8" secondAttribute="trailing" id="F5Q-s8-Rrk"/>
+                            <constraint firstItem="pjz-d6-2Vz" firstAttribute="top" secondItem="jc7-p1-t9r" secondAttribute="bottom" constant="8" id="R6t-N4-XDZ"/>
+                            <constraint firstAttribute="trailing" secondItem="Cjq-1l-EBm" secondAttribute="trailing" id="but-bu-oSz"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="pjz-d6-2Vz" secondAttribute="trailing" id="cFi-NT-iOA"/>
+                            <constraint firstItem="Cjq-1l-EBm" firstAttribute="top" secondItem="2Uh-YI-clu" secondAttribute="bottom" id="cZd-5k-re2"/>
+                            <constraint firstItem="vlL-tc-JA8" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leadingMargin" id="dLR-Sm-8tJ"/>
+                            <constraint firstItem="rHm-eE-H8v" firstAttribute="top" secondItem="0ao-tI-YGQ" secondAttribute="bottom" id="eVX-nH-h5N"/>
+                            <constraint firstAttribute="trailing" secondItem="0ao-tI-YGQ" secondAttribute="trailing" id="hjF-5y-JNO"/>
+                            <constraint firstItem="vlL-tc-JA8" firstAttribute="top" secondItem="Cjq-1l-EBm" secondAttribute="bottom" constant="8" id="iuZ-1N-rvN"/>
+                            <constraint firstItem="Cjq-1l-EBm" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leading" id="qyJ-Ny-yFR"/>
+                            <constraint firstItem="jc7-p1-t9r" firstAttribute="top" secondItem="vlL-tc-JA8" secondAttribute="bottom" constant="8" id="scC-ZX-CrQ"/>
+                            <constraint firstItem="0ao-tI-YGQ" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leading" id="tUc-lN-j5d"/>
+                            <constraint firstItem="pjz-d6-2Vz" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leadingMargin" id="ypL-Cd-cu5"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="jc7-p1-t9r" secondAttribute="trailing" id="zgZ-7H-6fk"/>
+                        </constraints>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="400" height="600"/>
+                    <connections>
+                        <outlet property="albumImageView" destination="Cjq-1l-EBm" id="0Wp-mi-0xS"/>
+                        <outlet property="albumLabel" destination="pjz-d6-2Vz" id="ZdA-LE-zjG"/>
+                        <outlet property="artistLabel" destination="jc7-p1-t9r" id="EZi-Qg-7eR"/>
+                        <outlet property="titleLabel" destination="vlL-tc-JA8" id="zCS-c2-q6G"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sV7-AV-Ucz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="J8s-tk-W5r" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2558" y="340"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="xJx-fg-xBS">

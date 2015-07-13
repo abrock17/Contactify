@@ -18,11 +18,13 @@ class SpotifyAudioFacadeSpec: QuickSpec {
         describe("The Spotify Audio Facade") {
             var spotifyAudioFacade: SpotifyAudioFacade!
             var mockAudioStreamingController: MockSPTAudioStreamingController!
+            var mockSpotifyPlaybackDelegate: MockSpotifyPlaybackDelegate!
             
             beforeEach() {
                 self.callbackErrors.removeAll(keepCapacity: false)
                 mockAudioStreamingController = MockSPTAudioStreamingController(clientId: SpotifyService.clientID)
-                spotifyAudioFacade = SpotifyAudioFacadeImpl(spotifyAudioController: mockAudioStreamingController, spotifyPlaybackDelegate: FakeSPTAudioStreamingPlaybackDelegate())
+                mockSpotifyPlaybackDelegate = MockSpotifyPlaybackDelegate()
+                spotifyAudioFacade = SpotifyAudioFacadeImpl(spotifyAudioController: mockAudioStreamingController, spotifyPlaybackDelegate: mockSpotifyPlaybackDelegate)
             }
             
             describe("play a playlist from a given index") {
@@ -155,6 +157,20 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("audio streaming did change playback status") {
+                beforeEach() {
+                    spotifyAudioFacade.audioStreaming?(mockAudioStreamingController, didChangePlaybackStatus: true)
+                }
+                
+                it("captures the isPlaying value") {
+                    expect(spotifyAudioFacade.isPlaying).to(beTrue())
+                }
+                
+                it("passes the value to changedPlaybackStatus on the playback delegate") {
+                    expect(mockSpotifyPlaybackDelegate.mocker.getNthCallTo(MockSpotifyPlaybackDelegate.Method.changedPlaybackStatus, n: 0)?.first as? Bool).to(equal(true))
+                }
+            }
         }
     }
 }
@@ -195,7 +211,4 @@ class MockSPTAudioStreamingController: SPTAudioStreamingController {
         mocker.recordCall(Method.stop)
         block(mocker.returnValueForCallTo(Method.stop) as! NSError!)
     }
-}
-
-class FakeSPTAudioStreamingPlaybackDelegate: NSObject, SPTAudioStreamingPlaybackDelegate {
 }
