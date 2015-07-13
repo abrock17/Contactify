@@ -23,7 +23,6 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             var mockSpotifyService: MockSpotifyService!
             var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             var mockControllerHelper: MockControllerHelper!
-            var mockSpotifyAudioStreamingController: MockSPTAudioStreamingController!
             
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -39,7 +38,6 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 spotifyPlaylistTableController.spotifyAudioFacadeOverride = mockSpotifyAudioFacade
                 mockControllerHelper = MockControllerHelper()
                 spotifyPlaylistTableController.controllerHelper = mockControllerHelper
-                mockSpotifyAudioStreamingController = MockSPTAudioStreamingController(clientId: SpotifyService.clientID)
                 
                 navigationController.pushViewController(spotifyPlaylistTableController, animated: false)
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController

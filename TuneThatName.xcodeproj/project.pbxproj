@@ -33,6 +33,7 @@
 		446B1C741B4961A300E5FA22 /* MockUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B1C731B4961A300E5FA22 /* MockUserDefaults.swift */; };
 		446B1C771B4964BB00E5FA22 /* PreferencesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B1C761B4964BB00E5FA22 /* PreferencesService.swift */; };
 		446B1C791B497FC000E5FA22 /* MockPreferencesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B1C781B497FC000E5FA22 /* MockPreferencesService.swift */; };
+		446B8F9F1B53C807002C687E /* SpotifyTrackViewControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B8F9E1B53C807002C687E /* SpotifyTrackViewControllerSpec.swift */; };
 		446DFE001AFFE3D00022B75F /* SpotifyAudioFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446DFDFF1AFFE3D00022B75F /* SpotifyAudioFacade.swift */; };
 		446DFE021B02183B0022B75F /* SpotifyAudioFacadeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446DFE011B02183B0022B75F /* SpotifyAudioFacadeSpec.swift */; };
 		446DFE041B0601470022B75F /* MockSpotifyAudioFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446DFE031B0601470022B75F /* MockSpotifyAudioFacade.swift */; };
@@ -120,6 +121,7 @@
 		446B1C731B4961A300E5FA22 /* MockUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUserDefaults.swift; sourceTree = "<group>"; };
 		446B1C761B4964BB00E5FA22 /* PreferencesService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesService.swift; sourceTree = "<group>"; };
 		446B1C781B497FC000E5FA22 /* MockPreferencesService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPreferencesService.swift; sourceTree = "<group>"; };
+		446B8F9E1B53C807002C687E /* SpotifyTrackViewControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyTrackViewControllerSpec.swift; sourceTree = "<group>"; };
 		446DFDFF1AFFE3D00022B75F /* SpotifyAudioFacade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAudioFacade.swift; sourceTree = "<group>"; };
 		446DFE011B02183B0022B75F /* SpotifyAudioFacadeSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAudioFacadeSpec.swift; sourceTree = "<group>"; };
 		446DFE031B0601470022B75F /* MockSpotifyAudioFacade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSpotifyAudioFacade.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				4440E4A21B33954C005A4333 /* NameSelectionTableControllerSpec.swift */,
 				447963511B3CD432003541BE /* PlaylistNameEntryControllerSpec.swift */,
 				4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */,
+				446B8F9E1B53C807002C687E /* SpotifyTrackViewControllerSpec.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -788,6 +791,7 @@
 				44FBFE981AC650EE0087C9FF /* SongSpec.swift in Sources */,
 				446B1C701B495D5400E5FA22 /* PreferencesServiceSpec.swift in Sources */,
 				44B2191C1AEA5C53002EA154 /* ControllerHelperSpec.swift in Sources */,
+				446B8F9F1B53C807002C687E /* SpotifyTrackViewControllerSpec.swift in Sources */,
 				449E66DD1B5156DC0036A9AD /* MockSpotifyPlaybackDelegate.swift in Sources */,
 				44FBFE9A1AC655050087C9FF /* PlaylistSpec.swift in Sources */,
 				446B1C741B4961A300E5FA22 /* MockUserDefaults.swift in Sources */,
