@@ -9,8 +9,11 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var artistLabel: UILabel!
     @IBOutlet public weak var albumLabel: UILabel!
-    @IBOutlet public weak var closeButton: UIBarButtonItem!
-
+    @IBOutlet public weak var toolbar: UIToolbar!
+    @IBOutlet public weak var playPauseButton: UIBarButtonItem!
+    @IBOutlet public weak var nextTrackButton: UIBarButtonItem!
+    @IBOutlet public weak var previousTrackButton: UIBarButtonItem!
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -19,6 +22,7 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         super.viewWillAppear(animated)
         spotifyAudioFacade.playbackDelegate = self
         startedPlayingSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack)
+        changedPlaybackStatus(spotifyAudioFacade.isPlaying)
     }
     
     public override func didReceiveMemoryWarning() {
@@ -38,6 +42,14 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     */
 
     public func changedPlaybackStatus(isPlaying: Bool) {
+        updatePlayPauseButton(isPlaying)
+    }
+    
+    func updatePlayPauseButton(isPlaying: Bool) {
+        let buttonSystemItem = isPlaying ? UIBarButtonSystemItem.Pause : UIBarButtonSystemItem.Play
+        let updatedButton = UIBarButtonItem(barButtonSystemItem: buttonSystemItem, target: self, action: "playPausePressed:")
+        self.toolbar.items?.removeLast()
+        self.toolbar.items?.append(updatedButton)
     }
     
     public func startedPlayingSpotifyTrack(spotifyTrack: SpotifyTrack?) {
@@ -51,5 +63,20 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
                 self.albumImageView.image = image
             }
         }
+    }
+    
+    @IBAction func playPausePressed(sender: UIBarButtonItem) {
+        spotifyAudioFacade.togglePlay() {
+            error in
+            if error != nil {
+                ControllerHelper.displaySimpleAlertForTitle("Unable to control playback", andError: error, onController: self)
+            }
+        }
+    }
+    
+    @IBAction func nextTrackButtonPressed(sender: UIBarButtonItem) {
+    }
+    
+    @IBAction func previousTrackButtonPressed(sender: UIBarButtonItem) {
     }
 }

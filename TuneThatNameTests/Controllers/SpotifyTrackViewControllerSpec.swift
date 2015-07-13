@@ -16,14 +16,11 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
             let image = UIImage(named: "yuck.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
 
             var spotifyTrackViewController: SpotifyTrackViewController!
-            var navigationController: UINavigationController!
             var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             var mockControllerHelper: MockControllerHelper!
 
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                
-                navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
                 
                 spotifyTrackViewController = storyboard.instantiateViewControllerWithIdentifier("SpotifyTrackViewController") as!  SpotifyTrackViewController
                 
@@ -34,10 +31,9 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                 
                 mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: spotifyTrack)
                 mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
+                mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getIsPlaying, returnValue: true)
                 
-                navigationController.pushViewController(spotifyTrackViewController, animated: false)
-                UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
-                NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+                UIApplication.sharedApplication().keyWindow!.rootViewController = spotifyTrackViewController
             }
             
             it("sets itself as the playback delegate on the spotifyAudioFacade") {
@@ -45,11 +41,15 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
             }
             
             it("sets the title, artist, and album label text for the current spotify track") {
-                self.verifyLabelTextOnSpotifyTrackViewController(spotifyTrackViewController, forSpotifyTrack: spotifyTrack)
+                self.assertCorrectLabelTextOnSpotifyTrackViewController(spotifyTrackViewController, forSpotifyTrack: spotifyTrack)
             }
             
             it("sets the album cover image for the current spotify track") {
                 expect(spotifyTrackViewController.albumImageView.image).toEventually(equal(image))
+            }
+            
+            it("sets the play/pause button for the current playback status") {
+                expect(self.getPlayPauseButtonSystemItemFromToolbar(spotifyTrackViewController)).to(equal(UIBarButtonSystemItem.Pause))
             }
             
             describe("starts playing spotify track") {
@@ -67,19 +67,56 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                 }
                 
                 it("updates the title, artist, and album label text for the spotify track") {
-                    self.verifyLabelTextOnSpotifyTrackViewController(spotifyTrackViewController, forSpotifyTrack: newSpotifyTrack)
+                    self.assertCorrectLabelTextOnSpotifyTrackViewController(spotifyTrackViewController, forSpotifyTrack: newSpotifyTrack)
                 }
                 
                 it("updates the album cover image for the spotify track") {
                     expect(spotifyTrackViewController.albumImageView.image).toEventually(equal(image))
                 }
             }
+            
+            describe("playback status change") {
+                context("when is playing") {
+                    it("sets the play/pause button to the 'pause' system item") {
+                        spotifyTrackViewController.changedPlaybackStatus(true)
+                        
+                        expect(self.getPlayPauseButtonSystemItemFromToolbar(spotifyTrackViewController)).to(equal(UIBarButtonSystemItem.Pause))
+                    }
+                }
+                
+                context("when is not playing") {
+                    it("sets the play/pause button to the 'play' system item") {
+                        spotifyTrackViewController.changedPlaybackStatus(false)
+                        
+                        expect(self.getPlayPauseButtonSystemItemFromToolbar(spotifyTrackViewController)).to(equal(UIBarButtonSystemItem.Play))
+                    }
+                }
+            }
+
+            describe("press the play/pause button") {
+                it("toggles play") {
+                    self.pressPlayPauseButton(spotifyTrackViewController)
+                    
+                    expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                        MockSpotifyAudioFacade.Method.togglePlay)).toEventually(equal(1))
+                }
+            }
         }
     }
     
-    func verifyLabelTextOnSpotifyTrackViewController(spotifyTrackViewController: SpotifyTrackViewController, forSpotifyTrack spotifyTrack: SpotifyTrack) {
+    func pressPlayPauseButton(spotifyTrackViewController: SpotifyTrackViewController) {
+        let playPauseButton = spotifyTrackViewController.playPauseButton
+        UIApplication.sharedApplication().sendAction(playPauseButton.action, to: playPauseButton.target, from: self, forEvent: nil)
+    }
+
+    func assertCorrectLabelTextOnSpotifyTrackViewController(spotifyTrackViewController: SpotifyTrackViewController, forSpotifyTrack spotifyTrack: SpotifyTrack) {
         expect(spotifyTrackViewController.titleLabel.text).to(equal(spotifyTrack.name))
         expect(spotifyTrackViewController.artistLabel.text).to(equal(spotifyTrack.displayArtistName))
         expect(spotifyTrackViewController.albumLabel.text).to(equal(spotifyTrack.albumName))
+    }
+    
+    func getPlayPauseButtonSystemItemFromToolbar(spotifyTrackViewController: SpotifyTrackViewController) -> UIBarButtonSystemItem {
+        let playPauseButton = spotifyTrackViewController.toolbar.items?[6] as? UIBarButtonItem
+        return UIBarButtonSystemItem(rawValue: playPauseButton!.valueForKey("systemItem") as! Int)!
     }
 }

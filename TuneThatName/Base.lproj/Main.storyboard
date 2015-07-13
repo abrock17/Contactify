@@ -287,19 +287,19 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.70000000000000018" translatesAutoresizingMaskIntoConstraints="NO" id="vlL-tc-JA8">
                                 <rect key="frame" x="16" y="408" width="368" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Artist" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="jc7-p1-t9r">
                                 <rect key="frame" x="16" y="436" width="368" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Album" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pjz-d6-2Vz">
                                 <rect key="frame" x="16" y="465" width="368" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0ao-tI-YGQ">
@@ -308,6 +308,24 @@
                                     <barButtonItem systemItem="stop" id="Zcz-CM-isw">
                                         <connections>
                                             <segue destination="J8s-tk-W5r" kind="unwind" unwindAction="unwindToSpotifyPlaylistTable:" id="dsa-DN-hd4"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="oRp-S9-gZR"/>
+                                    <barButtonItem systemItem="rewind" id="dUg-nW-Ufa">
+                                        <connections>
+                                            <action selector="previousTrackButtonPressed:" destination="njU-17-JH3" id="eLo-rX-5Cl"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="zVi-lQ-GOw"/>
+                                    <barButtonItem systemItem="fastForward" id="2ha-RT-6t7">
+                                        <connections>
+                                            <action selector="nextTrackButtonPressed:" destination="njU-17-JH3" id="Sgd-S2-djv"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="uW6-mV-XCf"/>
+                                    <barButtonItem systemItem="play" id="bgO-N4-sbl">
+                                        <connections>
+                                            <action selector="playPausePressed:" destination="njU-17-JH3" id="WuU-cG-4kQ"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -339,7 +357,11 @@
                         <outlet property="albumImageView" destination="Cjq-1l-EBm" id="0Wp-mi-0xS"/>
                         <outlet property="albumLabel" destination="pjz-d6-2Vz" id="ZdA-LE-zjG"/>
                         <outlet property="artistLabel" destination="jc7-p1-t9r" id="EZi-Qg-7eR"/>
+                        <outlet property="nextTrackButton" destination="2ha-RT-6t7" id="aaT-G9-uKA"/>
+                        <outlet property="playPauseButton" destination="bgO-N4-sbl" id="VcK-6H-wef"/>
+                        <outlet property="previousTrackButton" destination="dUg-nW-Ufa" id="1Q6-qV-I84"/>
                         <outlet property="titleLabel" destination="vlL-tc-JA8" id="zCS-c2-q6G"/>
+                        <outlet property="toolbar" destination="0ao-tI-YGQ" id="Fvz-yg-bEz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sV7-AV-Ucz" userLabel="First Responder" sceneMemberID="firstResponder"/>
