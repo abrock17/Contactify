@@ -423,14 +423,14 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
             }
             
-            describe("starts playing spotify track") {
+            describe("current track change") {
                 beforeEach() {
                     mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
                 }
                 
                 context("and it is not nil") {
                     beforeEach() {
-                        spotifyPlaylistTableController.startedPlayingSpotifyTrack(spotifyTrack)
+                        spotifyPlaylistTableController.changedCurrentTrack(spotifyTrack)
                     }
                     
                     it("updates the song view button image") {
@@ -445,11 +445,11 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 
                 context("and it is nil and previous track was not nil") {
                     beforeEach() {
-                        spotifyPlaylistTableController.startedPlayingSpotifyTrack(spotifyTrack)
+                        spotifyPlaylistTableController.changedCurrentTrack(spotifyTrack)
                         
                         expect(self.getSongViewButtonBackgroundImageFromToolbar(spotifyPlaylistTableController)).toEventually(equal(image))
                         
-                        spotifyPlaylistTableController.startedPlayingSpotifyTrack(nil)
+                        spotifyPlaylistTableController.changedCurrentTrack(nil)
                     }
                     
                     it("removes the image from the song view button") {

@@ -54,7 +54,7 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                 expect(self.getPlayPauseButtonSystemItemFromToolbar(spotifyTrackViewController)).to(equal(UIBarButtonSystemItem.Pause))
             }
             
-            describe("starts playing spotify track") {
+            describe("current track change") {
                 let newSpotifyTrack = SpotifyTrack(
                     uri: NSURL(string: "spotify:track:453d5sjBIPAfhajumXOPIs")!,
                     name: "Thunderclap For Bobby Pyn",
@@ -65,7 +65,7 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                 beforeEach() {
                     spotifyTrackViewController.albumImageView.image = nil
 
-                    spotifyTrackViewController.startedPlayingSpotifyTrack(newSpotifyTrack)
+                    spotifyTrackViewController.changedCurrentTrack(newSpotifyTrack)
                 }
                 
                 it("updates the title, artist, and album label text for the spotify track") {

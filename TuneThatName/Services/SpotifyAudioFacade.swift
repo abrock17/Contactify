@@ -28,7 +28,7 @@ public protocol SpotifyPlaybackDelegate {
     
     func changedPlaybackStatus(isPlaying: Bool)
     
-    func startedPlayingSpotifyTrack(spotifyTrack: SpotifyTrack?)
+    func changedCurrentTrack(spotifyTrack: SpotifyTrack?)
 }
 
 public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
@@ -126,16 +126,23 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
         playbackDelegate.changedPlaybackStatus(isPlaying)
     }
     
-    public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didStartPlayingTrack trackUri: NSURL!) {
-        SPTTrack.trackWithURI(trackUri, session: nil) {
-            (error, result) in
-            
-            if error != nil {
-                println("Error retrieving current track: \(error)")
+    public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didChangeToTrack trackMetadata: [NSObject : AnyObject]!) {
+        if trackMetadata != nil {
+            if let uriString = trackMetadata["SPTAudioStreamingMetadataTrackURI"] as? String, uri = NSURL(string: uriString) {
+                SPTTrack.trackWithURI(uri, session: nil) {
+                    (error, result) in
+                    
+                    if error != nil {
+                        println("Error retrieving current track: \(error)")
+                    }
+                    let sptTrack = result as? SPTTrack
+                    self.currentSpotifyTrack = sptTrack != nil ? SpotifyTrack(sptTrack: sptTrack!) : nil
+                    self.playbackDelegate.changedCurrentTrack(self.currentSpotifyTrack)
+                }
             }
-            let sptTrack = result as? SPTTrack
-            self.currentSpotifyTrack = sptTrack != nil ? SpotifyTrack(sptTrack: sptTrack!) : nil
-            self.playbackDelegate.startedPlayingSpotifyTrack(self.currentSpotifyTrack)
+        } else {
+            self.currentSpotifyTrack = nil
+            self.playbackDelegate.changedCurrentTrack(self.currentSpotifyTrack)
         }
     }
 }

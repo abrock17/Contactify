@@ -56,7 +56,7 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         self.toolbar.items?.append(updatedButton)
     }
     
-    public func startedPlayingSpotifyTrack(spotifyTrack: SpotifyTrack?) {
+    public func changedCurrentTrack(spotifyTrack: SpotifyTrack?) {
         if let spotifyTrack = spotifyTrack {
             updateViewElementsForSpotifyTrack(spotifyTrack)
         } else {

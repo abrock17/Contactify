@@ -171,6 +171,22 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                     expect(mockSpotifyPlaybackDelegate.mocker.getNthCallTo(MockSpotifyPlaybackDelegate.Method.changedPlaybackStatus, n: 0)?.first as? Bool).to(equal(true))
                 }
             }
+            
+            describe("audio streaming did change to track") {
+                context("when track is nil") {
+                    beforeEach() {
+                        spotifyAudioFacade.audioStreaming?(mockAudioStreamingController, didChangeToTrack: nil)
+                    }
+                    
+                    it("sets the current spotify track to nil") {
+                        expect(spotifyAudioFacade.currentSpotifyTrack).to(beNil())
+                    }
+                    
+                    it("passes the nil value to changedCurrentTrack on the playback delegate") {
+                        expect(mockSpotifyPlaybackDelegate.mocker.getNthCallTo(MockSpotifyPlaybackDelegate.Method.changedCurrentTrack, n: 0)?.first as? SpotifyTrack).to(beNil())
+                    }
+                }
+            }
         }
     }
 }

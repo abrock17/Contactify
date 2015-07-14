@@ -390,7 +390,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         self.toolbarItems?.append(updatedButton)
     }
     
-    public func startedPlayingSpotifyTrack(spotifyTrack: SpotifyTrack?) {
+    public func changedCurrentTrack(spotifyTrack: SpotifyTrack?) {
         selectRowForSpotifyTrack(spotifyTrack)
         updateSongViewButtonForTrack(spotifyTrack)
     }
@@ -423,7 +423,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     @IBAction public func unwindToSpotifyPlaylistTable(sender: UIStoryboardSegue) {
         spotifyAudioFacade.playbackDelegate = self
-        startedPlayingSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack)
+        changedCurrentTrack(spotifyAudioFacade.currentSpotifyTrack)
         changedPlaybackStatus(spotifyAudioFacade.isPlaying)
     }
 }
