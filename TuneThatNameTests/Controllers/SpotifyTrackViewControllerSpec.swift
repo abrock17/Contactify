@@ -64,7 +64,7 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                     albumSmallestCoverImageURL: NSURL(string: "https://i.scdn.co/image/8775b33d7423ca4281f1be7477f5a7e1ca3ce588")!)
                 beforeEach() {
                     spotifyTrackViewController.albumImageView.image = nil
-                    
+
                     spotifyTrackViewController.startedPlayingSpotifyTrack(newSpotifyTrack)
                 }
                 
