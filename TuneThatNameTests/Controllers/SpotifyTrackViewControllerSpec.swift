@@ -14,6 +14,8 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                 albumLargestCoverImageURL: NSURL(string: "https://i.scdn.co/image/eecb04997c5c163e2fc73804cc169fa46e87666e")!,
                 albumSmallestCoverImageURL: NSURL(string: "https://i.scdn.co/image/9fc8918a40a16e51eab4dd97512d623c2b590c63")!)
             let image = UIImage(named: "yuck.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
+            let playbackError = NSError(domain: "domain", code: 999, userInfo: [NSLocalizedDescriptionKey: "YOU CAN'T CONTROL ME!"])
+            let expectedErrorTitle = "Unable to Control Playback"
 
             var spotifyTrackViewController: SpotifyTrackViewController!
             var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
@@ -100,6 +102,16 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                     expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
                         MockSpotifyAudioFacade.Method.togglePlay)).toEventually(equal(1))
                 }
+                
+                context("and the spotify audio facade calls back with an error") {
+                    it("displays the error message in an alert") {
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.togglePlay, returnValue: playbackError)
+                        
+                        self.pressPlayPauseButton(spotifyTrackViewController)
+                        
+                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyTrackViewController, expectedTitle: expectedErrorTitle, expectedMessage: playbackError.localizedDescription)
+                    }
+                }
             }
             
             describe("press the next track button") {
@@ -109,6 +121,16 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                     expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
                         MockSpotifyAudioFacade.Method.toNextTrack)).to(equal(1))
                 }
+                
+                context("and the spotify audio facade calls back with an error") {
+                    it("displays the error message in an alert") {
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.toNextTrack, returnValue: playbackError)
+                        
+                        self.pressNextTrackButton(spotifyTrackViewController)
+                        
+                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyTrackViewController, expectedTitle: expectedErrorTitle, expectedMessage: playbackError.localizedDescription)
+                    }
+                }
             }
             
             describe("press the previous track button") {
@@ -117,6 +139,16 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                     
                     expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
                         MockSpotifyAudioFacade.Method.toPreviousTrack)).to(equal(1))
+                }
+                
+                context("and the spotify audio facade calls back with an error") {
+                    it("displays the error message in an alert") {
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.toPreviousTrack, returnValue: playbackError)
+                        
+                        self.pressPreviousTrackButton(spotifyTrackViewController)
+                        
+                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyTrackViewController, expectedTitle: expectedErrorTitle, expectedMessage: playbackError.localizedDescription)
+                    }
                 }
             }
         }
@@ -147,5 +179,14 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
     func getPlayPauseButtonSystemItemFromToolbar(spotifyTrackViewController: SpotifyTrackViewController) -> UIBarButtonSystemItem {
         let playPauseButton = spotifyTrackViewController.toolbar.items?[6] as? UIBarButtonItem
         return UIBarButtonSystemItem(rawValue: playPauseButton!.valueForKey("systemItem") as! Int)!
+    }
+    
+    func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {
+        expect(parentController.presentedViewController).toEventuallyNot(beNil())
+        expect(parentController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
+        if let alertController = parentController.presentedViewController as? UIAlertController {
+            expect(alertController.title).toEventually(equal(expectedTitle))
+            expect(alertController.message).toEventually(equal(expectedMessage))
+        }
     }
 }

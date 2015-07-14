@@ -2,7 +2,7 @@ import UIKit
 
 public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelegate {
     
-    let playbackErrorTitle = "Unable to control playback"
+    let playbackErrorTitle = "Unable to Control Playback"
     
     public var spotifyAudioFacade: SpotifyAudioFacade!
     public var controllerHelper = ControllerHelper()
