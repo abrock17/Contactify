@@ -16,28 +16,28 @@ class ContactSpec: QuickSpec {
         
         describe("equality") {
             
-            it("is when the names match") {
+            it("is when the ID and names match") {
                 expect(
                     Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)).to(equal(
-                    Contact(id: self.id2, firstName: self.firstName1, lastName: self.lastName1)))
+                    Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)))
             }
             
-            it("is when the IDs match") {
+            it("is not when the IDs do not match") {
                 expect(
-                    Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)).to(equal(
+                    Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)).toNot(equal(
+                        Contact(id: self.id2, firstName: self.firstName1, lastName: self.lastName1)))
+            }
+            
+            it("is not when the first names do not match") {
+                expect(
+                    Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)).toNot(equal(
                         Contact(id: self.id1, firstName: self.firstName2, lastName: self.lastName1)))
             }
             
-            it("is not when the ID and first names do not match") {
+            it("is not when the last names do not match") {
                 expect(
                     Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)).toNot(equal(
-                        Contact(id: self.id2, firstName: self.firstName2, lastName: self.lastName1)))
-            }
-            
-            it("is not when the ID and last names do not match") {
-                expect(
-                    Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)).toNot(equal(
-                        Contact(id: self.id2, firstName: self.firstName1, lastName: self.lastName2)))
+                        Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName2)))
             }
         }
         

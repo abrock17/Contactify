@@ -12,7 +12,7 @@ public struct Constants {
         public static let NoContactsMessage = "You currently have no contacts."
         
         public static let PlaylistGeneralErrorCode = 20
-        public static let PlaylistGeneralErrorMessage = "Unable to build your playlist."
+        public static let PlaylistGeneralErrorMessage = "Encountered errors trying to build your playlist."
         
         public static let SpotifyNoCurrentTrackCode = 25
         public static let SpotifyNoCurrentTrackMessage = "There is no track in the current session."

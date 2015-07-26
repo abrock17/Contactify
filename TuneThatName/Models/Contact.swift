@@ -11,7 +11,7 @@ public class Contact: NSObject, NSCoding, Equatable, Hashable {
     }
     
     public override var hashValue: Int {
-        return "\(id)\(firstName)\(lastName)".hashValue
+        return "\(id),\(firstName),\(lastName)".hashValue
     }
     
     public init(id: Int32, firstName: String?, lastName: String?, fullName: String! = nil) {
@@ -36,5 +36,5 @@ public class Contact: NSObject, NSCoding, Equatable, Hashable {
 }
 
 public func ==(x: Contact, y: Contact) -> Bool {
-    return x.id == y.id || (x.firstName == y.firstName && x.lastName == y.lastName)
+    return x.id == y.id && x.firstName == y.firstName && x.lastName == y.lastName
 }

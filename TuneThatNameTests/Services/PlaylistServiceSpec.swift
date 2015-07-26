@@ -224,15 +224,15 @@ class PlaylistServiceSpec: QuickSpec {
                             }
                         }
                         
-                        context("and the echo nest service calls back with three errors") {
+                        context("and the echo nest service calls back with an error for each contact") {
                             let numberOfSongs = contactList.count
-                            let lastError = NSError(domain: "89", code: 89, userInfo: nil)
                             let echoNestResults: [EchoNestService.SongsResult] = [
-                                .Failure(NSError(domain: "87", code: 87, userInfo: nil)),
-                                .Failure(NSError(domain: "88", code: 88, userInfo: nil)),
-                                .Failure(lastError)]
+                                .Failure(NSError(domain: "1", code: 87, userInfo: nil)),
+                                .Failure(NSError(domain: "2", code: 87, userInfo: nil)),
+                                .Failure(NSError(domain: "3", code: 87, userInfo: nil))
+                            ]
                             
-                            it("calls back with the last error of the three") {
+                            it("calls back with a generic error") {
                                 playlistPreferences.numberOfSongs = numberOfSongs
                                 for result in echoNestResults {
                                     mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
@@ -240,9 +240,11 @@ class PlaylistServiceSpec: QuickSpec {
                                 
                                 playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                                 
-                                expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(contactList.count))
+                                expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService))
+                                    .toEventually(equal(contactList.count))
                                 expect(self.callbackErrorList.count).toEventually(equal(1))
-                                expect(self.callbackErrorList[0]).toEventually(equal(lastError))
+                                let expectedError = NSError(domain: Constants.Error.Domain, code: Constants.Error.PlaylistGeneralErrorCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistGeneralErrorMessage])
+                                expect(self.callbackErrorList.first).toEventually(equal(expectedError))
                                 expect(self.callbackPlaylistList).to(beEmpty())
                             }
                         }
@@ -296,33 +298,43 @@ class PlaylistServiceSpec: QuickSpec {
                     }
                     
                     context("when the contact service calls back with a larger list of contacts with first names") {
-                        let contactList = Array(1...20).map({Contact(id: Int32($0), firstName: "John", lastName: "Doe")})
+                        let contactList = Array(1...40).map({ Contact(id: Int32($0), firstName: "John", lastName: "Doe") })
                         beforeEach() {
                             mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
                         }
                         
-                        context("and the echo nest service calls back with errors for at least 20% calls to find songs") {
-                            let numberOfSongs = contactList.count
-                            let lastError = NSError(domain: "89", code: 89, userInfo: nil)
-                            let echoNestResults: [EchoNestService.SongsResult] = [
-                                .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1")!)]),
-                                .Failure(NSError(domain: "85", code: 87, userInfo: nil)),
-                                .Failure(NSError(domain: "86", code: 88, userInfo: nil)),
-                                .Failure(NSError(domain: "87", code: 87, userInfo: nil)),
-                                .Failure(NSError(domain: "88", code: 88, userInfo: nil)),
-                                .Failure(lastError)]
+                        context("and the echo nest service calls back with errors for at least one third of the calls to find songs") {
+                            let numberOfSongs = 23
+                            let echoNestResults: [EchoNestService.SongsResult] = {
+                                var results = Array<EchoNestService.SongsResult>()
+                                for _ in 1...10 {
+                                    results += [
+                                        .Success([Song(title: "title 1", artistName: "artist 1", uri: NSURL(string: "uri1")!)]),
+                                        .Failure(NSError(domain: "89", code: 89, userInfo: [NSLocalizedDescriptionKey: "Huge dissapointing failure."])),
+                                        .Success([Song(title: "title 2", artistName: "artist 2", uri: NSURL(string: "uri2")!)])
+                                    ]
+                                }
+                                return results
+                                }()
                             
-                            it("calls back only with the first error over 20%") {
+                            beforeEach() {
                                 playlistPreferences.numberOfSongs = numberOfSongs
                                 for result in echoNestResults {
                                     mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
                                 }
                                 
                                 playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
-                                
-                                expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(contactList.count))
+                            }
+                            
+                            it("limits calls to the echo nest service") {
+                                expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService))
+                                    .toEventually(equal(echoNestResults.count))
+                            }
+                            
+                            it("calls back with an error") {
                                 expect(self.callbackErrorList.count).toEventually(equal(1))
-                                expect(self.callbackErrorList.first).toEventually(equal(lastError))
+                                let expectedError = NSError(domain: Constants.Error.Domain, code: Constants.Error.PlaylistGeneralErrorCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistGeneralErrorMessage])
+                                expect(self.callbackErrorList.first).toEventually(equal(expectedError))
                                 expect(self.callbackPlaylistList).to(beEmpty())
                             }
                         }

@@ -39,72 +39,76 @@ public class PlaylistService {
     }
     
     func createPlaylistForContactList(contactList: [Contact], playlistPreferences: PlaylistPreferences, callback: PlaylistResult -> Void) {
-        let numberOfSongs = playlistPreferences.numberOfSongs
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).isEmpty})
-        let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: numberOfSongs, numberOfContacts: searchableContacts.count)
-        var contactsToBeSearched = searchableContacts
-        var contactsSearched = [Contact]()
-        var contactSongsResultMap = [Contact: [Song]]()
-        var searchCallbackCount = 0, searchErrorCount = 0
-        var calledBack = false
+        let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: playlistPreferences.numberOfSongs, numberOfContacts: searchableContacts.count)
+        var contactSongsMap = [Contact: [Song]]()
+        var contactErrorMap = [Contact: NSError]()
+        let maxSongSearches = playlistPreferences.numberOfSongs + ((playlistPreferences.numberOfSongs - 5) / 9 + 5)
+        let errorThreshold = maxSongSearches / 3
         
-        var findSongsForRandomName: (() -> ())!
-        findSongsForRandomName = { () -> () in
-            if !contactsToBeSearched.isEmpty {
-                let randomIndex = Int(arc4random_uniform(UInt32(contactsToBeSearched.count)))
-                let searchContact = contactsToBeSearched.removeAtIndex(randomIndex)
-                contactsSearched.append(searchContact)
-                self.echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, songPreferences: playlistPreferences.songPreferences, desiredNumberOfSongs: searchNumber) {
-                    songsResult in
-                    
-                    switch (songsResult) {
-                    case .Success(let songs):
-                        if !songs.isEmpty {
-                            contactSongsResultMap[searchContact] = songs
-                        } else {
-                            println("No songs found for \(searchContact)")
-                            findSongsForRandomName()
-                        }
-                        
-                        if contactSongsResultMap.count == numberOfSongs {
-                            calledBack = true
-                            callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, numberOfSongs: numberOfSongs)))
-                        }
-                    case .Failure(let error):
-                        searchErrorCount++
-                        println("Error finding songs for \(searchContact): \(error)")
-                        
-                        if  searchErrorCount >= 3 && searchErrorCount > (numberOfSongs / 5) {
-                            if !calledBack {
-                                calledBack = true
-                                callback(.Failure(error))
-                            }
-                        } else {
-                            findSongsForRandomName()
-                        }
+        var contactLists = separateNRandomForSearch(playlistPreferences.numberOfSongs, fromContacts: searchableContacts)
+        do {
+            let contactSongsResultMap = findSongsForContacts(contactLists.searchContacts, withPreferences: playlistPreferences.songPreferences, andSearchNumber: searchNumber)
+            for (contact, songsResult) in contactSongsResultMap {
+                switch (songsResult) {
+                case .Success(let songs):
+                    if !songs.isEmpty {
+                        contactSongsMap[contact] = songs
+                    } else {
+                        println("No songs found for \(contact)")
                     }
-                    
-                    searchCallbackCount++
-                    if !calledBack && searchCallbackCount == searchableContacts.count {
-                        calledBack = true
-                        callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, numberOfSongs: numberOfSongs)))
-                    }
-                }
-            } else if !calledBack {
-                calledBack = true
-                if !contactSongsResultMap.isEmpty {
-                callback(.Success(self.buildPlaylistFromContactSongsResultMap(contactSongsResultMap, numberOfSongs: numberOfSongs)))
-                } else {
-                    callback(.Failure(self.generalError()))
+                case .Failure(let error):
+                    println("Error finding songs for \(contact): \(error)")
+                    contactErrorMap[contact] = error
                 }
             }
-        }
+            
+            let n = min((playlistPreferences.numberOfSongs - contactSongsMap.count),
+                maxSongSearches - (contactSongsMap.count + contactErrorMap.count))
+            contactLists = separateNRandomForSearch(n, fromContacts: contactLists.remainingContacts)
+            // println("contactSongsMap=\(contactSongsMap.count), contactErrorMap=\(contactErrorMap.count), n=\(n)")
+        } while contactSongsMap.count < playlistPreferences.numberOfSongs
+            && (contactSongsMap.count + contactErrorMap.count) < maxSongSearches
+            && contactErrorMap.count < errorThreshold
+            && !contactLists.searchContacts.isEmpty
         
-        while contactsSearched.count < numberOfSongs && contactsToBeSearched.count > 0 {
-            findSongsForRandomName()
+        if contactErrorMap.count >= errorThreshold {
+            callback(.Failure(generalError()))
+        } else {
+            callback(.Success(self.buildPlaylistFromContactSongsMap(contactSongsMap, numberOfSongs: playlistPreferences.numberOfSongs)))
         }
     }
     
+    func separateNRandomForSearch(n: Int, fromContacts contacts: [Contact]) -> (searchContacts: [Contact], remainingContacts: [Contact]) {
+        var randomContacts = [Contact]()
+        var remainingContacts = contacts
+        while randomContacts.count < n && !remainingContacts.isEmpty {
+            let randomIndex = Int(arc4random_uniform(UInt32(remainingContacts.count)))
+            let searchContact = remainingContacts.removeAtIndex(randomIndex)
+            randomContacts.append(searchContact)
+        }
+        
+        return (randomContacts, remainingContacts)
+    }
+    
+    func findSongsForContacts(contacts: [Contact], withPreferences songPreferences: SongPreferences, andSearchNumber searchNumber: Int) -> [Contact: EchoNestService.SongsResult] {
+
+        var contactSongsResultMap = Dictionary<Contact, EchoNestService.SongsResult>()
+        let group = dispatch_group_create()
+        for contact in contacts {
+            dispatch_group_enter(group)
+            self.echoNestService.findSongs(titleSearchTerm: contact.firstName!, songPreferences: songPreferences, desiredNumberOfSongs: searchNumber) {
+                songsResult in
+                
+                contactSongsResultMap[contact] = songsResult
+                dispatch_group_leave(group)
+            }
+        }
+        
+        dispatch_group_wait(group, dispatch_time(DISPATCH_TIME_NOW, Int64(30.0 * Double(NSEC_PER_SEC))))
+        return contactSongsResultMap
+    }
+
     func getEchoNestSearchNumberFor(totalRequestedNumberOfSongs numberOfSongs: Int, numberOfContacts: Int) -> Int {
         let searchNumber: Int
         let minimumSearchNumber = Float(numberOfSongs) / Float(numberOfContacts)
@@ -117,15 +121,15 @@ public class PlaylistService {
         return searchNumber
     }
     
-    func buildPlaylistFromContactSongsResultMap(contactSongsResultMap: [Contact: [Song]], numberOfSongs: Int) -> Playlist {
+    func buildPlaylistFromContactSongsMap(contactSongsMap: [Contact: [Song]], numberOfSongs: Int) -> Playlist {
         var playlistSongs = [Song]()
         var exhaustedContacts = [Contact]()
         
-        while playlistSongs.count < numberOfSongs && exhaustedContacts.count < contactSongsResultMap.count {
-            for contact in contactSongsResultMap.keys {
+        while playlistSongs.count < numberOfSongs && exhaustedContacts.count < contactSongsMap.count {
+            for contact in contactSongsMap.keys {
                 if !contains(exhaustedContacts, contact) {
                     var songAdded = false
-                    for contactSong in contactSongsResultMap[contact]! {
+                    for contactSong in contactSongsMap[contact]! {
                         if !contains(playlistSongs, contactSong) {
                             playlistSongs.append(contactSong)
                             songAdded = true

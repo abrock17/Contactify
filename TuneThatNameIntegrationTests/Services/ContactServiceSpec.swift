@@ -68,6 +68,20 @@ class ContactServiceSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("create a buncha contacts") {
+                let lastName = "Smith"
+                let firstNames = ["Al", "Bill", "Charlie", "Desmond", "Ernie", "Frank", "George", "Henry",
+                    "Icabod", "Jim", "Kevin", "Larry", "Mitch", "Norwin", "Orville", "Paul", "Quincy",
+                    "Rod", "Sam", "Terrence", "Ulysses", "Vinnie", "Walter", "Xavier", "Yakov", "Zack"]
+                xit("creates em") {
+                    for _ in 0..<4 {
+                        for firstName in firstNames {
+                            self.saveNewContact(firstName: firstName, lastName: lastName)
+                        }
+                    }
+                }
+            }
         }
     }
     

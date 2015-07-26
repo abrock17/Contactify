@@ -79,8 +79,14 @@ public class ContactService {
                 case .Success(let contacts):
                     let archivedFilteredContacts = contactDataArray.map({ NSKeyedUnarchiver.unarchiveObjectWithData($0) as! Contact })
                     for filteredContact in archivedFilteredContacts {
-                        let matchingContacts = contacts.filter({ $0 == filteredContact })
-                        filteredContacts += matchingContacts
+                        var matchingContacts = contacts.filter({ $0.id == filteredContact.id })
+                        if matchingContacts.isEmpty {
+                            matchingContacts = contacts.filter({
+                                $0.firstName == filteredContact.firstName && $0.lastName == filteredContact.lastName })
+                        }
+                        if !matchingContacts.isEmpty {
+                            filteredContacts.append(matchingContacts.first!)
+                        }
                     }
                     callback(.Success(filteredContacts))
                 case .Failure(let error):
