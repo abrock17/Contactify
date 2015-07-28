@@ -3,7 +3,7 @@ import UIKit
 public class CreatePlaylistController: UIViewController {
     
     let minNumberOfSongs = 1
-    let maxNumberOfSongs = 100
+    let maxNumberOfSongs = 50
     
     var playlistPreferences: PlaylistPreferences!
     var playlist: Playlist?
