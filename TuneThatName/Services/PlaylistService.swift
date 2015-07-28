@@ -44,7 +44,7 @@ public class PlaylistService {
         var contactSongsMap = [Contact: [Song]]()
         var contactErrorMap = [Contact: NSError]()
         let maxSongSearches = playlistPreferences.numberOfSongs + ((playlistPreferences.numberOfSongs - 5) / 9 + 5)
-        let errorThreshold = maxSongSearches / 3
+        let errorThreshold = min(searchableContacts.count - 1, max(5, maxSongSearches / 3))
         
         var contactLists = separateNRandomForSearch(playlistPreferences.numberOfSongs, fromContacts: searchableContacts)
         do {

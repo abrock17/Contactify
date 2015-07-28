@@ -338,6 +338,31 @@ class PlaylistServiceSpec: QuickSpec {
                                 expect(self.callbackPlaylistList).to(beEmpty())
                             }
                         }
+                        
+                        context("and the desired number of songs is one") {
+                            let numberOfSongs = 1
+                            
+                            context("and the echo nest service is only returning errors") {
+                                beforeEach() {
+                                    playlistPreferences.numberOfSongs = numberOfSongs
+                                    mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Failure(NSError(domain: "domain", code: 666, userInfo: nil)))
+                                    
+                                    playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
+                                }
+                                
+                                it("limits calls five times") {
+                                    expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService))
+                                        .toEventually(equal(5))
+                                }
+                                
+                                it("calls back with an error") {
+                                    expect(self.callbackErrorList.count).toEventually(equal(1))
+                                    let expectedError = NSError(domain: Constants.Error.Domain, code: Constants.Error.PlaylistGeneralErrorCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistGeneralErrorMessage])
+                                    expect(self.callbackErrorList.first).toEventually(equal(expectedError))
+                                    expect(self.callbackPlaylistList).to(beEmpty())
+                                }
+                            }
+                        }
                     }
                     
                     context("when the contact service calls back with contacts not all of whom have first names") {
