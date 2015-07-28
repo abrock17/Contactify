@@ -226,17 +226,10 @@ class PlaylistServiceSpec: QuickSpec {
                         
                         context("and the echo nest service calls back with an error for each contact") {
                             let numberOfSongs = contactList.count
-                            let echoNestResults: [EchoNestService.SongsResult] = [
-                                .Failure(NSError(domain: "1", code: 87, userInfo: nil)),
-                                .Failure(NSError(domain: "2", code: 87, userInfo: nil)),
-                                .Failure(NSError(domain: "3", code: 87, userInfo: nil))
-                            ]
                             
                             it("calls back with a generic error") {
                                 playlistPreferences.numberOfSongs = numberOfSongs
-                                for result in echoNestResults {
-                                    mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: result)
-                                }
+                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Failure(NSError(domain: "whatever", code: 87, userInfo: nil)))
                                 
                                 playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                                 
@@ -276,6 +269,24 @@ class PlaylistServiceSpec: QuickSpec {
                                 for expectedSong in expectedSongs {
                                     expect(playlistSongs).to(contain(expectedSong))
                                 }
+                            }
+                        }
+                        
+                        context("and the echo nest service calls back with no results for any of the songs") {
+                            let numberOfSongs = contactList.count
+                            
+                            it("calls back with the appropriate error") {
+                                playlistPreferences.numberOfSongs = numberOfSongs
+                                mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success([Song]()))
+                                
+                                playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
+                                
+                                expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService))
+                                    .toEventually(equal(contactList.count))
+                                expect(self.callbackErrorList.count).toEventually(equal(1))
+                                let expectedError = NSError(domain: Constants.Error.Domain, code: Constants.Error.PlaylistNotEnoughSongsCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistNotEnoughSongsMessage])
+                                expect(self.callbackErrorList.first).toEventually(equal(expectedError))
+                                expect(self.callbackPlaylistList).to(beEmpty())
                             }
                         }
                         

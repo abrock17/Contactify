@@ -397,8 +397,8 @@
 		44E9D5FE1A952D2F001E4792 /* TuneThatNameTests */ = {
 			isa = PBXGroup;
 			children = (
-				44FBFE961AC650CC0087C9FF /* Models */,
 				4433E6241ABD9634006CE8B8 /* Controllers */,
+				44FBFE961AC650CC0087C9FF /* Models */,
 				443F9EC61AA4BC9500705340 /* Mocks */,
 				443F9EC51AA3FCED00705340 /* Services */,
 				44E9D5FF1A952D2F001E4792 /* Supporting Files */,

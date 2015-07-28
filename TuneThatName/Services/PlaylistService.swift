@@ -8,6 +8,7 @@ public class PlaylistService {
     }
     
     let defaultSearchNumber = 20
+    let unacceptableSongResultPercentage: Float = 0.0
     
     let contactService: ContactService
     let echoNestService: EchoNestService
@@ -75,7 +76,12 @@ public class PlaylistService {
         if contactErrorMap.count >= errorThreshold {
             callback(.Failure(generalError()))
         } else {
-            callback(.Success(self.buildPlaylistFromContactSongsMap(contactSongsMap, numberOfSongs: playlistPreferences.numberOfSongs)))
+            let playlist = buildPlaylistFromContactSongsMap(contactSongsMap, numberOfSongs: playlistPreferences.numberOfSongs)
+            if Float(playlist.songs.count) / Float(playlistPreferences.numberOfSongs) <= unacceptableSongResultPercentage {
+                callback(.Failure(notEnoughSongsError()))
+            } else {
+                callback(.Success(playlist))
+            }
         }
     }
     
@@ -154,5 +160,11 @@ public class PlaylistService {
         return NSError(domain: Constants.Error.Domain,
             code: Constants.Error.PlaylistGeneralErrorCode,
             userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistGeneralErrorMessage])
+    }
+    
+    func notEnoughSongsError() -> NSError {
+        return NSError(domain: Constants.Error.Domain,
+            code: Constants.Error.PlaylistNotEnoughSongsCode,
+            userInfo: [NSLocalizedDescriptionKey: Constants.Error.PlaylistNotEnoughSongsMessage])
     }
 }

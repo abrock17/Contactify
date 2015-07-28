@@ -14,6 +14,9 @@ public struct Constants {
         public static let PlaylistGeneralErrorCode = 20
         public static let PlaylistGeneralErrorMessage = "Encountered errors trying to build your playlist."
         
+        public static let PlaylistNotEnoughSongsCode = 21
+        public static let PlaylistNotEnoughSongsMessage = "Could not find enough songs matching the provided search criteria."
+
         public static let SpotifyNoCurrentTrackCode = 25
         public static let SpotifyNoCurrentTrackMessage = "There is no track in the current session."
     }
