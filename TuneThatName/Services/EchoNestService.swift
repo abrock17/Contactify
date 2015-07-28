@@ -9,6 +9,15 @@ public class EchoNestService {
         case Failure(NSError)
     }
     
+    static func defaultAlamoFireManager() -> Manager {
+        let configuration: NSURLSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        configuration.HTTPAdditionalHeaders = Manager.defaultHTTPHeaders
+        configuration.timeoutIntervalForRequest = 10
+        configuration.HTTPMaximumConnectionsPerHost = 8
+        
+        return Manager(configuration: configuration)
+    }
+    
     let defaultSearchNumber = 50
     let maxResultNumber = 100
     let apiKey = "GVZ7FFJUMMXBG58VQ"
@@ -19,7 +28,7 @@ public class EchoNestService {
     
     let alamoFireManager: Manager!
     
-    public init(alamoFireManager: Manager = Manager.sharedInstance) {
+    public init(alamoFireManager: Manager = EchoNestService.defaultAlamoFireManager()) {
         self.alamoFireManager = alamoFireManager
     }
     

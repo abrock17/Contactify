@@ -66,7 +66,7 @@ public class PlaylistService {
             let n = min((playlistPreferences.numberOfSongs - contactSongsMap.count),
                 maxSongSearches - (contactSongsMap.count + contactErrorMap.count))
             contactLists = separateNRandomForSearch(n, fromContacts: contactLists.remainingContacts)
-            // println("contactSongsMap=\(contactSongsMap.count), contactErrorMap=\(contactErrorMap.count), n=\(n)")
+            println("searching for \(playlistPreferences.numberOfSongs) songs...\n\tcontactSongsMap=\(contactSongsMap.count)\n\tcontactErrorMap=\(contactErrorMap.count)\n\tn=\(n)")
         } while contactSongsMap.count < playlistPreferences.numberOfSongs
             && (contactSongsMap.count + contactErrorMap.count) < maxSongSearches
             && contactErrorMap.count < errorThreshold
@@ -122,6 +122,7 @@ public class PlaylistService {
     }
     
     func buildPlaylistFromContactSongsMap(contactSongsMap: [Contact: [Song]], numberOfSongs: Int) -> Playlist {
+        println("building playlist with \(contactSongsMap.count) contacts")
         var playlistSongs = [Song]()
         var exhaustedContacts = [Contact]()
         
