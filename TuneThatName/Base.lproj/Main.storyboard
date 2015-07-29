@@ -237,7 +237,7 @@
                         <barButtonItem key="backBarButtonItem" title=" " id="1P6-2k-tea"/>
                         <barButtonItem key="leftBarButtonItem" title="New" id="TJd-yq-C39">
                             <connections>
-                                <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistFromPlaylistTableSegue" unwindAction="unwindToCreatePlaylist:" id="tZw-B4-PxU"/>
+                                <action selector="newPlaylistPressed:" destination="197-cV-9aq" id="DRA-kB-rnU"/>
                             </connections>
                         </barButtonItem>
                         <button key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="kO6-zi-WbG">
@@ -254,11 +254,13 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
+                        <outlet property="newPlaylistButton" destination="TJd-yq-C39" id="xCi-ys-51w"/>
                         <outlet property="playPauseButton" destination="MEa-qh-7JS" id="Qjv-DG-DoC"/>
                         <outlet property="playlistNameButton" destination="kO6-zi-WbG" id="qyd-dR-Etd"/>
                         <outlet property="saveButton" destination="kyd-NY-KvY" id="7Cy-NB-X9a"/>
                         <outlet property="songViewButton" destination="vZD-FT-x7g" id="dYO-ld-fQl"/>
                         <segue destination="njU-17-JH3" kind="presentation" identifier="ShowSpotifyTrackSegue" id="thZ-EL-OxA"/>
+                        <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistFromPlaylistTableSegue" unwindAction="unwindToCreatePlaylist:" id="Ynz-83-V4a"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9zL-Pn-uq4" userLabel="First Responder" sceneMemberID="firstResponder"/>

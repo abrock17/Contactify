@@ -29,6 +29,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.tableView)
     
     @IBOutlet public weak var playlistNameButton: UIButton!
+    @IBOutlet public weak var newPlaylistButton: UIBarButtonItem!
     @IBOutlet public weak var saveButton: UIBarButtonItem!
     @IBOutlet public weak var playPauseButton: UIBarButtonItem!
     @IBOutlet public weak var songViewButton: UIBarButtonItem!
@@ -195,6 +196,14 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         } else if let spotifyTrackViewController = destinationViewController as? SpotifyTrackViewController {
             spotifyTrackViewController.spotifyAudioFacade = spotifyAudioFacade
         }
+    }
+    
+    @IBAction func newPlaylistPressed(sender: UIBarButtonItem) {
+//        if saveButton.title == "Playlist Saved" {
+            self.performSegueWithIdentifier("UnwindToCreatePlaylistFromPlaylistTableSegue", sender: sender)
+//        } else {
+//            ControllerHelper.displaySimpleAlertForTitle("Save your playlist, yo", andMessage: "or you gonna lose it", onController: self)
+//        }
     }
     
     @IBAction public func savePlaylistPressed(sender: AnyObject) {

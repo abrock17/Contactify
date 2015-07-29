@@ -479,6 +479,17 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
             }
             
+            describe("new playlist pressed") {
+                context("when the current playlist has been saved") {
+                    it("unwinds to create playlist") {
+                        self.pressNewPlaylistButton(spotifyPlaylistTableController)
+                        
+                        expect(navigationController.topViewController)
+                            .toEventually(beAnInstanceOf(CreatePlaylistController))
+                    }
+                }
+            }
+            
             describe("edit pressed") {
                 it("updates the save button text") {
                     self.pressEditButton(spotifyPlaylistTableController)
@@ -718,23 +729,27 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     }
     
     func pressSaveButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
-        let saveButton = spotifyPlaylistTableController.saveButton
-        UIApplication.sharedApplication().sendAction(saveButton.action, to: saveButton.target, from: self, forEvent: nil)
+        pressBarButton(spotifyPlaylistTableController.saveButton)
     }
     
     func pressPlayPauseButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
-        let playPauseButton = spotifyPlaylistTableController.playPauseButton
-        UIApplication.sharedApplication().sendAction(playPauseButton.action, to: playPauseButton.target, from: self, forEvent: nil)
+        pressBarButton(spotifyPlaylistTableController.playPauseButton)
     }
     
     func pressSongViewButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
-        let songViewButton = spotifyPlaylistTableController.songViewButton
-        UIApplication.sharedApplication().sendAction(songViewButton.action, to: songViewButton.target, from: self, forEvent: nil)
+        pressBarButton(spotifyPlaylistTableController.songViewButton)
+    }
+    
+    func pressNewPlaylistButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
+        pressBarButton(spotifyPlaylistTableController.newPlaylistButton)
     }
     
     func pressEditButton(spotifyPlaylistTableController: SpotifyPlaylistTableController) {
-        let editButton = spotifyPlaylistTableController.editButtonItem()
-        UIApplication.sharedApplication().sendAction(editButton.action, to: editButton.target, from: self, forEvent: nil)
+        pressBarButton(spotifyPlaylistTableController.editButtonItem())
+    }
+    
+    func pressBarButton(barButton: UIBarButtonItem) {
+        UIApplication.sharedApplication().sendAction(barButton.action, to: barButton.target, from: self, forEvent: nil)
     }
     
     func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {

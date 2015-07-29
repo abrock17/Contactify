@@ -135,7 +135,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     }
                     
                     it("segues to the name selection view") {
-                        expect(navigationController.topViewController).toEventually(beAnInstanceOf(NameSelectionTableController))
+                        expect(navigationController.topViewController)
+                            .toEventually(beAnInstanceOf(NameSelectionTableController))
                     }
                 }
                 
