@@ -7,11 +7,16 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         case SavePlaylist
     }
     
+    enum PlaylistState {
+        case Unsaved, Editing, Saving, Saved
+    }
+    
     let playSongErrorTitle = "Unable to Play Song"
     let songViewButtonWidth: CGFloat = 29
     
     public var playlist: Playlist!
     public var spotifySessionAction: SpotifySessionAction!
+    var playlistState: PlaylistState!
     var hasPlayed: Bool {
         return self.spotifyAudioFacade.currentSpotifyTrack != nil
     }
@@ -39,7 +44,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         self.navigationItem.rightBarButtonItem = self.editButtonItem()
         self.tableView.allowsSelectionDuringEditing = true
         
-        updateSaveButtonForUnsavedPlaylist()
+        updatePlaylistState(.Unsaved)
     }
     
     override public func viewWillAppear(animated: Bool) {
@@ -89,9 +94,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         super.setEditing(editing, animated: animated)
         
         if editing {
-            updateSaveButtonForPlaylistEditInProgress()
+            updatePlaylistState(.Editing)
         } else {
-            updateSaveButtonForUnsavedPlaylist()
+            updatePlaylistState(.Unsaved)
         }
         
         selectRowForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack)
@@ -199,11 +204,27 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     @IBAction func newPlaylistPressed(sender: UIBarButtonItem) {
-//        if saveButton.title == "Playlist Saved" {
+        if PlaylistState.Saved == playlistState {
+            performSegueWithIdentifier("UnwindToCreatePlaylistFromPlaylistTableSegue", sender: sender)
+        } else {
+            presentUnsavedPlaylistDialog(sender)
+        }
+    }
+    
+    func presentUnsavedPlaylistDialog(sender: AnyObject) {
+        let alertController = UIAlertController(title: "Unsaved Playlist", message: "Abandon changes to this playlist?", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Save Playlist", style: UIAlertActionStyle.Default) {
+            uiAlertAction in
+            
+            self.savePlaylist()
+            })
+        alertController.addAction(UIAlertAction(title: "Abandon Changes", style: UIAlertActionStyle.Destructive) {
+            uiAlertAction in
+            
             self.performSegueWithIdentifier("UnwindToCreatePlaylistFromPlaylistTableSegue", sender: sender)
-//        } else {
-//            ControllerHelper.displaySimpleAlertForTitle("Save your playlist, yo", andMessage: "or you gonna lose it", onController: self)
-//        }
+            })
+        presentViewController(alertController, animated: true, completion: nil)
     }
     
     @IBAction public func savePlaylistPressed(sender: AnyObject) {
@@ -291,7 +312,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     func updatePlaylistName(playlistName: String) {
         playlist.name = playlistName
         playlistNameButton.setTitle(playlist.name, forState: UIControlState.Normal)
-        updateSaveButtonForUnsavedPlaylist()
+        updatePlaylistState(.Unsaved)
     }
     
     func updatePlaylistNameAndSave(playlistName: String) {
@@ -301,7 +322,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     func savePlaylist() {
         if playlist.name != nil {
-            updateSaveButtonForPlaylistSaveInProgress()
+            updatePlaylistState(.Saving)
             ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
             let session = spotifyAuth.session
             println("access token: \(session?.accessToken)")
@@ -313,11 +334,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                         switch (playlistResult) {
                         case .Success(let playlist):
                             self.playlist = playlist
-                            self.updateSaveButtonAfterPlaylistSaved()
+                            self.updatePlaylistState(.Saved)
                         case .Failure(let error):
                             println("Error saving playlist: \(error)")
                             ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andError: error, onController: self)
-                            self.updateSaveButtonForUnsavedPlaylist()
+                            self.updatePlaylistState(.Unsaved)
                         }
                         ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                     }
@@ -328,24 +349,25 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         }
     }
     
-    func updateSaveButtonForUnsavedPlaylist() {
-        self.saveButton.title = "Save to Spotify"
-        self.saveButton.enabled = true
-    }
-    
-    func updateSaveButtonForPlaylistSaveInProgress() {
-        self.saveButton.title = "Saving Playlist"
-        self.saveButton.enabled = false
-    }
-    
-    func updateSaveButtonAfterPlaylistSaved() {
-        self.saveButton.title = "Playlist Saved"
-        self.saveButton.enabled = false
-    }
-    
-    func updateSaveButtonForPlaylistEditInProgress() {
-        self.saveButton.title = "Editing Playlist"
-        self.saveButton.enabled = false
+    func updatePlaylistState(state: PlaylistState) {
+        playlistState = state
+        var buttonEnabled = false
+        let buttonTitle: String
+        
+        switch state {
+        case .Unsaved:
+            buttonEnabled = true
+            buttonTitle = "Save to Spotify"
+        case .Editing:
+            buttonTitle = "Editing Playlist"
+        case .Saving:
+            buttonTitle = "Saving Playlist"
+        case .Saved:
+            buttonTitle = "Playlist Saved"
+        }
+        
+        saveButton.title = buttonTitle
+        saveButton.enabled = buttonEnabled
     }
     
     @IBAction func playPausePressed(sender: UIBarButtonItem) {

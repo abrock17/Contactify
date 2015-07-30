@@ -50,7 +50,6 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         spotifyPlaylistTableController.playlist.name = nil
 
                         self.pressSaveButton(spotifyPlaylistTableController)
-                        NSRunLoop.mainRunLoop().runUntilDate(NSDate())
 
                         expect(spotifyPlaylistTableController.presentedViewController).toEventually(beAnInstanceOf(PlaylistNameEntryController))
                     }
@@ -481,11 +480,25 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             
             describe("new playlist pressed") {
                 context("when the current playlist has been saved") {
+                    beforeEach() {
+                        mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Success(Playlist(name: "saved playlist", uri: NSURL(string: "uri"))))
+                        self.pressSaveButton(spotifyPlaylistTableController)
+                        expect(spotifyPlaylistTableController.saveButton.title).toEventually(equal("Playlist Saved"))
+                    }
+                    
                     it("unwinds to create playlist") {
                         self.pressNewPlaylistButton(spotifyPlaylistTableController)
                         
                         expect(navigationController.topViewController)
                             .toEventually(beAnInstanceOf(CreatePlaylistController))
+                    }
+                }
+                
+                context("when the current playlist has not been saved") {
+                    it("asks the user to confirm abandoning the playlist") {
+                        self.pressNewPlaylistButton(spotifyPlaylistTableController)
+                        
+                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Unsaved Playlist", expectedMessage: "Abandon changes to this playlist?")
                     }
                 }
             }

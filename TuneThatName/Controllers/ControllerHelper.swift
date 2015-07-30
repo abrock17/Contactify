@@ -6,10 +6,9 @@ public class ControllerHelper {
     }
     
     public class func displaySimpleAlertForTitle(title: String, andMessage message: String, onController controller: UIViewController) {
-        let errorAlertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-        let okAction = UIAlertAction(title: "Dismiss", style: .Default, handler: nil)
-        errorAlertViewController.addAction(okAction)
-        controller.presentViewController(errorAlertViewController, animated: true, completion: nil)
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: .Default, handler: nil))
+        controller.presentViewController(alertController, animated: true, completion: nil)
     }
     
     public class func displaySimpleAlertForTitle(title: String, andError error: NSError, onController controller: UIViewController) {

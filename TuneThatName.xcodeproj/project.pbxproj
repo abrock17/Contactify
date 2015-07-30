@@ -238,8 +238,8 @@
 		443F9EC31AA3FCA500705340 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				4440E49C1B303CAD005A4333 /* CreatePlaylistController.swift */,
 				44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */,
+				4440E49C1B303CAD005A4333 /* CreatePlaylistController.swift */,
 				4446FF0D1B2FD43100368ED7 /* NameSelectionTableController.swift */,
 				4479634F1B397994003541BE /* PlaylistNameEntryController.swift */,
 				44BE538F1AA76A1E0089BFCD /* SpotifyPlaylistTableController.swift */,
