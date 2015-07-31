@@ -31,7 +31,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }()
     public var controllerHelper = ControllerHelper()
 
-    lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.tableView)
+    lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.navigationController!.view)
     
     @IBOutlet public weak var playlistNameButton: UIButton!
     @IBOutlet public weak var newPlaylistButton: UIBarButtonItem!

@@ -12,7 +12,7 @@ public class CreatePlaylistController: UIViewController {
     public var preferencesService = PreferencesService()
     public var notificationCenter = NSNotificationCenter.defaultCenter()
     
-    lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.view)
+    lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.navigationController!.view)
 
     @IBOutlet public weak var numberOfSongsSlider: UISlider!
     @IBOutlet public weak var numberOfSongsLabel: UILabel!

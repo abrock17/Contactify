@@ -18,6 +18,8 @@ public class ControllerHelper {
     public class func newActivityIndicatorForView(view: UIView) -> UIActivityIndicatorView {
         let indicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
         view.addSubview(indicator)
+        indicator.bounds = view.frame
+        indicator.layer.backgroundColor = UIColor(white: 0.0, alpha: 0.3).CGColor
         indicator.center = CGPointMake(view.frame.size.width / 2.0, view.frame.size.height / 2.0)
         indicator.hidesWhenStopped = true
         return indicator
