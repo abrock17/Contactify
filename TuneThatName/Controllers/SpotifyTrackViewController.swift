@@ -21,6 +21,7 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     }
 
     public override func viewWillAppear(animated: Bool) {
+        println("viewWillAppear")
         super.viewWillAppear(animated)
         spotifyAudioFacade.playbackDelegate = self
         if let spotifyTrack = spotifyAudioFacade.currentSpotifyTrack {
@@ -68,11 +69,15 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         titleLabel.text = spotifyTrack.name
         artistLabel.text = spotifyTrack.displayArtistName
         albumLabel.text = spotifyTrack.albumName
+        println("updating image for track: \(spotifyTrack.albumLargestCoverImageURL)")
         if spotifyTrack.albumLargestCoverImageURL != nil {
             controllerHelper.getImageForURL(spotifyTrack.albumLargestCoverImageURL) {
                 image in
                 
-                self.albumImageView.image = image
+                if spotifyTrack.albumLargestCoverImageURL == self.spotifyAudioFacade.currentSpotifyTrack?.albumLargestCoverImageURL {
+                    self.albumImageView.image = image
+                    println("set image for track: \(spotifyTrack.albumLargestCoverImageURL)")
+                }
             }
         }
     }

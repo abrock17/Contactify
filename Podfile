@@ -3,9 +3,9 @@
 
 use_frameworks!
 
-pod 'SwiftyJSON', :git => 'https://github.com/SwiftyJSON/SwiftyJSON.git', :branch => 'xcode6.3'
+pod 'SwiftyJSON', '2.2.1'
 pod 'Alamofire', '1.2.0'
-pod 'Spotify-iOS-SDK'
+#pod 'Spotify-iOS-SDK', '0.8.0'
 
 target 'TuneThatName' do
 
