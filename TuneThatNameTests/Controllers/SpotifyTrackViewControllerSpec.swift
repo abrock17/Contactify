@@ -14,6 +14,7 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                 albumLargestCoverImageURL: NSURL(string: "https://i.scdn.co/image/eecb04997c5c163e2fc73804cc169fa46e87666e")!,
                 albumSmallestCoverImageURL: NSURL(string: "https://i.scdn.co/image/9fc8918a40a16e51eab4dd97512d623c2b590c63")!)
             let image = UIImage(named: "yuck.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
+            
             let playbackError = NSError(domain: "domain", code: 999, userInfo: [NSLocalizedDescriptionKey: "YOU CAN'T CONTROL ME!"])
             let expectedErrorTitle = "Unable to Control Playback"
 
@@ -62,18 +63,34 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                     albumName: "The Eternal",
                     albumLargestCoverImageURL: NSURL(string: "https://i.scdn.co/image/69f66e5ed0071a7c09705145e5bc7baf8a389499")!,
                     albumSmallestCoverImageURL: NSURL(string: "https://i.scdn.co/image/8775b33d7423ca4281f1be7477f5a7e1ca3ce588")!)
+                let otherImage = UIImage(named: "skull.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
+                
                 beforeEach() {
-                    spotifyTrackViewController.albumImageView.image = nil
-
-                    spotifyTrackViewController.changedCurrentTrack(newSpotifyTrack)
+                    mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: otherImage)
                 }
                 
                 it("updates the title, artist, and album label text for the spotify track") {
+                    spotifyTrackViewController.changedCurrentTrack(newSpotifyTrack)
+
                     self.assertCorrectLabelTextOnSpotifyTrackViewController(spotifyTrackViewController, forSpotifyTrack: newSpotifyTrack)
                 }
+                    
+                context("when the track is current in the audio facade") {
+                    it("updates the album cover image for the spotify track") {
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: newSpotifyTrack)
+                        
+                        spotifyTrackViewController.changedCurrentTrack(newSpotifyTrack)
+
+                        expect(spotifyTrackViewController.albumImageView.image).toEventually(equal(otherImage))
+                    }
+                }
                 
-                it("updates the album cover image for the spotify track") {
-                    expect(spotifyTrackViewController.albumImageView.image).toEventually(equal(image))
+                context("when the track is no longer current in the audio facade") {
+                    it("does not update the album cover image for the spotify track") {
+                        spotifyTrackViewController.changedCurrentTrack(newSpotifyTrack)
+
+                        expect(spotifyTrackViewController.albumImageView.image).toEventually(equal(image))
+                    }
                 }
             }
             

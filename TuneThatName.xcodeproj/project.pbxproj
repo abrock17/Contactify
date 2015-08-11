@@ -23,6 +23,7 @@
 		4440E4A51B339725005A4333 /* MockContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4440E4A41B339725005A4333 /* MockContactService.swift */; };
 		4446FF0E1B2FD43100368ED7 /* NameSelectionTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446FF0D1B2FD43100368ED7 /* NameSelectionTableController.swift */; };
 		4447107E1B73764A004F79C5 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4447107D1B73764A004F79C5 /* Spotify.framework */; };
+		444710801B7A0AD0004F79C5 /* skull.png in Resources */ = {isa = PBXBuildFile; fileRef = 4447107F1B7A0AD0004F79C5 /* skull.png */; };
 		445914751ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt in Resources */ = {isa = PBXBuildFile; fileRef = 445914741ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt */; };
 		445914821ACB6B1D00E9734C /* Mocker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445914811ACB6B1D00E9734C /* Mocker.swift */; };
 		4467307A1AD9B5E60056A840 /* ContactServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446730791AD9B5E60056A840 /* ContactServiceSpec.swift */; };
@@ -107,6 +108,7 @@
 		4440E4A41B339725005A4333 /* MockContactService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockContactService.swift; sourceTree = "<group>"; };
 		4446FF0D1B2FD43100368ED7 /* NameSelectionTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameSelectionTableController.swift; sourceTree = "<group>"; };
 		4447107D1B73764A004F79C5 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = Frameworks/Spotify.framework; sourceTree = "<group>"; };
+		4447107F1B7A0AD0004F79C5 /* skull.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skull.png; sourceTree = "<group>"; };
 		445914741ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-one-song-no-foreign_id.txt"; sourceTree = "<group>"; };
 		445914811ACB6B1D00E9734C /* Mocker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocker.swift; sourceTree = "<group>"; };
 		4467306D1AD9B41E0056A840 /* TuneThatNameIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuneThatNameIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -322,6 +324,7 @@
 		44AFD9BB1B18824D00E99FBF /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4447107F1B7A0AD0004F79C5 /* skull.png */,
 				44AFD9B81B18822900E99FBF /* yuck.png */,
 			);
 			path = Images;
@@ -580,6 +583,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44BE53941AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt in Resources */,
+				444710801B7A0AD0004F79C5 /* skull.png in Resources */,
 				44AFD9B91B18822900E99FBF /* yuck.png in Resources */,
 				443F9EC11AA39CAE00705340 /* echonest-response-data-one-song.txt in Resources */,
 				44C93D601B1F1E92008FDCDB /* echonest-response-data-songs-with-discovery.txt in Resources */,

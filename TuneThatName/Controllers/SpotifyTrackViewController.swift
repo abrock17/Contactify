@@ -6,7 +6,7 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     
     public var spotifyAudioFacade: SpotifyAudioFacade!
     public var controllerHelper = ControllerHelper()
-    
+
     @IBOutlet public weak var albumImageView: UIImageView!
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var artistLabel: UILabel!
@@ -69,14 +69,12 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         titleLabel.text = spotifyTrack.name
         artistLabel.text = spotifyTrack.displayArtistName
         albumLabel.text = spotifyTrack.albumName
-        println("updating image for track: \(spotifyTrack.albumLargestCoverImageURL)")
         if spotifyTrack.albumLargestCoverImageURL != nil {
             controllerHelper.getImageForURL(spotifyTrack.albumLargestCoverImageURL) {
                 image in
                 
                 if spotifyTrack.albumLargestCoverImageURL == self.spotifyAudioFacade.currentSpotifyTrack?.albumLargestCoverImageURL {
                     self.albumImageView.image = image
-                    println("set image for track: \(spotifyTrack.albumLargestCoverImageURL)")
                 }
             }
         }
