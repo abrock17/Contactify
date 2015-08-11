@@ -173,7 +173,8 @@ public class EchoNestService {
             "format": "json",
             "results": getResultParameter(desiredNumberOfSongs: desiredNumberOfSongs),
             "limit": "true",
-            "title": titleSearchTerm
+            "title": titleSearchTerm,
+            "max_speechiness": "0.67"
         ]
         
         if songPreferences.favorPopular {
