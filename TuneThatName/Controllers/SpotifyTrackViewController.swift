@@ -7,7 +7,6 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     public var spotifyAudioFacade: SpotifyAudioFacade!
     public var controllerHelper = ControllerHelper()
 
-
     @IBOutlet public weak var albumImageView: UIImageView!
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var artistLabel: UILabel!

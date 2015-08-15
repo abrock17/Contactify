@@ -8,7 +8,7 @@ class PreferencesServiceSpec: QuickSpec {
         describe("PreferencesService") {
             var preferencesService: PreferencesService!
             var mockUserDefaults: MockUserDefaults!
-            let playlistPreferences = PlaylistPreferences(numberOfSongs: 999, filterContacts: false, songPreferences: SongPreferences(favorPopular: false))
+            let playlistPreferences = PlaylistPreferences(numberOfSongs: 999, filterContacts: false, songPreferences: SongPreferences(favorPopular: false, favorPositive: false, favorNegative: false))
             
             beforeEach() {
                 mockUserDefaults = MockUserDefaults()

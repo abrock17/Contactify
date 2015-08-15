@@ -180,6 +180,12 @@ public class EchoNestService {
         if songPreferences.favorPopular {
             parameters["sort"] = "song_hotttnesss-desc"
         }
+        if songPreferences.favorPositive {
+            parameters["min_valence"] = "0.5"
+        }
+        if songPreferences.favorNegative {
+            parameters["max_valence"] = "0.5"
+        }
         
         return parameters
     }

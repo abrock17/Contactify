@@ -15,7 +15,7 @@ class PreferencesServiceSpec: QuickSpec {
             describe("retrieve playlist preferences") {
                 context("when they have been previously saved") {
                     it("can retrieve them") {
-                        let playlistPreferences = PlaylistPreferences(numberOfSongs: 3, filterContacts: true, songPreferences: SongPreferences(favorPopular: true))
+                        let playlistPreferences = PlaylistPreferences(numberOfSongs: 3, filterContacts: true, songPreferences: SongPreferences(favorPopular: true, favorPositive: true, favorNegative: false))
                         
                         preferencesService.savePlaylistPreferences(playlistPreferences)
                         

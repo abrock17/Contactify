@@ -47,7 +47,7 @@ public class CreatePlaylistController: UIViewController {
     func updateForPlaylistPreferences() {
         playlistPreferences = preferencesService.retrievePlaylistPreferences()
         if playlistPreferences == nil {
-            playlistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true))
+            playlistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true, favorPositive: false, favorNegative: false))
         }
         numberOfSongsChanged()
         selectNamesButton.enabled = playlistPreferences.filterContacts

@@ -11,7 +11,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
             var createPlaylistController: CreatePlaylistController!
             var mockPlaylistService: MockPlaylistService!
             var mockPreferencesService: MockPreferencesService!
-            let expectedDefaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true))
+            let expectedDefaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true, favorPositive: false, favorNegative: false))
             
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
