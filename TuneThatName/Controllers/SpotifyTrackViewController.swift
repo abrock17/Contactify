@@ -7,6 +7,7 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     public var spotifyAudioFacade: SpotifyAudioFacade!
     public var controllerHelper = ControllerHelper()
 
+
     @IBOutlet public weak var albumImageView: UIImageView!
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var artistLabel: UILabel!
@@ -15,15 +16,17 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     @IBOutlet public weak var playPauseButton: UIBarButtonItem!
     @IBOutlet public weak var nextTrackButton: UIBarButtonItem!
     @IBOutlet public weak var previousTrackButton: UIBarButtonItem!
-    
+    var albumImageActivityIndicator: UIActivityIndicatorView!
+
     public override func viewDidLoad() {
         super.viewDidLoad()
     }
 
     public override func viewWillAppear(animated: Bool) {
-        println("viewWillAppear")
         super.viewWillAppear(animated)
         spotifyAudioFacade.playbackDelegate = self
+        albumImageActivityIndicator = ControllerHelper.newActivityIndicatorForView(albumImageView)
+        
         if let spotifyTrack = spotifyAudioFacade.currentSpotifyTrack {
             updateViewElementsForSpotifyTrack(spotifyTrack)
         }
@@ -70,11 +73,17 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         artistLabel.text = spotifyTrack.displayArtistName
         albumLabel.text = spotifyTrack.albumName
         if spotifyTrack.albumLargestCoverImageURL != nil {
+            albumImageActivityIndicator.frame = albumImageView.bounds
+            ControllerHelper.handleBeginBackgroundActivityForView(albumImageView,
+                activityIndicator: albumImageActivityIndicator)
+
             controllerHelper.getImageForURL(spotifyTrack.albumLargestCoverImageURL) {
                 image in
                 
                 if spotifyTrack.albumLargestCoverImageURL == self.spotifyAudioFacade.currentSpotifyTrack?.albumLargestCoverImageURL {
                     self.albumImageView.image = image
+                    ControllerHelper.handleCompleteBackgroundActivityForView(self.albumImageView,
+                        activityIndicator: self.albumImageActivityIndicator)
                 }
             }
         }
