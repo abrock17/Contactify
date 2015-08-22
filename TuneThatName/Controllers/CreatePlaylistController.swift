@@ -47,12 +47,12 @@ public class CreatePlaylistController: UIViewController {
     func updateForPlaylistPreferences() {
         playlistPreferences = preferencesService.retrievePlaylistPreferences()
         if playlistPreferences == nil {
-            playlistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true, favorPositive: false, favorNegative: false))
+            playlistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(characteristics: [.Popular]))
         }
         numberOfSongsChanged()
         selectNamesButton.enabled = playlistPreferences.filterContacts
         filterContactsSwitch.on = playlistPreferences.filterContacts
-        favorPopularSwitch.on = playlistPreferences.songPreferences.favorPopular
+        favorPopularSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Popular)
     }
     
     override public func didReceiveMemoryWarning() {
@@ -105,7 +105,11 @@ public class CreatePlaylistController: UIViewController {
     }
     
     @IBAction public func favorPopularStateChanged(sender: UISwitch) {
-        playlistPreferences.songPreferences.favorPopular = sender.on
+        if sender.on {
+            playlistPreferences.songPreferences.characteristics.insert(.Popular)
+        } else {
+            playlistPreferences.songPreferences.characteristics.remove(.Popular)
+        }
     }
     
     @IBAction public func createPlaylistPressed(sender: AnyObject) {

@@ -22,7 +22,7 @@ class PlaylistServiceSpec: QuickSpec {
             var playlistService:PlaylistService!
             var mockContactService: MockContactService!
             var mockEchoNestService: MockEchoNestService!
-            var playlistPreferences = PlaylistPreferences(numberOfSongs: 1, filterContacts: false, songPreferences: SongPreferences(favorPopular: false, favorPositive: false, favorNegative: false))
+            var playlistPreferences = PlaylistPreferences(numberOfSongs: 1, filterContacts: false, songPreferences: SongPreferences())
             
             beforeEach() {
                 self.callbackPlaylistList.removeAll(keepCapacity: false)

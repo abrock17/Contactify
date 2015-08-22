@@ -11,7 +11,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
             var createPlaylistController: CreatePlaylistController!
             var mockPlaylistService: MockPlaylistService!
             var mockPreferencesService: MockPreferencesService!
-            let expectedDefaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(favorPopular: true, favorPositive: false, favorNegative: false))
+            let expectedDefaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular])))
             
             beforeEach() {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -46,8 +46,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
             
             describe("favor popular songs switch") {
                 it("has the correct initial state") {
-                    expect(createPlaylistController.favorPopularSwitch.on).to(
-                        equal(expectedDefaultPlaylistPreferences.songPreferences.favorPopular))
+                    expect(createPlaylistController.favorPopularSwitch.on).to(beTrue())
                 }
             }
             
@@ -106,13 +105,27 @@ class CreatePlaylistControllerSpec: QuickSpec {
             }
             
             describe("favor popular songs switch state change") {
-                context("when state changes") {
-                    it("updates the favor popular flag") {
+                context("when state changes to false") {
+                    it("removes popular characteristic from song preferences") {
                         createPlaylistController.favorPopularSwitch.on = false
                         createPlaylistController.favorPopularStateChanged(createPlaylistController.favorPopularSwitch)
                         
                         createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
-                        expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.favorPopular).toEventually(beFalse())
+                        expect(
+                            (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)
+                            .toEventuallyNot(contain(SongPreferences.Characteristic.Popular))
+                    }
+                }
+
+                context("when state changes to true") {
+                    it("adds popular characteristic to song preferences") {
+                        createPlaylistController.favorPopularSwitch.on = true
+                        createPlaylistController.favorPopularStateChanged(createPlaylistController.favorPopularSwitch)
+                        
+                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        expect(
+                            (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)
+                            .toEventually(contain(SongPreferences.Characteristic.Popular))
                     }
                 }
             }

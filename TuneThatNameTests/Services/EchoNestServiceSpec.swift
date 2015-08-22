@@ -20,7 +20,7 @@ class EchoNestServiceSpec: QuickSpec {
     }
     
     let arbitrarySongTitleSearchTerm = "Susie"
-    let arbitrarySongPreferences = SongPreferences(favorPopular: true, favorPositive: false, favorNegative: false)
+    let arbitrarySongPreferences = SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular]))
 
     override func spec() {
         
@@ -72,7 +72,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor popular songs") {
                     it("creates a request that sorts by song hotttnesss descending") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(favorPopular: true, favorPositive: false, favorNegative: false), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
 
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventually(contain("sort=song_hotttnesss-desc"))
@@ -81,7 +81,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor positive songs") {
                     it("creates a request that has a min valence parameter of 0.5") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(favorPopular: false, favorPositive: true, favorNegative: false), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Positive])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventually(contain("min_valence=0.5"))
@@ -90,7 +90,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor negative songs") {
                     it("creates a request that has a max valence parameter of 0.5") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(favorPopular: false, favorPositive: false, favorNegative: true), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Negative])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventually(contain("max_valence=0.5"))
@@ -99,7 +99,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor neither negative or positive songs") {
                     it("creates a request that makes no mention of the valence parameter") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(favorPopular: false, favorPositive: false, favorNegative: false), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventuallyNot(contain("valence"))
@@ -276,7 +276,7 @@ class EchoNestServiceSpec: QuickSpec {
                     context("and song preferences do not favor popular songs") {
                         let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-songs-with-discovery", withExtension: "txt")
                         let data = NSData(contentsOfURL: url!)
-                        let songPreferences = SongPreferences(favorPopular: false, favorPositive: false, favorNegative: false)
+                        let songPreferences = SongPreferences()
                         
                         it("calls back with songs sorted by a combination of song and artist discovery") {
                             MockURLProtocol.setMockResponseData(data)

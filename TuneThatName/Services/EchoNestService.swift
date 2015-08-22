@@ -91,7 +91,7 @@ public class EchoNestService {
     func sortForSongPreferences(jsonSongs: [JSON], songPreferences: SongPreferences) -> [JSON] {
         let sortedJSONSongs: [JSON]
         
-        if !songPreferences.favorPopular {
+        if !contains(songPreferences.characteristics, .Popular) {
             sortedJSONSongs = sorted(jsonSongs,
                 { self.combineSongAndArtistDiscoveryValue($0) > self.combineSongAndArtistDiscoveryValue($1) })
         } else {
@@ -177,14 +177,17 @@ public class EchoNestService {
             "max_speechiness": "0.67"
         ]
         
-        if songPreferences.favorPopular {
-            parameters["sort"] = "song_hotttnesss-desc"
-        }
-        if songPreferences.favorPositive {
-            parameters["min_valence"] = "0.5"
-        }
-        if songPreferences.favorNegative {
-            parameters["max_valence"] = "0.5"
+        for characteristic in songPreferences.characteristics {
+            switch characteristic {
+            case .Popular:
+                parameters["sort"] = "song_hotttnesss-desc"
+            case .Positive:
+                parameters["min_valence"] = "0.5"
+            case .Negative:
+                parameters["max_valence"] = "0.5"
+            default:
+                break
+            }
         }
         
         return parameters

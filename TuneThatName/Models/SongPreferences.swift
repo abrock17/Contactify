@@ -2,35 +2,40 @@ import Foundation
 
 public class SongPreferences: NSObject, NSCoding, Equatable {
     
-    public var favorPopular: Bool
-    public var favorPositive: Bool
-    public var favorNegative: Bool
-    public override var description: String {
-        return "SongPreferences:[favorPopular:\(favorPopular), favorPositive:\(favorPositive), favorNegative:\(favorNegative)]"
+    public enum Characteristic: String, Printable {
+        case Popular = "Popular"
+        case Positive = "Positive"
+        case Negative = "Negative"
+        case Energetic = "Energetic"
+        case Chill = "Chill"
+        public var description: String {
+            return rawValue
+        }
     }
     
-    public init(favorPopular: Bool, favorPositive: Bool, favorNegative: Bool) {
-        self.favorPopular = favorPopular
-        self.favorPositive = favorPositive
-        self.favorNegative = favorNegative
+    public var characteristics = Set<Characteristic>()
+    public override var description: String {
+        return "SongPreferences:[characteristics:\(characteristics)]"
+    }
+    
+    public init(characteristics: Set<Characteristic> = Set<SongPreferences.Characteristic>([])) {
+        self.characteristics = characteristics
     }
     
     public required convenience init(coder decoder: NSCoder) {
-        let favorPopular = decoder.decodeBoolForKey("favorPopular")
-        let favorPositive = decoder.decodeBoolForKey("favorPositive")
-        let favorNegative = decoder.decodeBoolForKey("favorNegative")
-        self.init(favorPopular: favorPopular, favorPositive: favorPositive, favorNegative: favorNegative)
+        var characteristics = Set<Characteristic>()
+        let characteristicsObject: AnyObject? = decoder.decodeObjectForKey("characteristics")
+        if let characteristicStrings = characteristicsObject as? [String] {
+            characteristics.unionInPlace(characteristicStrings.map({ Characteristic(rawValue: $0) }).filter({ $0 != nil }).map({ $0! }))
+        }
+        self.init(characteristics: characteristics)
     }
     
     public func encodeWithCoder(coder: NSCoder) {
-        coder.encodeBool(self.favorPopular, forKey: "favorPopular")
-        coder.encodeBool(self.favorPositive, forKey: "favorPositive")
-        coder.encodeBool(self.favorNegative, forKey: "favorNegative")
+        coder.encodeObject(Array(characteristics).map({ $0.rawValue }), forKey: "characteristics")
     }
 }
 
 public func ==(x: SongPreferences, y: SongPreferences) -> Bool {
-    return x.favorPopular == y.favorPopular
-        && x.favorPositive == y.favorPositive
-        && x.favorNegative == y.favorNegative
+    return x.characteristics == y.characteristics
 }
