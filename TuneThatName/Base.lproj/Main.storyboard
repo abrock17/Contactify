@@ -111,7 +111,7 @@
                                     <constraint firstAttribute="height" constant="33" id="ogZ-Mj-mqX"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="default">
                                     <mask key="constraints">
@@ -125,7 +125,7 @@
                                     <constraint firstAttribute="height" constant="33" id="ica-bf-UiY"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wvm-nJ-vVh">
@@ -134,7 +134,7 @@
                                     <constraint firstAttribute="height" constant="33" id="YI8-rb-G5y"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oq7-t3-HXS">
@@ -168,14 +168,17 @@
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="33" id="uRt-is-heW"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xRL-Tx-hX6">
                                 <rect key="frame" x="158" y="295" width="142" height="33"/>
                                 <subviews>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="VpY-U0-VVk">
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VpY-U0-VVk">
                                         <rect key="frame" x="46" y="1" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="favorPositiveStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="OYk-gI-mjQ"/>
+                                        </connections>
                                     </switch>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -194,8 +197,11 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KtW-H2-U9H">
                                 <rect key="frame" x="442" y="295" width="142" height="33"/>
                                 <subviews>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="cqH-sT-P4p">
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cqH-sT-P4p">
                                         <rect key="frame" x="93" y="1" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="favorNegativeStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="iVH-LB-DMG"/>
+                                        </connections>
                                     </switch>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -212,7 +218,7 @@
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="33" id="Tud-uf-hsg"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Chill" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="lOX-7J-hjx">
@@ -221,7 +227,7 @@
                                     <constraint firstAttribute="height" constant="33" id="xrl-0a-5qd"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Positive" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ef7-yO-7xx">
@@ -231,14 +237,17 @@
                                     <constraint firstAttribute="height" constant="33" id="w69-QA-xoa"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zgd-ZQ-fsa">
                                 <rect key="frame" x="158" y="341" width="142" height="33"/>
                                 <subviews>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="BaG-lf-r12">
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BaG-lf-r12">
                                         <rect key="frame" x="46" y="1" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="favorEnergeticStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="69k-OW-PAc"/>
+                                        </connections>
                                     </switch>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -251,8 +260,11 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F2P-yw-r0P">
                                 <rect key="frame" x="442" y="341" width="142" height="33"/>
                                 <subviews>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="sRQ-qd-kB0">
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sRQ-qd-kB0">
                                         <rect key="frame" x="93" y="1" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="favorChillStateChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="3DI-Uc-QQN"/>
+                                        </connections>
                                     </switch>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -329,7 +341,11 @@
                     <connections>
                         <outlet property="createPlaylistButton" destination="HeA-qY-xM1" id="A3O-oK-qk0"/>
                         <outlet property="decrementNumberOfSongsButton" destination="JK9-5F-GeH" id="iBD-qO-tFy"/>
+                        <outlet property="favorChillSwitch" destination="sRQ-qd-kB0" id="ALS-eV-DhI"/>
+                        <outlet property="favorEnergeticSwitch" destination="BaG-lf-r12" id="VmP-7X-huM"/>
+                        <outlet property="favorNegativeSwitch" destination="cqH-sT-P4p" id="cO6-g6-cgs"/>
                         <outlet property="favorPopularSwitch" destination="jgY-qx-zeV" id="lkC-fU-SvR"/>
+                        <outlet property="favorPositiveSwitch" destination="VpY-U0-VVk" id="QQw-Is-hme"/>
                         <outlet property="filterContactsSwitch" destination="P5d-Pz-Tpy" id="IDy-SH-4WN"/>
                         <outlet property="incrementNumberOfSongsButton" destination="3uB-hS-GmW" id="ysI-Q5-Jei"/>
                         <outlet property="numberOfSongsLabel" destination="hbq-o6-8bp" id="Y8Q-HR-IFS"/>

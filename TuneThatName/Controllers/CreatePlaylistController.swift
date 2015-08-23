@@ -21,6 +21,10 @@ public class CreatePlaylistController: UIViewController {
     @IBOutlet public weak var filterContactsSwitch: UISwitch!
     @IBOutlet public weak var selectNamesButton: UIButton!
     @IBOutlet public weak var favorPopularSwitch: UISwitch!
+    @IBOutlet public weak var favorPositiveSwitch: UISwitch!
+    @IBOutlet public weak var favorNegativeSwitch: UISwitch!
+    @IBOutlet public weak var favorEnergeticSwitch: UISwitch!
+    @IBOutlet public weak var favorChillSwitch: UISwitch!
     @IBOutlet public weak var createPlaylistButton: UIButton!
 
     override public func viewDidLoad() {
@@ -53,6 +57,10 @@ public class CreatePlaylistController: UIViewController {
         selectNamesButton.enabled = playlistPreferences.filterContacts
         filterContactsSwitch.on = playlistPreferences.filterContacts
         favorPopularSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Popular)
+        favorPositiveSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Positive)
+        favorNegativeSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Negative)
+        favorEnergeticSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Energetic)
+        favorChillSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Chill)
     }
     
     override public func didReceiveMemoryWarning() {
@@ -105,10 +113,47 @@ public class CreatePlaylistController: UIViewController {
     }
     
     @IBAction public func favorPopularStateChanged(sender: UISwitch) {
-        if sender.on {
-            playlistPreferences.songPreferences.characteristics.insert(.Popular)
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Popular, andSwitchValue: sender.on)
+    }
+    
+    @IBAction public func favorPositiveStateChanged(sender: UISwitch) {
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Positive, andSwitchValue: sender.on)
+        favorNegativeSwitch.on = false
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Negative, andSwitchValue: false)
+    }
+    
+    @IBAction public func favorNegativeStateChanged(sender: UISwitch) {
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Negative, andSwitchValue: sender.on)
+        favorPositiveSwitch.on = false
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Positive, andSwitchValue: false)
+    }
+    
+    @IBAction public func favorEnergeticStateChanged(sender: UISwitch) {
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Energetic, andSwitchValue: sender.on)
+        favorChillSwitch.on = false
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Chill, andSwitchValue: false)
+    }
+    
+    @IBAction public func favorChillStateChanged(sender: UISwitch) {
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Chill, andSwitchValue: sender.on)
+        favorEnergeticSwitch.on = false
+        updateSongPreferences(playlistPreferences.songPreferences,
+            forCharacteristic: SongPreferences.Characteristic.Energetic, andSwitchValue: false)
+    }
+    
+    func updateSongPreferences(songPreferences: SongPreferences, forCharacteristic characteristic: SongPreferences.Characteristic, andSwitchValue switchValue: Bool) {
+        if switchValue {
+            songPreferences.characteristics.insert(characteristic)
         } else {
-            playlistPreferences.songPreferences.characteristics.remove(.Popular)
+            songPreferences.characteristics.remove(characteristic)
         }
     }
     

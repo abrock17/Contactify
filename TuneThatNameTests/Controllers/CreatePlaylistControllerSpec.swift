@@ -28,7 +28,9 @@ class CreatePlaylistControllerSpec: QuickSpec {
             }
             
             it("loads playlist preferences from preferences service") {
-                expect(mockPreferencesService.mocker.getCallCountFor(MockPreferencesService.Method.retrievePlaylistPreferences)).toEventually(equal(1))
+                expect(
+                    mockPreferencesService.mocker.getCallCountFor(MockPreferencesService.Method.retrievePlaylistPreferences))
+                    .toEventually(equal(1))
             }
             
             describe("number of songs slider") {
@@ -47,6 +49,30 @@ class CreatePlaylistControllerSpec: QuickSpec {
             describe("favor popular songs switch") {
                 it("has the correct initial state") {
                     expect(createPlaylistController.favorPopularSwitch.on).to(beTrue())
+                }
+            }
+            
+            describe("favor positive songs switch") {
+                it("has the correct initial state") {
+                    expect(createPlaylistController.favorPositiveSwitch.on).to(beFalse())
+                }
+            }
+            
+            describe("favor negative songs switch") {
+                it("has the correct initial state") {
+                    expect(createPlaylistController.favorNegativeSwitch.on).to(beFalse())
+                }
+            }
+            
+            describe("favor energetic songs switch") {
+                it("has the correct initial state") {
+                    expect(createPlaylistController.favorEnergeticSwitch.on).to(beFalse())
+                }
+            }
+            
+            describe("favor chill songs switch") {
+                it("has the correct initial state") {
+                    expect(createPlaylistController.favorChillSwitch.on).to(beFalse())
                 }
             }
             
@@ -105,15 +131,16 @@ class CreatePlaylistControllerSpec: QuickSpec {
             }
             
             describe("favor popular songs switch state change") {
+                beforeEach() {
+                    createPlaylistController.favorPopularSwitch.on = false
+                    createPlaylistController.favorPopularStateChanged(createPlaylistController.favorPopularSwitch)
+                }
+                
                 context("when state changes to false") {
                     it("removes popular characteristic from song preferences") {
-                        createPlaylistController.favorPopularSwitch.on = false
-                        createPlaylistController.favorPopularStateChanged(createPlaylistController.favorPopularSwitch)
-                        
-                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
-                        expect(
-                            (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)
-                            .toEventuallyNot(contain(SongPreferences.Characteristic.Popular))
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Popular)
                     }
                 }
 
@@ -122,10 +149,211 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         createPlaylistController.favorPopularSwitch.on = true
                         createPlaylistController.favorPopularStateChanged(createPlaylistController.favorPopularSwitch)
                         
-                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
-                        expect(
-                            (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)
-                            .toEventually(contain(SongPreferences.Characteristic.Popular))
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesContainsCharacteristic: SongPreferences.Characteristic.Popular)
+                    }
+                }
+            }
+            
+            describe("favor positive songs switch state change") {
+                context("when state changes to true") {
+                    it("adds positive characteristic to song preferences") {
+                        createPlaylistController.favorPositiveSwitch.on = true
+                        createPlaylistController.favorPositiveStateChanged(createPlaylistController.favorPositiveSwitch)
+
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesContainsCharacteristic: SongPreferences.Characteristic.Positive)
+                    }
+                }
+                
+                context("when state changes to false") {
+                    it("removes positive characteristic from song preferences") {
+                        createPlaylistController.favorPositiveSwitch.on = true
+                        createPlaylistController.favorPositiveStateChanged(createPlaylistController.favorPositiveSwitch)
+                        
+                        createPlaylistController.favorPositiveSwitch.on = false
+                        createPlaylistController.favorPositiveStateChanged(createPlaylistController.favorPositiveSwitch)
+                        
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Positive)
+                    }
+                }
+                
+                context("when negative characteristic is in song preferences") {
+                    beforeEach() {
+                        createPlaylistController.favorNegativeSwitch.on = true
+                        createPlaylistController.favorNegativeStateChanged(createPlaylistController.favorNegativeSwitch)
+                    }
+                    
+                    context("and state changes to true") {
+                        beforeEach() {
+                            createPlaylistController.favorPositiveSwitch.on = true
+                            createPlaylistController.favorPositiveStateChanged(createPlaylistController.favorPositiveSwitch)
+                        }
+                        
+                        it("sets the favor negative switch state to false") {
+                            expect(createPlaylistController.favorNegativeSwitch.on).toEventually(beFalse())
+                        }
+                        
+                        it("removes negative characteristic from song preferences") {
+                            self.assertUponPlaylistCreationInController(createPlaylistController,
+                                withMockPlaylistService: mockPlaylistService,
+                                songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Negative)
+                        }
+                    }
+                }
+            }
+            
+            describe("favor negative songs switch state change") {
+                context("when state changes to true") {
+                    it("adds negative characteristic to song preferences") {
+                        createPlaylistController.favorNegativeSwitch.on = true
+                        createPlaylistController.favorNegativeStateChanged(createPlaylistController.favorNegativeSwitch)
+
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesContainsCharacteristic: SongPreferences.Characteristic.Negative)
+                    }
+                }
+                
+                context("when state changes to false") {
+                    it("removes negative characteristic from song preferences") {
+                        createPlaylistController.favorNegativeSwitch.on = true
+                        createPlaylistController.favorNegativeStateChanged(createPlaylistController.favorNegativeSwitch)
+
+                        createPlaylistController.favorNegativeSwitch.on = false
+                        createPlaylistController.favorNegativeStateChanged(createPlaylistController.favorNegativeSwitch)
+                        
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Negative)
+                    }
+                }
+
+                context("when positive characteristic is in song preferences") {
+                    beforeEach() {
+                        createPlaylistController.favorPositiveSwitch.on = true
+                        createPlaylistController.favorPositiveStateChanged(createPlaylistController.favorPositiveSwitch)
+                    }
+                    
+                    context("and state changes to true") {
+                        beforeEach() {
+                            createPlaylistController.favorNegativeSwitch.on = true
+                            createPlaylistController.favorNegativeStateChanged(createPlaylistController.favorNegativeSwitch)
+                        }
+                        
+                        it("sets the favor positive switch state to false") {
+                            expect(createPlaylistController.favorPositiveSwitch.on).toEventually(beFalse())
+                        }
+                        
+                        it("removes positive characteristic from song preferences") {
+                            self.assertUponPlaylistCreationInController(createPlaylistController,
+                                withMockPlaylistService: mockPlaylistService,
+                                songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Positive)
+                        }
+                    }
+                }
+            }
+            
+            describe("favor energetic songs switch state change") {
+                beforeEach() {
+                    createPlaylistController.favorEnergeticSwitch.on = true
+                    createPlaylistController.favorEnergeticStateChanged(createPlaylistController.favorEnergeticSwitch)
+                }
+                
+                context("when state changes to true") {
+                    it("adds energetic characteristic to song preferences") {
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesContainsCharacteristic: SongPreferences.Characteristic.Energetic)
+                    }
+                }
+                
+                context("when state changes to false") {
+                    it("removes energetic characteristic from song preferences") {
+                        createPlaylistController.favorEnergeticSwitch.on = false
+                        createPlaylistController.favorEnergeticStateChanged(createPlaylistController.favorEnergeticSwitch)
+                        
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Energetic)
+                    }
+                }
+                
+                context("when chill characteristic is in song preferences") {
+                    beforeEach() {
+                        createPlaylistController.favorChillSwitch.on = true
+                        createPlaylistController.favorChillStateChanged(createPlaylistController.favorChillSwitch)
+                    }
+                    
+                    context("and state changes to true") {
+                        beforeEach() {
+                            createPlaylistController.favorEnergeticSwitch.on = true
+                            createPlaylistController.favorEnergeticStateChanged(createPlaylistController.favorEnergeticSwitch)
+                        }
+                        
+                        it("sets the favor chill switch state to false") {
+                            expect(createPlaylistController.favorChillSwitch.on).toEventually(beFalse())
+                        }
+                        
+                        it("removes chill characteristic from song preferences") {
+                            self.assertUponPlaylistCreationInController(createPlaylistController,
+                                withMockPlaylistService: mockPlaylistService,
+                                songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Chill)
+                        }
+                    }
+                }
+            }
+            
+            describe("favor chill songs switch state change") {
+                beforeEach() {
+                    createPlaylistController.favorChillSwitch.on = true
+                    createPlaylistController.favorChillStateChanged(createPlaylistController.favorChillSwitch)
+                }
+                
+                context("when state changes to true") {
+                    it("adds chill characteristic to song preferences") {
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesContainsCharacteristic: SongPreferences.Characteristic.Chill)
+                    }
+                }
+                
+                context("when state changes to false") {
+                    it("removes chill characteristic from song preferences") {
+                        createPlaylistController.favorChillSwitch.on = false
+                        createPlaylistController.favorChillStateChanged(createPlaylistController.favorChillSwitch)
+                        
+                        self.assertUponPlaylistCreationInController(createPlaylistController,
+                            withMockPlaylistService: mockPlaylistService,
+                            songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Chill)
+                    }
+                }
+                
+                context("when energetic characteristic is in song preferences") {
+                    beforeEach() {
+                        createPlaylistController.favorEnergeticSwitch.on = true
+                        createPlaylistController.favorEnergeticStateChanged(createPlaylistController.favorEnergeticSwitch)
+                    }
+                    
+                    context("and state changes to true") {
+                        beforeEach() {
+                            createPlaylistController.favorChillSwitch.on = true
+                            createPlaylistController.favorChillStateChanged(createPlaylistController.favorChillSwitch)
+                        }
+                        
+                        it("sets the favor energetic switch state to false") {
+                            expect(createPlaylistController.favorEnergeticSwitch.on).toEventually(beFalse())
+                        }
+                        
+                        it("removes energetic characteristic from song preferences") {
+                            self.assertUponPlaylistCreationInController(createPlaylistController,
+                                withMockPlaylistService: mockPlaylistService,
+                                songPreferencesDoNotContainCharacteristic: SongPreferences.Characteristic.Energetic)
+                        }
                     }
                 }
             }
@@ -240,6 +468,24 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 }
             }
         }
+    }
+    
+    func assertUponPlaylistCreationInController(createPlaylistController: CreatePlaylistController,
+        withMockPlaylistService mockPlaylistService: MockPlaylistService,
+        songPreferencesContainsCharacteristic characteristic: SongPreferences.Characteristic) {
+            createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+            expect(
+                (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)
+                .toEventually(contain(characteristic))
+    }
+    
+    func assertUponPlaylistCreationInController(createPlaylistController: CreatePlaylistController,
+        withMockPlaylistService mockPlaylistService: MockPlaylistService,
+        songPreferencesDoNotContainCharacteristic characteristic: SongPreferences.Characteristic) {
+            createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+            expect(
+                (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)
+                .toEventuallyNot(contain(characteristic))
     }
 }
 
