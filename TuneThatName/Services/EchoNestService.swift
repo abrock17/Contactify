@@ -185,8 +185,10 @@ public class EchoNestService {
                 parameters["min_valence"] = "0.5"
             case .Negative:
                 parameters["max_valence"] = "0.5"
-            default:
-                break
+            case .Energetic:
+                parameters["min_energy"] = "0.5"
+            case .Chill:
+                parameters["max_energy"] = "0.5"
             }
         }
         

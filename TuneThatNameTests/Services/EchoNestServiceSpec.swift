@@ -106,6 +106,33 @@ class EchoNestServiceSpec: QuickSpec {
                     }
                 }
                 
+                context("when the song preferences favor energetic songs") {
+                    it("creates a request that has a min energy parameter of 0.5") {
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Energetic])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        
+                        expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
+                            .toEventually(contain("min_energy=0.5"))
+                    }
+                }
+                
+                context("when the song preferences favor chill songs") {
+                    it("creates a request that has a max energy parameter of 0.5") {
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Chill])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        
+                        expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
+                            .toEventually(contain("max_energy=0.5"))
+                    }
+                }
+                
+                context("when the song preferences favor neither energetic or chill songs") {
+                    it("creates a request that makes no mention of the energy parameter") {
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        
+                        expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
+                            .toEventuallyNot(contain("energy"))
+                    }
+                }
+                
                 context("when the desired number of songs is greater than half the default search number") {
                     it("creates a request that contains a 'results' parameter double the necessary minimum") {
                         echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 26, callback: self.findSongsCallback)
