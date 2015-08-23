@@ -7,9 +7,17 @@ class PreferencesServiceSpec: QuickSpec {
     override func spec() {
         describe("PreferencesService") {
             var preferencesService: PreferencesService!
+            var existingPlaylistPreferences: PlaylistPreferences?
             
             beforeEach() {
                 preferencesService = PreferencesService()
+                existingPlaylistPreferences = preferencesService.retrievePlaylistPreferences()
+            }
+            
+            afterEach() {
+                if let preferencesToSave = existingPlaylistPreferences {
+                    preferencesService.savePlaylistPreferences(preferencesToSave)
+                }
             }
             
             describe("retrieve playlist preferences") {
