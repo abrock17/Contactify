@@ -172,15 +172,15 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
     }
     
     func pressPlayPauseButton(spotifyTrackViewController: SpotifyTrackViewController) {
-        pressBarButtonItem(spotifyTrackViewController.playPauseButton)
+        pressBarButtonItem(spotifyTrackViewController.toolbar.items![6] as! UIBarButtonItem)
     }
     
     func pressNextTrackButton(spotifyTrackViewController: SpotifyTrackViewController) {
-        pressBarButtonItem(spotifyTrackViewController.nextTrackButton)
+        pressBarButtonItem(spotifyTrackViewController.toolbar.items![4] as! UIBarButtonItem)
     }
     
     func pressPreviousTrackButton(spotifyTrackViewController: SpotifyTrackViewController) {
-        pressBarButtonItem(spotifyTrackViewController.previousTrackButton)
+        pressBarButtonItem(spotifyTrackViewController.toolbar.items![2] as! UIBarButtonItem)
     }
     
     func pressBarButtonItem(barButtonItem: UIBarButtonItem) {

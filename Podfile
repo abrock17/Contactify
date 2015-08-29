@@ -14,13 +14,13 @@ end
 target 'TuneThatNameTests' do
 
     pod 'Quick', '0.3.1'
-    pod 'Nimble', '0.4.2'
+    pod 'Nimble', '1.0.0'
     
 end
 
 target 'TuneThatNameIntegrationTests' do
     
     pod 'Quick', '0.3.1'
-    pod 'Nimble', '0.4.2'
+    pod 'Nimble', '1.0.0'
     
 end

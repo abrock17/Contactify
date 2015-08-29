@@ -27,6 +27,10 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 NSRunLoop.mainRunLoop().runUntilDate(NSDate())
             }
             
+            afterEach() {
+                NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+            }
+            
             it("loads playlist preferences from preferences service") {
                 expect(
                     mockPreferencesService.mocker.getCallCountFor(MockPreferencesService.Method.retrievePlaylistPreferences))

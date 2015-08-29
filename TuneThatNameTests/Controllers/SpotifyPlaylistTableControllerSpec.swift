@@ -41,9 +41,9 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 
                 navigationController.pushViewController(spotifyPlaylistTableController, animated: false)
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
-                NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: 0.1))
+                self.advanceRunLoopForTimeInterval(0.1)
             }
-
+            
             describe("press the 'save to spotify' button") {
                 context("when the playlist does not have a name") {
                     it("presents the playlist name entry view") {
@@ -51,7 +51,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
 
                         self.pressSaveButton(spotifyPlaylistTableController)
 
-                        expect(spotifyPlaylistTableController.presentedViewController).toEventually(beAnInstanceOf(PlaylistNameEntryController))
+                        expect(spotifyPlaylistTableController.presentedViewController).toEventually(beAnInstanceOf(PlaylistNameEntryController), timeout: 2)
                     }
                 }
                 
@@ -208,6 +208,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         spotifyPlaylistTableController.spotifySessionAction = SpotifyPlaylistTableController.SpotifySessionAction.SavePlaylist
 
                         spotifyPlaylistTableController.authenticationViewController(SPTAuthViewController(), didLoginWithSession: spotifyAuth.session)
+                        self.advanceRunLoopForTimeInterval(0.0)
                         
                         expect(mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)?.first as? Playlist).toEventually(equal(playlist))
                     }
@@ -468,6 +469,10 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     spotifyPlaylistTableController.playlistNameButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
                 }
                 
+                afterEach() {
+                    spotifyPlaylistTableController.presentedViewController?.removeFromParentViewController()
+                }
+                
                 it("presents the playlist name entry view") {
                     expect(spotifyPlaylistTableController.presentedViewController).toEventually(beAnInstanceOf(PlaylistNameEntryController))
                 }
@@ -482,12 +487,16 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 context("when the current playlist has been saved") {
                     beforeEach() {
                         mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Success(Playlist(name: "saved playlist", uri: NSURL(string: "uri"))))
+
                         self.pressSaveButton(spotifyPlaylistTableController)
+                        self.advanceRunLoopForTimeInterval(0.0)
+                        
                         expect(spotifyPlaylistTableController.saveButton.title).toEventually(equal("Playlist Saved"))
                     }
                     
                     it("unwinds to create playlist") {
                         self.pressNewPlaylistButton(spotifyPlaylistTableController)
+                        self.advanceRunLoopForTimeInterval(0.0)
                         
                         expect(navigationController.topViewController)
                             .toEventually(beAnInstanceOf(CreatePlaylistController))
@@ -497,6 +506,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 context("when the current playlist has not been saved") {
                     it("asks the user to confirm abandoning the playlist") {
                         self.pressNewPlaylistButton(spotifyPlaylistTableController)
+                        self.advanceRunLoopForTimeInterval(0.0)
                         
                         self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Unsaved Playlist", expectedMessage: "Abandon changes to this playlist?")
                     }
@@ -558,6 +568,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         context("and play has not yet started") {
                             it("does not update the playlist with the spotify audio facade") {
                                 spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, moveRowAtIndexPath: firstIndexPath, toIndexPath: secondIndexPath)
+                                self.advanceRunLoopForTimeInterval(0.05)
                                 
                                 expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
                                     MockSpotifyAudioFacade.Method.updatePlaylist)).toEventually(equal(0))
@@ -573,6 +584,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             
                             it("updates the selected song in the table") {
                                 spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, moveRowAtIndexPath: firstIndexPath, toIndexPath: secondIndexPath)
+                                self.advanceRunLoopForTimeInterval(0.0)
                                 
                                 expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
                                     .toEventually(equal(expectedNewIndex))
@@ -580,6 +592,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             
                             it("updates the playlist with the spotify audio facade") {
                                 spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, moveRowAtIndexPath: firstIndexPath, toIndexPath: secondIndexPath)
+                                self.advanceRunLoopForTimeInterval(0.0)
                                 
                                 self.verifyCallToUpdatePlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: spotifyPlaylistTableController.playlist, expectedIndex: expectedNewIndex)
                             }
@@ -667,6 +680,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                                 spotifyPlaylistTableController.handleDeleteRow(deleteAction, indexPath: secondIndexPath)
 
                                 self.pressEditButton(spotifyPlaylistTableController)
+                                self.advanceRunLoopForTimeInterval(0.05)
 
                                 expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow())
                                     .toEventually(beNil())
@@ -680,7 +694,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 it("stops play") {
                     spotifyPlaylistTableController.performSegueWithIdentifier(
                         "UnwindToCreatePlaylistFromPlaylistTableSegue", sender: nil)
-                    NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+                    self.advanceRunLoopForTimeInterval(0.0)
                     
                     expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
                         MockSpotifyAudioFacade.Method.stopPlay)).to(equal(1))
@@ -766,6 +780,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     }
     
     func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {
+        self.advanceRunLoopForTimeInterval(0.5)
         expect(parentController.presentedViewController).toEventuallyNot(beNil())
         expect(parentController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
         if let alertController = parentController.presentedViewController as? UIAlertController {
@@ -791,8 +806,13 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     }
     
     func verifyCallToUpdatePlaylistOn(mockSpotifyAudioFacade: MockSpotifyAudioFacade, expectedPlaylist: Playlist, expectedIndex: Int) {
+        self.advanceRunLoopForTimeInterval(0.1)
         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.updatePlaylist, n: 0)?[0] as? Playlist).toEventually(equal(expectedPlaylist))
         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.updatePlaylist, n: 0)?[1] as? Int).toEventually(equal(expectedIndex))
+    }
+    
+    func advanceRunLoopForTimeInterval(timeInterval: Double) {
+        NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: timeInterval))
     }
 }
 
