@@ -544,9 +544,11 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 let firstIndexPath = NSIndexPath(forRow: 0, inSection: 0)
                 let secondIndexPath = NSIndexPath(forRow: 1, inSection: 0)
                 var deleteAction: UITableViewRowAction!
+                var replaceAction: UITableViewRowAction!
                 
                 beforeEach() {
-                    deleteAction = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, editActionsForRowAtIndexPath: firstIndexPath)!.first as! UITableViewRowAction
+                    deleteAction = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, editActionsForRowAtIndexPath: firstIndexPath)![0] as! UITableViewRowAction
+                    replaceAction = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, editActionsForRowAtIndexPath: firstIndexPath)![1] as! UITableViewRowAction
                     
                     self.pressEditButton(spotifyPlaylistTableController)
                 }
@@ -645,6 +647,14 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                                     MockSpotifyAudioFacade.Method.stopPlay)).to(equal(1))
                             }
                         }
+                    }
+                }
+                
+                describe("replace song") {
+                    it("prompts to choose to use the same name") {
+                        spotifyPlaylistTableController.presentReplaceSongDialog(replaceAction, indexPath: firstIndexPath)
+                        
+                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Replace this Song", expectedMessage: "Use the same name (placeholder)?")
                     }
                 }
                 

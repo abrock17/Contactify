@@ -144,7 +144,10 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     override public func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
-        return [UITableViewRowAction(style: .Default, title: "Delete", handler: handleDeleteRow)]
+        return [
+            UITableViewRowAction(style: .Default, title: "Delete", handler: handleDeleteRow),
+            UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Replace", handler: presentReplaceSongDialog)
+        ]
     }
     
     public func handleDeleteRow(rowAction: UITableViewRowAction!, indexPath: NSIndexPath!) {
@@ -156,6 +159,24 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                 self.stopPlay()
             }
         }
+    }
+    
+    public func presentReplaceSongDialog(rowAction: UITableViewRowAction!, indexPath: NSIndexPath!) {
+        let alertController = UIAlertController(title: "Replace this Song", message: "Use the same name (placeholder)?", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Use a Different Name", style: UIAlertActionStyle.Default) {
+            uiAlertAction in
+            
+            })
+        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default) {
+            uiAlertAction in
+            
+            })
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    public func handleReplaceRowForContact(contact: Contact, indexPath: NSIndexPath) {
+        
     }
     
     func stopPlay() {
