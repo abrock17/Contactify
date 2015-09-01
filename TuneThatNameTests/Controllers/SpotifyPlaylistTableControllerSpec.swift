@@ -45,16 +45,6 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
             
             describe("press the 'save to spotify' button") {
-                context("when the playlist does not have a name") {
-                    it("presents the playlist name entry view") {
-                        spotifyPlaylistTableController.playlist.name = nil
-
-                        self.pressSaveButton(spotifyPlaylistTableController)
-
-                        expect(spotifyPlaylistTableController.presentedViewController).toEventually(beAnInstanceOf(PlaylistNameEntryController), timeout: 2)
-                    }
-                }
-                
                 context("when there is no session and no token refresh service") {
                     let spotifyAuth = self.getMockSpotifyAuth()
                     spotifyAuth.tokenRefreshURL = nil
@@ -130,6 +120,16 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
 
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                    }
+                    
+                    context("and the playlist does not have a name") {
+                        it("presents the playlist name entry view") {
+                            spotifyPlaylistTableController.playlist.name = nil
+                            
+                            self.pressSaveButton(spotifyPlaylistTableController)
+                            
+                            expect(spotifyPlaylistTableController.presentedViewController).toEventually(beAnInstanceOf(PlaylistNameEntryController), timeout: 2)
+                        }
                     }
                     
                     it("does not prompt the user to log in") {
@@ -486,6 +486,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             describe("new playlist pressed") {
                 context("when the current playlist has been saved") {
                     beforeEach() {
+                        spotifyPlaylistTableController.spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
                         mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Success(Playlist(name: "saved playlist", uri: NSURL(string: "uri"))))
 
                         self.pressSaveButton(spotifyPlaylistTableController)
