@@ -129,16 +129,16 @@ public class PlaylistService {
     
     func buildPlaylistFromContactSongsMap(contactSongsMap: [Contact: [Song]], numberOfSongs: Int) -> Playlist {
         println("building playlist with \(contactSongsMap.count) contacts")
-        var playlistSongs = [Song]()
+        var songsWithContacts: [(song: Song, contact: Contact?)] = []
         var exhaustedContacts = [Contact]()
         
-        while playlistSongs.count < numberOfSongs && exhaustedContacts.count < contactSongsMap.count {
+        while songsWithContacts.count < numberOfSongs && exhaustedContacts.count < contactSongsMap.count {
             for contact in contactSongsMap.keys {
                 if !contains(exhaustedContacts, contact) {
                     var songAdded = false
-                    for contactSong in contactSongsMap[contact]! {
-                        if !contains(playlistSongs, contactSong) {
-                            playlistSongs.append(contactSong)
+                    for song in contactSongsMap[contact]! {
+                        if !contains(songsWithContacts.map({ $0.song }), song) {
+                            songsWithContacts.append(song: song, contact: contact as Contact?)
                             songAdded = true
                             break
                         }
@@ -147,13 +147,13 @@ public class PlaylistService {
                         exhaustedContacts.append(contact)
                     }
                 }
-                if playlistSongs.count == numberOfSongs {
+                if songsWithContacts.count == numberOfSongs {
                     break
                 }
             }
         }
     
-        return Playlist(name: nil, uri: nil, songs: playlistSongs)
+        return Playlist(songsWithContacts: songsWithContacts)
     }
     
     func generalError() -> NSError {

@@ -151,11 +151,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     public func handleDeleteRow(rowAction: UITableViewRowAction!, indexPath: NSIndexPath!) {
-        let deletedSong = self.playlist.songs.removeAtIndex(indexPath.row)
+        let deletedSong = self.playlist.songsWithContacts.removeAtIndex(indexPath.row)
         self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
         if hasPlayed {
             self.syncEditedPlaylist()
-            if spotifyAudioFacade.currentSpotifyTrack?.uri == deletedSong.uri {
+            if spotifyAudioFacade.currentSpotifyTrack?.uri == deletedSong.song.uri {
                 self.stopPlay()
             }
         }
@@ -201,8 +201,8 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     */
 
     override public func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-        let song = playlist.songs.removeAtIndex(fromIndexPath.row)
-        playlist.songs.insert(song, atIndex: toIndexPath.row)
+        let songWithContact = playlist.songsWithContacts.removeAtIndex(fromIndexPath.row)
+        playlist.songsWithContacts.insert(songWithContact, atIndex: toIndexPath.row)
         if hasPlayed {
             syncEditedPlaylist()
         }

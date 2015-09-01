@@ -71,13 +71,12 @@ class SpotifyServiceSpec: QuickSpec {
                     it("updates the existing playlist") {
                         if playlistURI != nil {
                             playlist.name = "the new hotttnesss"
-                            playlist.songs = []
                             for i in 1...37 {
-                                playlist.songs.append(Song(title: "Carrie-Anne", artistName: "The Hollies", uri: NSURL(string: "spotify:track:0EpJ6gnNlNvTVjDuf2OyOY")!))
-                                playlist.songs.append(Song(title: "Susie Q", artistName: "Creedence Clearwater Revival", uri: NSURL(string: "spotify:track:6z2AyfE9GZxoHqJVSA4NgN")!))
+                                playlist.songsWithContacts.append(song: Song(title: "Carrie-Anne", artistName: "The Hollies", uri: NSURL(string: "spotify:track:0EpJ6gnNlNvTVjDuf2OyOY")!), contact: Contact(id: 1, firstName: "Carrie Anne", lastName: "Moss") as Contact?)
+                                playlist.songsWithContacts.append(song: Song(title: "Susie Q", artistName: "Creedence Clearwater Revival", uri: NSURL(string: "spotify:track:6z2AyfE9GZxoHqJVSA4NgN")!), contact: Contact(id: 2, firstName: "Susie", lastName: "B Anthony") as Contact?)
                             }
                             for i in 1...68 {
-                                playlist.songs.append(Song(title: "Billie Jean - Single Version", artistName: "Michael Jackson", uri: NSURL(string: "spotify:track:5ChkMS8OtdzJeqyybCc9R5")!))
+                                playlist.songsWithContacts.append(song: Song(title: "Billie Jean - Single Version", artistName: "Michael Jackson", uri: NSURL(string: "spotify:track:5ChkMS8OtdzJeqyybCc9R5")!), contact: Contact(id: 3, firstName: "Billie Jean", lastName: "King") as Contact?)
                             }
                             
                             spotifyService.savePlaylist(playlist, session: self.session, callback: self.playlistCallback)
@@ -134,12 +133,12 @@ class SpotifyServiceSpec: QuickSpec {
     }
     
     func getPlaylist() -> Playlist! {
-        var playlist = Playlist(name: "test playlist")
+        var songsWithContacts: [(song: Song, contact: Contact?)] = []
         for i in 1...75 {
-            playlist.songs.append(Song(title: "Susie Q", artistName: "Creedence Clearwater Revival", uri: NSURL(string: "spotify:track:6z2AyfE9GZxoHqJVSA4NgN")!))
-            playlist.songs.append(Song(title: "Suite: Judy Blue Eyes", artistName: "Crosby, Stills & Nash", uri: NSURL(string: "spotify:track:2Jf0PGy9NzR1PTXvRFfaoE")!))
+            songsWithContacts.append(song: Song(title: "Susie Q", artistName: "Creedence Clearwater Revival", uri: NSURL(string: "spotify:track:6z2AyfE9GZxoHqJVSA4NgN")!), contact: Contact(id: 1, firstName: "Susie", lastName: "Q") as Contact?)
+            songsWithContacts.append(song: Song(title: "Suite: Judy Blue Eyes", artistName: "Crosby, Stills & Nash", uri: NSURL(string: "spotify:track:2Jf0PGy9NzR1PTXvRFfaoE")!), contact: Contact(id: 2, firstName: "Judie", lastName: "Blume") as Contact?)
         }
-        return playlist
+        return Playlist(name: "test playlist", songsWithContacts: songsWithContacts)
     }
     
     func clearCallbackVariables() {

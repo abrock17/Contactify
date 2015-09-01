@@ -34,7 +34,8 @@ public class SpotifyService {
                     self.updatePlaylistName(playlist.name!, forPlaylistSnapshot: spotifyPlaylistSnapshot, inSession: session)
                     self.replaceTracksForURIs(playlist.songURIs,
                         inSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
-                        andResultPlaylist: Playlist(name: playlist.name, uri: playlist.uri),
+                        andResultPlaylist: Playlist(name: playlist.name!, uri: playlist.uri!,
+                            songsWithContacts: playlist.songsWithContacts),
                         withSession: session,
                         callback: callback)
                 } else {
@@ -50,7 +51,8 @@ public class SpotifyService {
                 } else {
                     self.addTracksForURIs(playlist.songURIs,
                         toSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
-                        andResultPlaylist: Playlist(name: spotifyPlaylistSnapshot.name, uri: spotifyPlaylistSnapshot.uri),
+                        andResultPlaylist: Playlist(name: spotifyPlaylistSnapshot.name, uri: spotifyPlaylistSnapshot.uri,
+                            songsWithContacts: playlist.songsWithContacts),
                         withSession: session,
                         callback: callback)
                 }
@@ -78,7 +80,7 @@ public class SpotifyService {
                         if error != nil {
                             callback(.Failure(error))
                         } else {
-                            resultPlaylist.songs += self.songsFromSPTTracks(tracks)
+                            self.updateSongsForSPTTracks(tracks, inPlaylist: resultPlaylist)
                             let remainingURIs = self.getRemainingURIS(uris)
                             if remainingURIs.isEmpty {
                                 callback(.Success(resultPlaylist))
@@ -116,7 +118,7 @@ public class SpotifyService {
                         if error != nil {
                             callback(.Failure(error))
                         } else {
-                            resultPlaylist.songs += self.songsFromSPTTracks(tracks)
+                            self.updateSongsForSPTTracks(tracks, inPlaylist: resultPlaylist)
                             let remainingURIs = self.getRemainingURIS(uris)
                             if remainingURIs.isEmpty {
                                 callback(.Success(resultPlaylist))
@@ -141,6 +143,20 @@ public class SpotifyService {
     
     func getRemainingURIS(uris: [NSURL]) -> [NSURL] {
         return Array(uris[min(uris.count, trackMaxBatchSize)..<uris.count])
+    }
+    
+    func updateSongsForSPTTracks(tracks: [SPTTrack], var inPlaylist playlist: Playlist) {
+        for track in tracks {
+            for (index, song) in enumerate(playlist.songs) {
+                if track.uri == song.uri {
+                    playlist.songsWithContacts[index].song = songForSPTTrack(track)
+                }
+            }
+        }
+    }
+    
+    func songForSPTTrack(track: SPTTrack) -> Song {
+        return Song(title: track.name, artistNames: self.getArtistNamesFromTrack(track), uri: track.uri)
     }
     
     func songsFromSPTTracks(tracks: [SPTTrack]) -> [Song] {
@@ -191,7 +207,7 @@ public class SpotifyService {
     func completePlaylistRetrieval(var playlist: Playlist!, withPlaylistSnapshotPage page: SPTListPage!, withSession session: SPTSession!, callback: (PlaylistResult) -> Void) {
         if let tracks = page.items {
             for track in tracks {
-                playlist.songs.append(Song(title: track.name, artistNames: getArtistNamesFromTrack(track as! SPTTrack), uri: track.uri))
+                playlist.songsWithContacts.append(song: Song(title: track.name, artistNames: getArtistNamesFromTrack(track as! SPTTrack), uri: track.uri), contact: nil)
             }
         }
         

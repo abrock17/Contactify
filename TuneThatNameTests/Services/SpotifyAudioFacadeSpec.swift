@@ -4,9 +4,10 @@ import Nimble
 
 class SpotifyAudioFacadeSpec: QuickSpec {
     
-    let playlist = Playlist(name: "name", uri: nil, songs:
-        [Song(title: "Hit the Road Jack", artistName: "Ray Charles", uri: NSURL(string: "spotify:track:1blficLzeYlqZ7WtIxulLq")!),
-        Song(title: "Diane Young", artistName: "Vampire Weekend", uri: NSURL(string: "spotify:track:27zVV7Q7LbqsjWm40HOXuq")!)])
+    let playlist = Playlist(name: "name", songsWithContacts:[
+            (song: Song(title: "Hit the Road Jack", artistName: "Ray Charles", uri: NSURL(string: "spotify:track:1blficLzeYlqZ7WtIxulLq")!), contact: nil),
+            (song: Song(title: "Diane Young", artistName: "Vampire Weekend", uri: NSURL(string: "spotify:track:27zVV7Q7LbqsjWm40HOXuq")!), contact: nil)
+        ])
     
     var callbackErrors = [NSError?]()
     

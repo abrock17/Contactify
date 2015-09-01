@@ -6,9 +6,9 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     
     override func spec() {
         describe("SpotifyPlaylistTableController") {
-            let playlist = Playlist(name: "about to DROP", uri: nil, songs:
-                [Song(title: "Me And Bobby McGee", artistName: "Janis Joplin", uri: NSURL(string: "spotify:track:3RpndSyVypRVcN38z98MvU")!),
-                    Song(title: "Bobby Brown Goes Down", artistName: "Frank Zappa", uri: NSURL(string: "spotify:track:6WALLlw7klz1BfjlyaBDen")!)])
+            let playlist = Playlist(name: "about to DROP", 
+                songsWithContacts: [(song: Song(title: "Me And Bobby McGee", artistName: "Janis Joplin", uri: NSURL(string: "spotify:track:3RpndSyVypRVcN38z98MvU")!), contact: Contact(id: 1, firstName: "Bobby", lastName: "McGee")),
+                    (song: Song(title: "Bobby Brown Goes Down", artistName: "Frank Zappa", uri: NSURL(string: "spotify:track:6WALLlw7klz1BfjlyaBDen")!), contact: Contact(id: 2, firstName: "Bobby", lastName: "Brown"))])
             let spotifyTrack = SpotifyTrack(
                 uri: NSURL(string: "spotify:track:6WALLlw7klz1BfjlyaBDen")!,
                 name: "Bobby Brown Goes Down",

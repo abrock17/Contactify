@@ -4,27 +4,21 @@ public struct Playlist: Equatable, Printable {
     
     public var name: String?
     public var uri: NSURL?
-    public var songs = [Song]()
+    public var songsWithContacts: [(song: Song, contact: Contact?)]
+    public var songs: [Song] {
+        return self.songsWithContacts.map({ $0.song })
+    }
     public var songURIs: [NSURL] {
-        return self.songs.map({$0.uri})
+        return self.songsWithContacts.map({ $0.song.uri })
     }
     public var description: String {
         return "Playlist:[name:\(name), uri:\(uri), number of songs:\(songs.count)]"
     }
     
-    public init(name: String!) {
-        self.name = name
-    }
-
-    public init(name: String!, uri: NSURL!) {
+    public init(name: String! = nil, uri: NSURL! = nil, songsWithContacts: [(song: Song, contact: Contact?)] = []) {
         self.name = name
         self.uri = uri
-    }
-
-    public init(name: String!, uri: NSURL!, songs: [Song]!) {
-        self.name = name
-        self.uri = uri
-        self.songs = songs
+        self.songsWithContacts = songsWithContacts
     }
 }
 
