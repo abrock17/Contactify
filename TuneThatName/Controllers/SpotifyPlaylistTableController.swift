@@ -146,7 +146,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     override public func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         return [
             UITableViewRowAction(style: .Default, title: "Delete", handler: handleDeleteRow),
-            UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Replace", handler: presentReplaceSongDialog)
+            UITableViewRowAction(style: .Normal, title: "Replace", handler: handleReplaceRow)
         ]
     }
     
@@ -161,21 +161,34 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         }
     }
     
-    public func presentReplaceSongDialog(rowAction: UITableViewRowAction!, indexPath: NSIndexPath!) {
-        let alertController = UIAlertController(title: "Replace this Song", message: "Use the same name (placeholder)?", preferredStyle: .Alert)
-        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
-        alertController.addAction(UIAlertAction(title: "Use a Different Name", style: UIAlertActionStyle.Default) {
-            uiAlertAction in
-            
-            })
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default) {
-            uiAlertAction in
-            
-            })
-        presentViewController(alertController, animated: true, completion: nil)
+    public func handleReplaceRow(rowAction: UITableViewRowAction!, indexPath: NSIndexPath!) {
+        presentReplaceSongDialogForIndexPath(indexPath)
     }
     
-    public func handleReplaceRowForContact(contact: Contact, indexPath: NSIndexPath) {
+    public func presentReplaceSongDialogForIndexPath(indexPath: NSIndexPath) {
+        let songWithContact = playlist.songsWithContacts[indexPath.row]
+        let singleNameEntryController = SingleNameEntryController() {
+            contact in
+            println("contact : \(contact)")
+        }
+        if let contact = songWithContact.contact {
+            let alertController = UIAlertController(title: "Replace this Song", message: "Use the same name (\(songWithContact.contact!.fullName))?", preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+            alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default) {
+                uiAlertAction in
+                
+                })
+            alertController.addAction(UIAlertAction(title: "Use a Different Name", style: UIAlertActionStyle.Default) {
+                uiAlertAction in
+                self.presentViewController(singleNameEntryController, animated: true, completion: nil)
+                })
+            presentViewController(alertController, animated: true, completion: nil)
+        } else {
+            presentViewController(singleNameEntryController, animated: true, completion: nil)
+        }
+    }
+    
+    public func handleReplaceRowAtIndexPath(indexPath: NSIndexPath, forContact contact: Contact) {
         
     }
     

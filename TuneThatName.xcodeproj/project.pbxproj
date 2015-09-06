@@ -43,11 +43,13 @@
 		4484B52B1AD1C7B300F33C8F /* ContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52A1AD1C7B300F33C8F /* ContactService.swift */; };
 		4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52C1AD1C80400F33C8F /* Contact.swift */; };
 		4484B52F1AD36C0C00F33C8F /* ContactSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4484B52E1AD36C0C00F33C8F /* ContactSpec.swift */; };
+		448A8C351B9C62A400BAAEC4 /* SingleNameEntryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448A8C341B9C62A400BAAEC4 /* SingleNameEntryController.swift */; };
 		449E66DB1B5135340036A9AD /* SpotifyTrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449E66DA1B5135340036A9AD /* SpotifyTrackViewController.swift */; };
 		449E66DD1B5156DC0036A9AD /* MockSpotifyPlaybackDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449E66DC1B5156DC0036A9AD /* MockSpotifyPlaybackDelegate.swift */; };
 		44A0A8D51AEC57F900E7A2A1 /* MockEchoNestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */; };
 		44A0A8DB1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44A0A8DA1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt */; };
 		44A0A8DD1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44A0A8DC1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt */; };
+		44A32FC51B9C665C000A2C46 /* SingleNameEntryControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A32FC41B9C665C000A2C46 /* SingleNameEntryControllerSpec.swift */; };
 		44AEBC981AE89DFF00D96CD1 /* ControllerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */; };
 		44AFD9B51B16B99500E99FBF /* MockControllerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AFD9B41B16B99500E99FBF /* MockControllerHelper.swift */; };
 		44AFD9B71B1722FC00E99FBF /* SpotifyTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AFD9B61B1722FC00E99FBF /* SpotifyTrack.swift */; };
@@ -129,11 +131,13 @@
 		4484B52A1AD1C7B300F33C8F /* ContactService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 		4484B52C1AD1C80400F33C8F /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		4484B52E1AD36C0C00F33C8F /* ContactSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactSpec.swift; sourceTree = "<group>"; };
+		448A8C341B9C62A400BAAEC4 /* SingleNameEntryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleNameEntryController.swift; sourceTree = "<group>"; };
 		449E66DA1B5135340036A9AD /* SpotifyTrackViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyTrackViewController.swift; sourceTree = "<group>"; };
 		449E66DC1B5156DC0036A9AD /* MockSpotifyPlaybackDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSpotifyPlaybackDelegate.swift; sourceTree = "<group>"; };
 		44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockEchoNestService.swift; sourceTree = "<group>"; };
 		44A0A8DA1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-multiple-songs.txt"; sourceTree = "<group>"; };
 		44A0A8DC1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-no-songs.txt"; sourceTree = "<group>"; };
+		44A32FC41B9C665C000A2C46 /* SingleNameEntryControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleNameEntryControllerSpec.swift; sourceTree = "<group>"; };
 		44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerHelper.swift; sourceTree = "<group>"; };
 		44AFD9B41B16B99500E99FBF /* MockControllerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockControllerHelper.swift; sourceTree = "<group>"; };
 		44AFD9B61B1722FC00E99FBF /* SpotifyTrack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyTrack.swift; sourceTree = "<group>"; };
@@ -212,6 +216,7 @@
 				443F89F31AE2A551005920B1 /* CreatePlaylistControllerSpec.swift */,
 				4440E4A21B33954C005A4333 /* NameSelectionTableControllerSpec.swift */,
 				447963511B3CD432003541BE /* PlaylistNameEntryControllerSpec.swift */,
+				44A32FC41B9C665C000A2C46 /* SingleNameEntryControllerSpec.swift */,
 				4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */,
 				446B8F9E1B53C807002C687E /* SpotifyTrackViewControllerSpec.swift */,
 			);
@@ -238,6 +243,7 @@
 				4440E49C1B303CAD005A4333 /* CreatePlaylistController.swift */,
 				4446FF0D1B2FD43100368ED7 /* NameSelectionTableController.swift */,
 				4479634F1B397994003541BE /* PlaylistNameEntryController.swift */,
+				448A8C341B9C62A400BAAEC4 /* SingleNameEntryController.swift */,
 				44BE538F1AA76A1E0089BFCD /* SpotifyPlaylistTableController.swift */,
 				449E66DA1B5135340036A9AD /* SpotifyTrackViewController.swift */,
 			);
@@ -756,6 +762,7 @@
 				4440E49D1B303CAD005A4333 /* CreatePlaylistController.swift in Sources */,
 				4484B52D1AD1C80400F33C8F /* Contact.swift in Sources */,
 				44C93D591B1D51AE008FDCDB /* SongPreferences.swift in Sources */,
+				448A8C351B9C62A400BAAEC4 /* SingleNameEntryController.swift in Sources */,
 				443F89F21AE2A3E1005920B1 /* PlaylistService.swift in Sources */,
 				4484B52B1AD1C7B300F33C8F /* ContactService.swift in Sources */,
 				44FDE0C21A9F40040052C6D1 /* Song.swift in Sources */,
@@ -780,6 +787,7 @@
 				445914821ACB6B1D00E9734C /* Mocker.swift in Sources */,
 				446DFE021B02183B0022B75F /* SpotifyAudioFacadeSpec.swift in Sources */,
 				44AFD9B51B16B99500E99FBF /* MockControllerHelper.swift in Sources */,
+				44A32FC51B9C665C000A2C46 /* SingleNameEntryControllerSpec.swift in Sources */,
 				446B1C791B497FC000E5FA22 /* MockPreferencesService.swift in Sources */,
 				44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */,
 				4440E4A11B32DC8E005A4333 /* PlaylistPreferencesSpec.swift in Sources */,

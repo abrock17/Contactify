@@ -8,7 +8,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
         describe("SpotifyPlaylistTableController") {
             let playlist = Playlist(name: "about to DROP", 
                 songsWithContacts: [(song: Song(title: "Me And Bobby McGee", artistName: "Janis Joplin", uri: NSURL(string: "spotify:track:3RpndSyVypRVcN38z98MvU")!), contact: Contact(id: 1, firstName: "Bobby", lastName: "McGee")),
-                    (song: Song(title: "Bobby Brown Goes Down", artistName: "Frank Zappa", uri: NSURL(string: "spotify:track:6WALLlw7klz1BfjlyaBDen")!), contact: Contact(id: 2, firstName: "Bobby", lastName: "Brown"))])
+                    (song: Song(title: "Bobby Brown Goes Down", artistName: "Frank Zappa", uri: NSURL(string: "spotify:track:6WALLlw7klz1BfjlyaBDen")!), contact: nil)])
             let spotifyTrack = SpotifyTrack(
                 uri: NSURL(string: "spotify:track:6WALLlw7klz1BfjlyaBDen")!,
                 name: "Bobby Brown Goes Down",
@@ -653,9 +653,18 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 
                 describe("replace song") {
                     it("prompts to choose to use the same name") {
-                        spotifyPlaylistTableController.presentReplaceSongDialog(replaceAction, indexPath: firstIndexPath)
+                        spotifyPlaylistTableController.handleReplaceRow(replaceAction, indexPath: firstIndexPath)
                         
-                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Replace this Song", expectedMessage: "Use the same name (placeholder)?")
+                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Replace this Song", expectedMessage: "Use the same name (Bobby McGee)?")
+                    }
+                    
+                    context("when the song is not associated with a contact") {
+                        it("prompts the user to choose a new name") {
+                            spotifyPlaylistTableController.handleReplaceRow(replaceAction, indexPath: secondIndexPath)
+                            
+                            expect(spotifyPlaylistTableController.presentedViewController)
+                                .toEventually(beAnInstanceOf(SingleNameEntryController))
+                        }
                     }
                 }
                 

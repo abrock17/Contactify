@@ -18,7 +18,7 @@ public class Contact: NSObject, NSCoding, Equatable, Hashable {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
-        self.fullName = fullName
+        self.fullName = fullName != nil ? fullName : ((firstName ?? "") + " " + (lastName ?? "")).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
     }
     
     public required convenience init(coder decoder: NSCoder) {
