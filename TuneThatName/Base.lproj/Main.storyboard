@@ -476,12 +476,87 @@
                         <outlet property="songViewButton" destination="vZD-FT-x7g" id="dYO-ld-fQl"/>
                         <segue destination="njU-17-JH3" kind="presentation" identifier="ShowSpotifyTrackSegue" id="thZ-EL-OxA"/>
                         <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistFromPlaylistTableSegue" unwindAction="unwindToCreatePlaylist:" id="Ynz-83-V4a"/>
+                        <segue destination="zTz-r1-XjC" kind="show" identifier="SelectSongSegue" id="Xtd-C4-B77"/>
+                        <segue destination="cAw-7i-YC1" kind="show" identifier="SingleNameEntrySegue" id="YWX-yD-MDI"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9zL-Pn-uq4" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="49h-Wb-X4D" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1821" y="340"/>
+        </scene>
+        <!--Single Name Entry Controller-->
+        <scene sceneID="QtE-Fk-xUG">
+            <objects>
+                <viewController storyboardIdentifier="SingleNameEntryController" id="cAw-7i-YC1" customClass="SingleNameEntryController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="97n-oL-d8h"/>
+                        <viewControllerLayoutGuide type="bottom" id="ExR-7j-k1G"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8V4-ts-Afw">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PKF-rp-sUO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1821" y="1127"/>
+        </scene>
+        <!--Select a Song-->
+        <scene sceneID="gUv-s6-4aV">
+            <objects>
+                <tableViewController storyboardIdentifier="SpotifySongSelectionTableController" id="zTz-r1-XjC" customClass="SpotifySongSelectionTableController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="yP8-w8-jgT">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SongSelectionTableCell" textLabel="PX3-Us-b9Y" detailTextLabel="25F-Vc-keP" style="IBUITableViewCellStyleSubtitle" id="WqZ-ib-J84">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WqZ-ib-J84" id="BUs-gY-o2H">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="PX3-Us-b9Y">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="25F-Vc-keP">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="zTz-r1-XjC" id="XOe-3T-YNc"/>
+                            <outlet property="delegate" destination="zTz-r1-XjC" id="ddu-Mj-JTU"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Select a Song" id="DOF-op-hgg">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="KPF-87-fi9">
+                            <connections>
+                                <action selector="cancelPressed:" destination="zTz-r1-XjC" id="Jei-iO-vO2"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="5Tx-jh-9WN">
+                            <connections>
+                                <action selector="donePressed:" destination="zTz-r1-XjC" id="UbW-AS-glk"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="doneButton" destination="5Tx-jh-9WN" id="t3V-ck-Nuk"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="V3C-yu-6lw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2658" y="1127"/>
         </scene>
         <!--Spotify Track View Controller-->
         <scene sceneID="mKm-au-cJ4">

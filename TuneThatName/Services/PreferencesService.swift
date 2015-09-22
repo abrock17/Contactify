@@ -8,6 +8,10 @@ public class PreferencesService {
         self.userDefaults = userDefaults
     }
     
+    public func getDefaultPlaylistPreferences() -> PlaylistPreferences {
+        return PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular])))
+    }
+    
     public func retrievePlaylistPreferences() -> PlaylistPreferences? {
         var playlistPreferences: PlaylistPreferences? = nil
         if let preferencesData = userDefaults.dataForKey(Constants.StorageKeys.playlistPreferences) {

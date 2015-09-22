@@ -20,6 +20,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     var hasPlayed: Bool {
         return self.spotifyAudioFacade.currentSpotifyTrack != nil
     }
+    public var songReplacementIndexPath: NSIndexPath?
     
     public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
     var spotifyAuthController: SPTAuthViewController!
@@ -162,34 +163,40 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     public func handleReplaceRow(rowAction: UITableViewRowAction!, indexPath: NSIndexPath!) {
-        presentReplaceSongDialogForIndexPath(indexPath)
-    }
-    
-    public func presentReplaceSongDialogForIndexPath(indexPath: NSIndexPath) {
+        songReplacementIndexPath = indexPath
         let songWithContact = playlist.songsWithContacts[indexPath.row]
-        let singleNameEntryController = SingleNameEntryController() {
-            contact in
-            println("contact : \(contact)")
-        }
         if let contact = songWithContact.contact {
-            let alertController = UIAlertController(title: "Replace this Song", message: "Use the same name (\(songWithContact.contact!.fullName))?", preferredStyle: .Alert)
+            let alertController = UIAlertController(title: "Replace this Song",
+                message: "(For \(songWithContact.contact!.fullName))", preferredStyle: .Alert)
             alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
-            alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default) {
+            alertController.addAction(UIAlertAction(title: "Use the Same Name", style: UIAlertActionStyle.Default) {
                 uiAlertAction in
-                
+                    self.performSegueWithIdentifier("SelectSongSegue", sender: nil)
                 })
             alertController.addAction(UIAlertAction(title: "Use a Different Name", style: UIAlertActionStyle.Default) {
                 uiAlertAction in
-                self.presentViewController(singleNameEntryController, animated: true, completion: nil)
+                    self.performSegueWithIdentifier("SingleNameEntrySegue", sender: nil)
                 })
             presentViewController(alertController, animated: true, completion: nil)
         } else {
-            presentViewController(singleNameEntryController, animated: true, completion: nil)
+            performSegueWithIdentifier("SingleNameEntrySegue", sender: nil)
         }
     }
     
-    public func handleReplaceRowAtIndexPath(indexPath: NSIndexPath, forContact contact: Contact) {
-        
+    public func completeReplacementWithSong(song: Song, andContact contact: Contact?) {
+        navigationController?.popToViewController(self, animated: true)
+        if let indexPath = songReplacementIndexPath {
+            let oldSong = playlist.songsWithContacts[indexPath.row].song
+            playlist.songsWithContacts[indexPath.row] = (song: song, contact: contact)
+            tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+            if hasPlayed {
+                if spotifyAudioFacade.currentSpotifyTrack?.uri == oldSong.uri {
+                    playFromIndex(indexPath.row)
+                } else {
+                    syncEditedPlaylist()
+                }
+            }
+        }
     }
     
     func stopPlay() {
@@ -234,6 +241,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
             stopPlay()
         } else if let spotifyTrackViewController = destinationViewController as? SpotifyTrackViewController {
             spotifyTrackViewController.spotifyAudioFacade = spotifyAudioFacade
+        } else if let spotifySongSelectionController = destinationViewController as? SpotifySongSelectionTableController {
+            spotifySongSelectionController.searchContact = playlist.songsWithContacts[songReplacementIndexPath!.row].contact
+            spotifySongSelectionController.songSelectionCompletionHandler = completeReplacementWithSong
         }
     }
     

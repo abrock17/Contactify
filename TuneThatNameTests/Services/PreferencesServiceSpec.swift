@@ -46,6 +46,14 @@ class PreferencesServiceSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("get default playlist preferences") {
+                it("returns the expected preferences") {
+                    let expectedPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular])))
+                    
+                    expect(preferencesService.getDefaultPlaylistPreferences).to(equal(expectedPlaylistPreferences))
+                }
+            }
         }
     }
 }

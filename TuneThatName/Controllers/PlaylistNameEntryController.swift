@@ -32,7 +32,7 @@ public class PlaylistNameEntryController: UIAlertController {
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
         addAction(cancelAction)
 
-        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) {
+        let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.Default) {
             alertAction in
             
             completionHandler((self.textFields?.first as! UITextField).text)
@@ -43,8 +43,7 @@ public class PlaylistNameEntryController: UIAlertController {
     
     func playlistNameTextFieldDidChange(sender: UITextField) {
         let okAction = actions.last as! UIAlertAction
-        let playlistNameTextField = textFields!.first as! UITextField
-        okAction.enabled = !playlistNameTextField.text.isEmpty
+        okAction.enabled = !sender.text.isEmpty
     }
 
     /*

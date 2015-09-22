@@ -1,15 +1,10 @@
 import UIKit
 
-public class SingleNameEntryController: UIAlertController {
-    
-    public convenience init(completionHandler: Contact -> Void) {
-        self.init()
-        self.init(title: "Choose a Name", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
-    }
+public class SingleNameEntryController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // Do any additional setup after loading the view.
     }
 

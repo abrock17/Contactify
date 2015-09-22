@@ -651,19 +651,99 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                 }
                 
-                describe("replace song") {
+                describe("replace button pressed") {
+                    it("sets the song replacement index") {
+                        spotifyPlaylistTableController.handleReplaceRow(replaceAction, indexPath: firstIndexPath)
+
+                        expect(spotifyPlaylistTableController.songReplacementIndexPath).to(equal(firstIndexPath))
+                    }
+                    
                     it("prompts to choose to use the same name") {
                         spotifyPlaylistTableController.handleReplaceRow(replaceAction, indexPath: firstIndexPath)
                         
-                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Replace this Song", expectedMessage: "Use the same name (Bobby McGee)?")
+                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Replace this Song", expectedMessage: "(For Bobby McGee)")
                     }
                     
                     context("when the song is not associated with a contact") {
                         it("prompts the user to choose a new name") {
                             spotifyPlaylistTableController.handleReplaceRow(replaceAction, indexPath: secondIndexPath)
                             
-                            expect(spotifyPlaylistTableController.presentedViewController)
+                            expect(navigationController.topViewController)
                                 .toEventually(beAnInstanceOf(SingleNameEntryController))
+                        }
+                    }
+                }
+                
+                describe("complete replacement with song and contact") {
+                    let newSong = Song(title: "Don’t call me Whitney, Bobby",
+                        artistNames: ["Islands"],
+                        uri: NSURL(string:"spotify:track:51L6XqGwYaRUh5qenzko3F")!)
+                    var numberOfRowsBefore: Int!
+                    
+                    beforeEach() {
+                        numberOfRowsBefore = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, numberOfRowsInSection: 0)
+                    }
+                    
+                    it("replaces the row in the table") {
+                        spotifyPlaylistTableController.songReplacementIndexPath = firstIndexPath
+                        spotifyPlaylistTableController.completeReplacementWithSong(newSong, andContact: nil)
+                        
+                        expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, numberOfRowsInSection: 0)).to(equal(numberOfRowsBefore))
+                        expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).textLabel?.text).to(equal(newSong.title))
+                        expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).detailTextLabel?.text).to(equal(newSong.displayArtistName))
+                    }
+                    
+                    context("and play has not yet started") {
+                        it("does not update the playlist with the spotify audio facade") {
+                            spotifyPlaylistTableController.songReplacementIndexPath = firstIndexPath
+                            spotifyPlaylistTableController.completeReplacementWithSong(newSong, andContact: nil)
+                            
+                            expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                                MockSpotifyAudioFacade.Method.updatePlaylist)).toEventually(equal(0))
+                        }
+                    }
+                    
+                    context("and play has already started") {
+                        let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+
+                        beforeEach() {
+                            spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                            mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: spotifyTrack)
+                        }
+                        
+                        context("and the replaced song is not currently playing") {
+                            beforeEach() {
+                                spotifyPlaylistTableController.songReplacementIndexPath = firstIndexPath
+                                spotifyPlaylistTableController.completeReplacementWithSong(newSong, andContact: nil)
+                            }
+                            
+                            it("updates the playlist with the spotify audio facade") {
+                                self.verifyCallToUpdatePlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: spotifyPlaylistTableController.playlist, expectedIndex: 1)
+                            }
+                            
+                            it("does not restart play") {
+                                expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                                    MockSpotifyAudioFacade.Method.playPlaylist)).to(equal(0))
+                            }
+                        }
+                        
+                        context("and the replaced song is playing") {
+                            beforeEach() {
+                                spotifyPlaylistTableController.songReplacementIndexPath = secondIndexPath
+                                spotifyPlaylistTableController.completeReplacementWithSong(newSong, andContact: nil)
+                            }
+                            
+                            it("does not update the playlist with the spotify audio facade") {
+                                expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                                    MockSpotifyAudioFacade.Method.updatePlaylist)).to(equal(0))
+                            }
+                            
+                            it("starts playing the new song") {
+                                self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade,
+                                    expectedPlaylist: spotifyPlaylistTableController.playlist,
+                                    expectedIndex: 1,
+                                    expectedSession: spotifyAuth.session)
+                            }
                         }
                     }
                 }
@@ -754,6 +834,28 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         
                         expect(self.getPlayPauseButtonSystemItemFromToolbar(spotifyPlaylistTableController)).to(equal(UIBarButtonSystemItem.Pause))
                     }
+                }
+            }
+            
+            describe("segue to the SpotifySongSelectionController") {
+                beforeEach() {
+                    spotifyPlaylistTableController.songReplacementIndexPath = NSIndexPath(forRow: 0, inSection: 0)
+                    spotifyPlaylistTableController.performSegueWithIdentifier("SelectSongSegue", sender: nil)
+                }
+                
+                it("shows the spotify song selection table") {
+                    expect(navigationController.topViewController)
+                        .toEventually(beAnInstanceOf(SpotifySongSelectionTableController))
+                }
+                
+                it("sets the search contact on the song selection table controller") {
+                    let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
+                    expect(spotifySongSelectionTableController?.searchContact).to(equal(playlist.songsWithContacts[0].contact))
+                }
+                
+                it("sets the song replacement completion handler on the song selection table controller") {
+                    let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
+                    expect(spotifySongSelectionTableController?.songSelectionCompletionHandler).toNot(beNil())
                 }
             }
         }

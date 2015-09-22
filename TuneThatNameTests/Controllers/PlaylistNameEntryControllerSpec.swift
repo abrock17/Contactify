@@ -15,19 +15,27 @@ class PlaylistNameEntryControllerSpec: QuickSpec {
         
         describe("PlaylistNameEntryController") {
             context("when the name is empty") {
+                playlistNameEntryController = PlaylistNameEntryController(currentName: nil, completionHandler: self.playlistNameEntryCompletionHandler)
                 it("the OK action is disabled") {
-                    playlistNameEntryController = PlaylistNameEntryController(currentName: nil, completionHandler: self.playlistNameEntryCompletionHandler)
-                    
                     expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beFalse())
                 }
                 
                 context("and text is entered") {
+                    let textField = playlistNameEntryController.textFields!.first as! UITextField
                     it("enables the OK action") {
-                        let textField = playlistNameEntryController.textFields!.first as! UITextField
                         textField.text = "x"
                         textField.sendActionsForControlEvents(UIControlEvents.EditingChanged)
 
                         expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beTrue())
+                    }
+                    
+                    context("and text is cleared") {
+                        it("disables the OK action") {
+                            textField.text = ""
+                            textField.sendActionsForControlEvents(UIControlEvents.EditingChanged)
+                            
+                            expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beFalse())
+                        }
                     }
                 }
             }

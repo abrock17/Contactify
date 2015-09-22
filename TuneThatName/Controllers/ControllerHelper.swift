@@ -5,14 +5,14 @@ public class ControllerHelper {
     public init() {
     }
     
-    public class func displaySimpleAlertForTitle(title: String, andMessage message: String, onController controller: UIViewController) {
+    public class func displaySimpleAlertForTitle(title: String, andMessage message: String, onController controller: UIViewController, withHandler handler: ((UIAlertAction!) -> Void)! = nil) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-        alertController.addAction(UIAlertAction(title: "Dismiss", style: .Default, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: .Default, handler: handler))
         controller.presentViewController(alertController, animated: true, completion: nil)
     }
     
-    public class func displaySimpleAlertForTitle(title: String, andError error: NSError, onController controller: UIViewController) {
-        displaySimpleAlertForTitle(title, andMessage: error.localizedDescription, onController: controller)
+    public class func displaySimpleAlertForTitle(title: String, andError error: NSError, onController controller: UIViewController, withHandler handler: ((UIAlertAction!) -> Void)! = nil) {
+        displaySimpleAlertForTitle(title, andMessage: error.localizedDescription, onController: controller, withHandler: handler)
     }
     
     public class func newActivityIndicatorForView(view: UIView) -> UIActivityIndicatorView {
