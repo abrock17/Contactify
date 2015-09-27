@@ -840,7 +840,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             describe("segue to the SpotifySongSelectionController") {
                 beforeEach() {
                     spotifyPlaylistTableController.songReplacementIndexPath = NSIndexPath(forRow: 0, inSection: 0)
-                    spotifyPlaylistTableController.performSegueWithIdentifier("SelectSongSegue", sender: nil)
+                    spotifyPlaylistTableController.performSegueWithIdentifier("SelectSongSameContactSegue", sender: nil)
                 }
                 
                 it("shows the spotify song selection table") {
@@ -853,9 +853,26 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     expect(spotifySongSelectionTableController?.searchContact).to(equal(playlist.songsWithContacts[0].contact))
                 }
                 
-                it("sets the song replacement completion handler on the song selection table controller") {
+                it("sets the song selection completion handler on the song selection table controller") {
                     let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
                     expect(spotifySongSelectionTableController?.songSelectionCompletionHandler).toNot(beNil())
+                }
+            }
+            
+            describe("segue to the SingleNameEntryController") {
+                beforeEach() {
+                    spotifyPlaylistTableController.songReplacementIndexPath = NSIndexPath(forRow: 0, inSection: 0)
+                    spotifyPlaylistTableController.performSegueWithIdentifier("EnterNameSegue", sender: nil)
+                }
+                
+                it("shows the single name entry view") {
+                    expect(navigationController.topViewController)
+                        .toEventually(beAnInstanceOf(SingleNameEntryController))
+                }
+                
+                it("sets the song selection completion handler on the song selection table controller") {
+                    let singleNameEntryController = navigationController.topViewController as? SingleNameEntryController
+                    expect(singleNameEntryController?.songSelectionCompletionHandler).toNot(beNil())
                 }
             }
         }

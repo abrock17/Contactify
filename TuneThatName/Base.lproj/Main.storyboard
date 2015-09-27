@@ -476,8 +476,8 @@
                         <outlet property="songViewButton" destination="vZD-FT-x7g" id="dYO-ld-fQl"/>
                         <segue destination="njU-17-JH3" kind="presentation" identifier="ShowSpotifyTrackSegue" id="thZ-EL-OxA"/>
                         <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistFromPlaylistTableSegue" unwindAction="unwindToCreatePlaylist:" id="Ynz-83-V4a"/>
-                        <segue destination="zTz-r1-XjC" kind="show" identifier="SelectSongSegue" id="Xtd-C4-B77"/>
-                        <segue destination="cAw-7i-YC1" kind="show" identifier="SingleNameEntrySegue" id="YWX-yD-MDI"/>
+                        <segue destination="zTz-r1-XjC" kind="show" identifier="SelectSongSameContactSegue" id="Xtd-C4-B77"/>
+                        <segue destination="cAw-7i-YC1" kind="show" identifier="EnterNameSegue" id="YWX-yD-MDI"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9zL-Pn-uq4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -485,7 +485,7 @@
             </objects>
             <point key="canvasLocation" x="1821" y="340"/>
         </scene>
-        <!--Single Name Entry Controller-->
+        <!--Enter a Name-->
         <scene sceneID="QtE-Fk-xUG">
             <objects>
                 <viewController storyboardIdentifier="SingleNameEntryController" id="cAw-7i-YC1" customClass="SingleNameEntryController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
@@ -496,8 +496,42 @@
                     <view key="view" contentMode="scaleToFill" id="8V4-ts-Afw">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hoB-qE-gO1">
+                                <rect key="frame" x="16" y="80" width="568" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="nameEntryTextChanged:" destination="cAw-7i-YC1" eventType="editingChanged" id="jDM-9E-GvU"/>
+                                    <action selector="nameEntryValueChanged:" destination="cAw-7i-YC1" eventType="valueChanged" id="jL6-0y-S6H"/>
+                                </connections>
+                            </textField>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="hoB-qE-gO1" secondAttribute="trailing" id="NST-rs-HfA"/>
+                            <constraint firstItem="hoB-qE-gO1" firstAttribute="leading" secondItem="8V4-ts-Afw" secondAttribute="leadingMargin" id="ceM-g2-PxB"/>
+                            <constraint firstAttribute="centerX" secondItem="hoB-qE-gO1" secondAttribute="centerX" id="ePH-Jk-DZT"/>
+                            <constraint firstItem="hoB-qE-gO1" firstAttribute="top" secondItem="97n-oL-d8h" secondAttribute="bottom" constant="16" id="pgV-JN-zqb"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="Enter a Name" id="2Eb-v9-HEm">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="sNk-Ph-oOI">
+                            <connections>
+                                <action selector="cancelPressed:" destination="cAw-7i-YC1" id="QoI-bU-hWf"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="lF3-2L-g7r">
+                            <connections>
+                                <action selector="donePressed:" destination="cAw-7i-YC1" id="Aja-KN-98t"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="doneButton" destination="lF3-2L-g7r" id="4Ja-OT-vlS"/>
+                        <outlet property="nameEntryTextField" destination="hoB-qE-gO1" id="DXD-1f-xen"/>
+                        <segue destination="zTz-r1-XjC" kind="show" identifier="SelectSongDifferentContactSegue" id="uSv-zE-s4T"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PKF-rp-sUO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -680,4 +714,7 @@
             <point key="canvasLocation" x="404" y="340"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="uSv-zE-s4T"/>
+    </inferredMetricsTieBreakers>
 </document>

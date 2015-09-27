@@ -2,10 +2,29 @@ import UIKit
 
 public class SingleNameEntryController: UIViewController {
 
+    public var contact = Contact(id: -1, firstName: nil, lastName: nil)
+    var allConctacts = [Contact]()
+    public var songSelectionCompletionHandler: ((Song, Contact?) -> Void)!
+    
+    public var contactService = ContactService()
+    
+    @IBOutlet public weak var nameEntryTextField: UITextField!
+    @IBOutlet public weak var doneButton: UIBarButtonItem!
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        nameEntryTextChanged(nameEntryTextField)
+        contactService.retrieveAllContacts() {
+            contactListResult in
+            
+            switch(contactListResult) {
+            case .Success(let contacts):
+                self.allConctacts = contacts
+            case .Failure(let error):
+                println("Unable to retrieve contacts: \(error)")
+            }
+        }
     }
 
     override public func didReceiveMemoryWarning() {
@@ -14,14 +33,29 @@ public class SingleNameEntryController: UIViewController {
     }
     
 
-    /*
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let spotifySongSelectionTableController = segue.destinationViewController as? SpotifySongSelectionTableController {
+            spotifySongSelectionTableController.searchContact = contact
+            spotifySongSelectionTableController.songSelectionCompletionHandler = songSelectionCompletionHandler
+        }
     }
-    */
-
+    
+    @IBAction public func nameEntryTextChanged(sender: UITextField) {
+        doneButton.enabled = !nameEntryTextField.text
+            .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()).isEmpty
+    }
+    
+    @IBAction public func cancelPressed(sender: UIBarButtonItem) {
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
+    @IBAction public func donePressed(sender: UIBarButtonItem) {
+        contact = Contact(
+            id: -1,
+            firstName: nameEntryTextField.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()),
+            lastName: nil)
+        performSegueWithIdentifier("SelectSongDifferentContactSegue", sender: sender)
+    }
 }

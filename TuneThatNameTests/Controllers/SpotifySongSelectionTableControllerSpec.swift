@@ -13,7 +13,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
     }
     
     override func spec() {
-        describe("SpotifySongSelectionTableControllerSpec") {
+        describe("SpotifySongSelectionTableController") {
             var spotifySongSelectionTableController: SpotifySongSelectionTableController!
             var navigationController: UINavigationController!
             var mockEchoNestService: MockEchoNestService!

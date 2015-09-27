@@ -171,15 +171,15 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
             alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
             alertController.addAction(UIAlertAction(title: "Use the Same Name", style: UIAlertActionStyle.Default) {
                 uiAlertAction in
-                    self.performSegueWithIdentifier("SelectSongSegue", sender: nil)
+                    self.performSegueWithIdentifier("SelectSongSameContactSegue", sender: nil)
                 })
             alertController.addAction(UIAlertAction(title: "Use a Different Name", style: UIAlertActionStyle.Default) {
                 uiAlertAction in
-                    self.performSegueWithIdentifier("SingleNameEntrySegue", sender: nil)
+                    self.performSegueWithIdentifier("EnterNameSegue", sender: nil)
                 })
             presentViewController(alertController, animated: true, completion: nil)
         } else {
-            performSegueWithIdentifier("SingleNameEntrySegue", sender: nil)
+            performSegueWithIdentifier("EnterNameSegue", sender: nil)
         }
     }
     
@@ -244,6 +244,8 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         } else if let spotifySongSelectionController = destinationViewController as? SpotifySongSelectionTableController {
             spotifySongSelectionController.searchContact = playlist.songsWithContacts[songReplacementIndexPath!.row].contact
             spotifySongSelectionController.songSelectionCompletionHandler = completeReplacementWithSong
+        } else if let singleNameEntryController = destinationViewController as? SingleNameEntryController {
+            singleNameEntryController.songSelectionCompletionHandler = completeReplacementWithSong
         }
     }
     

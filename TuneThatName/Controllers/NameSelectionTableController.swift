@@ -194,8 +194,6 @@ public class NameSelectionTableController: UITableViewController {
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         contactService.saveFilteredContacts(Array<Contact>(filteredContacts))
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
     }
     
     func selectAllPressed(sender: UIBarButtonItem) {
