@@ -506,14 +506,62 @@
                                     <action selector="nameEntryValueChanged:" destination="cAw-7i-YC1" eventType="valueChanged" id="jL6-0y-S6H"/>
                                 </connections>
                             </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text=" " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fR5-fj-DCd">
+                                <rect key="frame" x="16" y="126" width="568" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="90l-Zb-RJ5">
+                                <rect key="frame" x="16" y="126" width="568" height="377.5"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="NameSuggestionTableCell" textLabel="alk-7O-oIR" style="IBUITableViewCellStyleDefault" id="Ql8-cb-6XO">
+                                        <rect key="frame" x="0.0" y="0.0" width="568" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ql8-cb-6XO" id="8rr-Lm-zo5">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="alk-7O-oIR">
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="cAw-7i-YC1" id="CwG-M6-B0c"/>
+                                    <outlet property="delegate" destination="cAw-7i-YC1" id="HYT-I3-dxK"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="centerX" secondItem="fR5-fj-DCd" secondAttribute="centerX" id="5hH-UG-Qf7"/>
+                            <constraint firstItem="90l-Zb-RJ5" firstAttribute="top" secondItem="fR5-fj-DCd" secondAttribute="bottom" constant="16" id="9Tq-Yk-peA"/>
+                            <constraint firstItem="ExR-7j-k1G" firstAttribute="top" secondItem="90l-Zb-RJ5" secondAttribute="bottom" constant="16" id="LMX-gs-ver"/>
                             <constraint firstAttribute="trailingMargin" secondItem="hoB-qE-gO1" secondAttribute="trailing" id="NST-rs-HfA"/>
+                            <constraint firstItem="90l-Zb-RJ5" firstAttribute="top" secondItem="fR5-fj-DCd" secondAttribute="top" id="PRt-yX-fOU"/>
+                            <constraint firstAttribute="centerX" secondItem="90l-Zb-RJ5" secondAttribute="centerX" id="PyB-bD-t9h"/>
+                            <constraint firstItem="hoB-qE-gO1" firstAttribute="width" secondItem="fR5-fj-DCd" secondAttribute="width" id="QZP-36-gHp"/>
+                            <constraint firstItem="90l-Zb-RJ5" firstAttribute="top" secondItem="fR5-fj-DCd" secondAttribute="bottom" constant="16" id="WBT-oE-Kqk"/>
                             <constraint firstItem="hoB-qE-gO1" firstAttribute="leading" secondItem="8V4-ts-Afw" secondAttribute="leadingMargin" id="ceM-g2-PxB"/>
                             <constraint firstAttribute="centerX" secondItem="hoB-qE-gO1" secondAttribute="centerX" id="ePH-Jk-DZT"/>
+                            <constraint firstItem="hoB-qE-gO1" firstAttribute="width" secondItem="fR5-fj-DCd" secondAttribute="width" id="erC-mz-ZGe"/>
+                            <constraint firstItem="fR5-fj-DCd" firstAttribute="top" secondItem="hoB-qE-gO1" secondAttribute="bottom" constant="16" id="k9X-Wv-Zwd"/>
                             <constraint firstItem="hoB-qE-gO1" firstAttribute="top" secondItem="97n-oL-d8h" secondAttribute="bottom" constant="16" id="pgV-JN-zqb"/>
+                            <constraint firstItem="hoB-qE-gO1" firstAttribute="width" secondItem="90l-Zb-RJ5" secondAttribute="width" id="vpC-t8-jX1"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="QZP-36-gHp"/>
+                                <exclude reference="9Tq-Yk-peA"/>
+                                <exclude reference="WBT-oE-Kqk"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Enter a Name" id="2Eb-v9-HEm">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="sNk-Ph-oOI">
@@ -529,7 +577,9 @@
                     </navigationItem>
                     <connections>
                         <outlet property="doneButton" destination="lF3-2L-g7r" id="4Ja-OT-vlS"/>
+                        <outlet property="lastNameLabel" destination="fR5-fj-DCd" id="PiT-X5-QBr"/>
                         <outlet property="nameEntryTextField" destination="hoB-qE-gO1" id="DXD-1f-xen"/>
+                        <outlet property="nameSuggestionTableView" destination="90l-Zb-RJ5" id="cwB-7g-p8T"/>
                         <segue destination="zTz-r1-XjC" kind="show" identifier="SelectSongDifferentContactSegue" id="uSv-zE-s4T"/>
                     </connections>
                 </viewController>
