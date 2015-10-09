@@ -152,7 +152,7 @@ class EchoNestServiceSpec: QuickSpec {
                 }
                 
                 context("when the search term has special characters") {
-                    it("encodeds them propery in the URL request") {
+                    it("encodes them propery in the URL request") {
                         echoNestService.findSongs(titleSearchTerm: "\"Special, Characters ... (&)\"", songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
@@ -161,13 +161,14 @@ class EchoNestServiceSpec: QuickSpec {
                 }
                 
                 context("when the underlying URL connection returns no data") {
-                    it("calls back with a generic error message") {
+                    it("calls back with an error message") {
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
                         
                         echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
-                        expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
-                        expect(self.callbackError?.userInfo?[NSLocalizedDescriptionKey] as? String).toEventually(equal("Unexpected response from the Echo Nest."))
+                    
+                        expect(self.callbackError).toEventuallyNot(beNil())
+                        expect(self.callbackSongs).toEventually(beEmpty())
                     }
                 }
                 
@@ -194,8 +195,8 @@ class EchoNestServiceSpec: QuickSpec {
                         echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
-                        expect(self.callbackError?.userInfo?[NSLocalizedDescriptionKey] as? String).toEventually(equal("Non-zero status code from the Echo Nest."))
-                        expect(self.callbackError?.userInfo?[NSLocalizedFailureReasonErrorKey] as? String).toEventually(equal("The operation timed out"))
+                        expect(self.callbackError?.userInfo[NSLocalizedDescriptionKey] as? String).toEventually(equal("Non-zero status code from the Echo Nest."))
+                        expect(self.callbackError?.userInfo[NSLocalizedFailureReasonErrorKey] as? String).toEventually(equal("The operation timed out"))
                     }
                 }
 

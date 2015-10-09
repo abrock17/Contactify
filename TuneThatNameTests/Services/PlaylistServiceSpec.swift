@@ -8,7 +8,7 @@ class PlaylistServiceSpec: QuickSpec {
     var callbackErrorList = [NSError]()
     
     func playlistCallback(playlistResult: PlaylistService.PlaylistResult) {
-        println("callback result : \(playlistResult)")
+        print("callback result : \(playlistResult)")
         switch (playlistResult) {
         case .Success(let playlist):
             callbackPlaylistList.append(playlist)
@@ -22,7 +22,7 @@ class PlaylistServiceSpec: QuickSpec {
             var playlistService:PlaylistService!
             var mockContactService: MockContactService!
             var mockEchoNestService: MockEchoNestService!
-            var playlistPreferences = PlaylistPreferences(numberOfSongs: 1, filterContacts: false, songPreferences: SongPreferences())
+            let playlistPreferences = PlaylistPreferences(numberOfSongs: 1, filterContacts: false, songPreferences: SongPreferences())
             
             beforeEach() {
                 self.callbackPlaylistList.removeAll(keepCapacity: false)

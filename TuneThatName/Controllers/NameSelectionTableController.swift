@@ -35,7 +35,7 @@ public class NameSelectionTableController: UITableViewController {
             case .Success(let contacts):
                 self.buildContactSectionMap(contacts)
             case .Failure(let error):
-                println("Error retrieving all contacts: \(error)")
+                print("Error retrieving all contacts: \(error)")
             }
         }
 
@@ -46,7 +46,7 @@ public class NameSelectionTableController: UITableViewController {
             case .Success(let contacts):
                 self.filteredContacts = Set<Contact>(contacts)
             case .Failure(let error):
-                println("Error retrieving filtered contacts: \(error)")
+                print("Error retrieving filtered contacts: \(error)")
             }
         }
         
@@ -60,21 +60,21 @@ public class NameSelectionTableController: UITableViewController {
             var added = false
             for indexTitle in indexTitles {
                 if contact.fullName.uppercaseString.hasPrefix(indexTitle) {
-                    addToContactSectionMap(key: indexTitle, contact: contact)
+                    addToContactSectionMapForKey(indexTitle, withContact: contact)
                     added = true
                     break
                 }
             }
             if !added {
-                addToContactSectionMap(key: "#", contact: contact)
+                addToContactSectionMapForKey("#", withContact: contact)
             }
         }
         for key in contactSectionMap.keys {
-            contactSectionMap[key]!.sort({ $0.fullName < $1.fullName })
+            contactSectionMap[key]!.sortInPlace({ $0.fullName < $1.fullName })
         }
     }
     
-    func addToContactSectionMap(#key: String, contact: Contact) {
+    func addToContactSectionMapForKey(key: String, withContact contact: Contact) {
         if contactSectionMap[key] == nil {
             contactSectionMap[key] = [Contact]()
         }
@@ -98,13 +98,13 @@ public class NameSelectionTableController: UITableViewController {
         return indexTitles.count
     }
     
-    override public func sectionIndexTitlesForTableView(tableView: UITableView) -> [AnyObject]! {
+    override public func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
         return indexTitles
     }
     
     override public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         let indexTitle = indexTitles[section]
-        return contains(contactSectionMap.keys, indexTitle) ? indexTitle : nil
+        return contactSectionMap.keys.contains(indexTitle) ? indexTitle : nil
     }
     
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -119,7 +119,8 @@ public class NameSelectionTableController: UITableViewController {
     }
 
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("ContactNameTableCell", forIndexPath: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("ContactNameTableCell", forIndexPath: indexPath)
+        
         let contact = contactForIndexPath(indexPath)
         cell.textLabel?.text = contact.fullName
         if filteredContacts.contains(contact) {

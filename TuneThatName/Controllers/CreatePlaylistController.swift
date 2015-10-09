@@ -56,11 +56,11 @@ public class CreatePlaylistController: UIViewController {
         numberOfSongsChanged()
         selectNamesButton.enabled = playlistPreferences.filterContacts
         filterContactsSwitch.on = playlistPreferences.filterContacts
-        favorPopularSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Popular)
-        favorPositiveSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Positive)
-        favorNegativeSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Negative)
-        favorEnergeticSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Energetic)
-        favorChillSwitch.on = contains(playlistPreferences.songPreferences.characteristics, .Chill)
+        favorPopularSwitch.on = playlistPreferences.songPreferences.characteristics.contains(.Popular)
+        favorPositiveSwitch.on = playlistPreferences.songPreferences.characteristics.contains(.Positive)
+        favorNegativeSwitch.on = playlistPreferences.songPreferences.characteristics.contains(.Negative)
+        favorEnergeticSwitch.on = playlistPreferences.songPreferences.characteristics.contains(.Energetic)
+        favorChillSwitch.on = playlistPreferences.songPreferences.characteristics.contains(.Chill)
     }
     
     override public func didReceiveMemoryWarning() {
@@ -166,7 +166,7 @@ public class CreatePlaylistController: UIViewController {
                 dispatch_async(dispatch_get_main_queue()) {
                     switch (playlistResult) {
                     case .Failure(let error):
-                        println("Error creating playlist: \(error)")
+                        print("Error creating playlist: \(error)")
                         ControllerHelper.displaySimpleAlertForTitle("Unable to Create Your Playlist", andError: error, onController: self)
                     case .Success(let playlist):
                         self.handleCreatedPlaylist(playlist, sender: sender)
@@ -178,7 +178,7 @@ public class CreatePlaylistController: UIViewController {
     }
     
     func handleCreatedPlaylist(playlist: Playlist, sender: AnyObject) {
-        println("Playlist: \(playlist)")
+        print("Playlist: \(playlist)")
         self.playlist = playlist
         self.performSegueWithIdentifier("CreatePlaylistSegue", sender: sender)
     }

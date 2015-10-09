@@ -78,7 +78,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
 
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("PlaylistTableCell", forIndexPath: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("PlaylistTableCell", forIndexPath: indexPath)
 
         let song = playlist.songs[indexPath.row]
         cell.textLabel?.text = song.title
@@ -110,7 +110,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
             error in
             
             if error != nil {
-                println("Error updating queue: \(error)")
+                print("Error updating queue: \(error)")
             }
         }
     }
@@ -121,7 +121,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         dispatch_after(delayTime, dispatch_get_main_queue()) {
             if let index = currentTrackIndex {
                 self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.None)
-            } else if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
+            } else if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
                 self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: false)
             }
         }
@@ -130,7 +130,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     func getIndexForSpotifyTrack(spotifyTrack: SpotifyTrack?) -> Int? {
         var indexForURI: Int?
         if let uri = spotifyTrack?.uri {
-            for (index, song) in enumerate(self.playlist.songs) {
+            for (index, song) in self.playlist.songs.enumerate() {
                 if song.uri == uri {
                     indexForURI = index
                 }
@@ -144,7 +144,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         return true
     }
     
-    override public func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
+    override public func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
         return [
             UITableViewRowAction(style: .Default, title: "Delete", handler: handleDeleteRow),
             UITableViewRowAction(style: .Normal, title: "Replace", handler: handleReplaceRow)
@@ -167,7 +167,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         let songWithContact = playlist.songsWithContacts[indexPath.row]
         if let contact = songWithContact.contact {
             let alertController = UIAlertController(title: "Replace this Song",
-                message: "(For \(songWithContact.contact!.fullName))", preferredStyle: .Alert)
+                message: "(For \(contact.fullName))", preferredStyle: .Alert)
             alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
             alertController.addAction(UIAlertAction(title: "Use the Same Name", style: UIAlertActionStyle.Default) {
                 uiAlertAction in
@@ -296,7 +296,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                     
                     dispatch_async(dispatch_get_main_queue()) {
                         if error != nil {
-                            println("Error renewing session: \(error)")
+                            print("Error renewing session: \(error)")
                         }
                         ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                         if session != nil {
@@ -326,11 +326,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     public func authenticationViewController(viewController: SPTAuthViewController, didFailToLogin error: NSError) {
-        println("Login failed... error: \(error)")
+        print("Login failed... error: \(error)")
     }
     
     public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
-        println("Login succeeded... session: \(session)")
+        print("Login succeeded... session: \(session)")
         doSpotifySessionAction()
     }
     
@@ -371,7 +371,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
             updatePlaylistState(.Saving)
             ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
             let session = spotifyAuth.session
-            println("access token: \(session?.accessToken)")
+            print("access token: \(session?.accessToken)")
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
                 self.spotifyService.savePlaylist(self.playlist, session: session) {
                     playlistResult in
@@ -382,7 +382,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                             self.playlist = playlist
                             self.updatePlaylistState(.Saved)
                         case .Failure(let error):
-                            println("Error saving playlist: \(error)")
+                            print("Error saving playlist: \(error)")
                             ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andError: error, onController: self)
                             self.updatePlaylistState(.Unsaved)
                         }

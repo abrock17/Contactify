@@ -147,7 +147,7 @@ public class SpotifyService {
     
     func updateSongsForSPTTracks(tracks: [SPTTrack], var inPlaylist playlist: Playlist) {
         for track in tracks {
-            for (index, song) in enumerate(playlist.songs) {
+            for (index, song) in playlist.songs.enumerate() {
                 if track.uri == song.uri {
                     playlist.songsWithContacts[index].song = songForSPTTrack(track)
                 }
@@ -172,21 +172,25 @@ public class SpotifyService {
             error in
             
             if error != nil {
-                println("Error updating playlist name: \(error)")
+                print("Error updating playlist name: \(error)")
             }
         }
     }
     
     public func unfollowPlaylistURI(playlistURI: NSURL, inSession session: SPTSession) {
-        let request = SPTFollow.createRequestForUnfollowingPlaylist(playlistURI, withAccessToken: session.accessToken, error: nil)
-        SPTRequest.sharedHandler().performRequest(request) {
-            (error, response, data) in
-            
-            if error != nil {
-                println("Error unfollowing playlist: \(error)")
-            } else if (response as? NSHTTPURLResponse)?.statusCode != 200 {
-                println("Bad response code trying to un-follow playlist: \((response as? NSHTTPURLResponse)?.statusCode)")
+        do {
+            let request = try SPTFollow.createRequestForUnfollowingPlaylist(playlistURI, withAccessToken: session.accessToken)
+            SPTRequest.sharedHandler().performRequest(request) {
+                (error, response, data) in
+                
+                if error != nil {
+                    print("Error unfollowing playlist: \(error)")
+                } else if (response as? NSHTTPURLResponse)?.statusCode != 200 {
+                    print("Bad response code trying to un-follow playlist: \((response as? NSHTTPURLResponse)?.statusCode)")
+                }
             }
+        } catch let error as NSError {
+            print("Error while creating request: \(error)")
         }
     }
     
@@ -207,7 +211,7 @@ public class SpotifyService {
     func completePlaylistRetrieval(var playlist: Playlist!, withPlaylistSnapshotPage page: SPTListPage!, withSession session: SPTSession!, callback: (PlaylistResult) -> Void) {
         if let tracks = page.items {
             for track in tracks {
-                playlist.songsWithContacts.append(song: Song(title: track.name, artistNames: getArtistNamesFromTrack(track as! SPTTrack), uri: track.uri), contact: nil)
+                playlist.songsWithContacts.append((song: Song(title: track.name, artistNames: getArtistNamesFromTrack(track as! SPTTrack), uri: track.uri), contact: nil))
             }
         }
         

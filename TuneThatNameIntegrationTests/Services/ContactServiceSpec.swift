@@ -26,7 +26,7 @@ class ContactServiceSpec: QuickSpec {
                 self.callbackContactList = nil
                 self.callbackError = nil
                 contactService = ContactService()
-                addressBookContact = self.saveNewContact(firstName: "Casey", lastName: "Kasem")
+                addressBookContact = self.saveNewContactWithFirstName("Casey", andLastName: "Kasem")
             }
             
             afterEach() {
@@ -77,7 +77,7 @@ class ContactServiceSpec: QuickSpec {
                 xit("creates em") {
                     for _ in 0..<4 {
                         for firstName in firstNames {
-                            self.saveNewContact(firstName: firstName, lastName: lastName)
+                            self.saveNewContactWithFirstName(firstName, andLastName: lastName)
                         }
                     }
                 }
@@ -85,7 +85,7 @@ class ContactServiceSpec: QuickSpec {
         }
     }
     
-    func saveNewContact(#firstName: String, lastName: String) -> Contact {
+    func saveNewContactWithFirstName(firstName: String, andLastName lastName: String) -> Contact {
         let addressBook: ABAddressBookRef! = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
 
         let record: ABRecordRef! = ABPersonCreate().takeUnretainedValue()

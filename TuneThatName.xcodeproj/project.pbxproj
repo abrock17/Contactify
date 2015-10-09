@@ -9,9 +9,10 @@
 /* Begin PBXBuildFile section */
 		1626BD4B92B820EDC793B971 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFF842C549D9522FF3D0601 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4164F941306C806DCB698B44 /* Pods_TuneThatNameIntegrationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A47FA193F9049FB6779A49F /* Pods_TuneThatNameIntegrationTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		441A9BF31BC1535500A57F11 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963941A9755FA00E0C385 /* AVFoundation.framework */; };
+		441A9BF51BC1537500A57F11 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 441A9BF41BC1537500A57F11 /* SystemConfiguration.framework */; };
 		4433E6261ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */; };
 		4433E6281AC119A6006CE8B8 /* Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4433E6271AC119A6006CE8B8 /* Playlist.swift */; };
-		443963951A9755FA00E0C385 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963941A9755FA00E0C385 /* AVFoundation.framework */; };
 		443F89F21AE2A3E1005920B1 /* PlaylistService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443F89F11AE2A3E1005920B1 /* PlaylistService.swift */; };
 		443F89F41AE2A551005920B1 /* CreatePlaylistControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443F89F31AE2A551005920B1 /* CreatePlaylistControllerSpec.swift */; };
 		443F9EC11AA39CAE00705340 /* echonest-response-data-one-song.txt in Resources */ = {isa = PBXBuildFile; fileRef = 443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */; };
@@ -97,6 +98,7 @@
 
 /* Begin PBXFileReference section */
 		2C42088056DB800A75BCFC0F /* Pods_TuneThatName.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TuneThatName.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		441A9BF41BC1537500A57F11 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyPlaylistTableControllerSpec.swift; sourceTree = "<group>"; };
 		4433E6271AC119A6006CE8B8 /* Playlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		443963941A9755FA00E0C385 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -196,7 +198,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				443963951A9755FA00E0C385 /* AVFoundation.framework in Frameworks */,
+				441A9BF51BC1537500A57F11 /* SystemConfiguration.framework in Frameworks */,
+				441A9BF31BC1535500A57F11 /* AVFoundation.framework in Frameworks */,
 				4447107E1B73764A004F79C5 /* Spotify.framework in Frameworks */,
 				1626BD4B92B820EDC793B971 /* Pods.framework in Frameworks */,
 			);
@@ -439,6 +442,7 @@
 		5267B1DE1C08D6BCF6EE1253 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				441A9BF41BC1537500A57F11 /* SystemConfiguration.framework */,
 				4447107D1B73764A004F79C5 /* Spotify.framework */,
 				443963941A9755FA00E0C385 /* AVFoundation.framework */,
 				C9038133D111DE159169DBFD /* Pods_TuneThatNameTests.framework */,
@@ -536,7 +540,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Tony Brock";
 				TargetAttributes = {
 					4467306C1AD9B41E0056A840 = {
@@ -874,6 +878,7 @@
 				INFOPLIST_FILE = TuneThatNameIntegrationTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsearchin.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/TuneThatName/TuneThatName-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -896,6 +901,7 @@
 				INFOPLIST_FILE = TuneThatNameIntegrationTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsearchin.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/TuneThatName/TuneThatName-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TuneThatName.app/TuneThatName";
@@ -922,6 +928,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1001,6 +1008,15 @@
 				INFOPLIST_FILE = TuneThatName/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"SwiftyJSON\"",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsearchin.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TuneThatName/TuneThatName-Bridging-Header.h";
@@ -1028,6 +1044,15 @@
 				INFOPLIST_FILE = TuneThatName/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"SwiftyJSON\"",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsearchin.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TuneThatName/TuneThatName-Bridging-Header.h";
@@ -1051,6 +1076,7 @@
 				);
 				INFOPLIST_FILE = TuneThatNameTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsearchin.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/TuneThatName/TuneThatName-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TuneThatName.app/TuneThatName";
@@ -1070,6 +1096,7 @@
 				);
 				INFOPLIST_FILE = TuneThatNameTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsearchin.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/TuneThatName/TuneThatName-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TuneThatName.app/TuneThatName";

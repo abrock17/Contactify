@@ -8,7 +8,7 @@ class MockEchoNestService: EchoNestService {
         static let findSongs = "findSongs"
     }
     
-    override func findSongs(#titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int, callback: (EchoNestService.SongsResult) -> Void) {
+    override func findSongs(titleSearchTerm titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int, callback: (EchoNestService.SongsResult) -> Void) {
         mocker.recordCall(Method.findSongs, parameters: titleSearchTerm, songPreferences, desiredNumberOfSongs)
         let mockedResult = mocker.returnValueForCallTo(Method.findSongs)
         if let mockedResult = mockedResult as? EchoNestService.SongsResult {

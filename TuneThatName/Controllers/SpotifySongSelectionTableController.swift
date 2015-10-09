@@ -65,7 +65,7 @@ public class SpotifySongSelectionTableController: UITableViewController {
     }
 
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("SongSelectionTableCell", forIndexPath: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("SongSelectionTableCell", forIndexPath: indexPath) 
         
         let song = songs[indexPath.row]
         cell.textLabel?.text = song.title
@@ -128,7 +128,7 @@ public class SpotifySongSelectionTableController: UITableViewController {
     }
     
     @IBAction func donePressed(sender: UIBarButtonItem) {
-        let selectedSong = songs[tableView.indexPathForSelectedRow()!.row]
+        let selectedSong = songs[tableView.indexPathForSelectedRow!.row]
         songSelectionCompletionHandler(selectedSong, searchContact)
     }
 }

@@ -17,16 +17,16 @@ class PlaylistNameEntryControllerSpec: QuickSpec {
             context("when the name is empty") {
                 playlistNameEntryController = PlaylistNameEntryController(currentName: nil, completionHandler: self.playlistNameEntryCompletionHandler)
                 it("the OK action is disabled") {
-                    expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beFalse())
+                    expect(playlistNameEntryController.actions.last?.enabled).to(beFalse())
                 }
                 
                 context("and text is entered") {
-                    let textField = playlistNameEntryController.textFields!.first as! UITextField
+                    let textField = playlistNameEntryController.textFields!.first!
                     it("enables the OK action") {
                         textField.text = "x"
                         textField.sendActionsForControlEvents(UIControlEvents.EditingChanged)
 
-                        expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beTrue())
+                        expect(playlistNameEntryController.actions.last?.enabled).to(beTrue())
                     }
                     
                     context("and text is cleared") {
@@ -34,7 +34,7 @@ class PlaylistNameEntryControllerSpec: QuickSpec {
                             textField.text = ""
                             textField.sendActionsForControlEvents(UIControlEvents.EditingChanged)
                             
-                            expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beFalse())
+                            expect(playlistNameEntryController.actions.last?.enabled).to(beFalse())
                         }
                     }
                 }
@@ -47,21 +47,21 @@ class PlaylistNameEntryControllerSpec: QuickSpec {
                 }
                 
                 it("the name is set in the text field") {
-                    let textField = playlistNameEntryController.textFields!.first as! UITextField
+                    let textField = playlistNameEntryController.textFields!.first!
                     expect(textField.text).to(equal(playlistName))
                 }
                 
                 it("the OK action is enabled") {
-                    expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beTrue())
+                    expect(playlistNameEntryController.actions.last?.enabled).to(beTrue())
                 }
 
                 context("and text is cleared") {
                     it("enables the OK action") {
-                        let textField = playlistNameEntryController.textFields!.first as! UITextField
+                        let textField = playlistNameEntryController.textFields!.first!
                         textField.text = ""
                         textField.sendActionsForControlEvents(UIControlEvents.EditingChanged)
                         
-                        expect((playlistNameEntryController.actions.last as? UIAlertAction)?.enabled).to(beFalse())
+                        expect(playlistNameEntryController.actions.last?.enabled).to(beFalse())
                     }
                 }
             }

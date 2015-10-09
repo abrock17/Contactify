@@ -32,18 +32,21 @@ public class EchoNestService {
         self.alamoFireManager = alamoFireManager
     }
     
-    public func findSongs(#titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int, callback: (SongsResult) -> Void) {
+    public func findSongs(titleSearchTerm titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int, callback: (SongsResult) -> Void) {
         
         let urlString = buildSongSearchEndpointStringWithBucketParameters() as URLStringConvertible
-        let parameters = getSongSearchParameters(titleSearchTerm: titleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)
+        let parameters = getSongSearchParametersForTitleSearchTerm(titleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)
         
         alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
-            (request, response, data, error) in
+            request, response, result in
             
-            if let error = error {
-                println("request url : \(request.URL) \nresponse status code : \(response?.statusCode) \nheaders : \(response?.allHeaderFields)")
-                callback(.Failure(error))
-            } else if let data: AnyObject = data {
+            switch (result) {
+            case .Failure(let data, let errorType):
+                print("request url : \(request?.URL) \nresponse status code : \(response?.statusCode) \nheaders : \(response?.allHeaderFields)")
+                print("data : \(data)")
+                
+                callback(.Failure(errorType as NSError))
+            case .Success(let data):
                 let json = JSON(data)
                 
                 let statusJSON = json["response"]["status"]
@@ -54,12 +57,9 @@ public class EchoNestService {
                         callback(.Failure(self.errorForUnexpectedStatusJSON(statusJSON)))
                     }
                 } else {
-                    println("json : \(json.rawString())")
+                    print("json : \(json.rawString())")
                     callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No status code in the response.")))
                 }
-            } else {
-                println("request url : \(request.URL) \nresponse status code : \(response?.statusCode) \nheaders : \(response?.allHeaderFields)")
-                callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No data in the response.")))
             }
         }
     }
@@ -70,10 +70,10 @@ public class EchoNestService {
         
         let jsonSongs = json["response"]["songs"].arrayValue
         let sortedSongs = sortForSongPreferences(jsonSongs, songPreferences: songPreferences)
-        for (songJSON: JSON) in sortedSongs {
+        for songJSON: JSON in sortedSongs {
             if let title = self.getValidMatchingTitle(songJSON, titleSearchTerm: titleSearchTerm) {
                 let artistID = songJSON["artist_id"].stringValue
-                if !contains(artistIDs, artistID) {
+                if !artistIDs.contains(artistID) {
                     if let uri = self.getValidURI(songJSON) {
                         songs.append(Song(title: title, artistName: songJSON["artist_name"].string, uri: uri))
                         artistIDs.append(artistID)
@@ -91,8 +91,8 @@ public class EchoNestService {
     func sortForSongPreferences(jsonSongs: [JSON], songPreferences: SongPreferences) -> [JSON] {
         let sortedJSONSongs: [JSON]
         
-        if !contains(songPreferences.characteristics, .Popular) {
-            sortedJSONSongs = sorted(jsonSongs,
+        if !songPreferences.characteristics.contains(.Popular) {
+            sortedJSONSongs = jsonSongs.sort(
                 { self.combineSongAndArtistDiscoveryValue($0) > self.combineSongAndArtistDiscoveryValue($1) })
         } else {
             sortedJSONSongs = jsonSongs
@@ -145,8 +145,7 @@ public class EchoNestService {
         var uri: NSURL?
         
         if let uriStringWithLocale = songJSON["tracks"][0]["foreign_id"].string {
-            var uriString = uriStringWithLocale.stringByReplacingOccurrencesOfString("-US", withString: "")
-            uri = NSURL(string: uriString)
+            uri = NSURL(string: uriStringWithLocale.stringByReplacingOccurrencesOfString("-US", withString: ""))
         }
         
         return uri
@@ -167,11 +166,11 @@ public class EchoNestService {
         return NSError(domain: Constants.Error.Domain, code: 0, userInfo: [NSLocalizedDescriptionKey: message, NSLocalizedFailureReasonErrorKey: reason])
     }
     
-    func getSongSearchParameters(#titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int) -> [String : AnyObject] {
+    func getSongSearchParametersForTitleSearchTerm(titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int) -> [String : AnyObject] {
         var parameters: [String: AnyObject] = [
             "api_key": apiKey,
             "format": "json",
-            "results": getResultParameter(desiredNumberOfSongs: desiredNumberOfSongs),
+            "results": getResultParameterForDesiredNumberOfSongs(desiredNumberOfSongs),
             "limit": "true",
             "title": titleSearchTerm,
             "max_speechiness": "0.67"
@@ -195,7 +194,7 @@ public class EchoNestService {
         return parameters
     }
     
-    func getResultParameter(#desiredNumberOfSongs: Int) -> Int {
+    func getResultParameterForDesiredNumberOfSongs(desiredNumberOfSongs: Int) -> Int {
         let resultNumber: Int
         if desiredNumberOfSongs > defaultSearchNumber / 2 {
             if maxResultNumber < desiredNumberOfSongs * 2 {
@@ -217,6 +216,6 @@ public class EchoNestService {
             urlString += "\(separator)bucket=\(bucket)"
             separator = "&"
         }
-        return urlString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+        return urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
     }
 }

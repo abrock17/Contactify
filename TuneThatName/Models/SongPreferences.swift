@@ -1,8 +1,8 @@
 import Foundation
 
-public class SongPreferences: NSObject, NSCoding, Equatable {
+public class SongPreferences: NSObject, NSCoding {
     
-    public enum Characteristic: String, Printable {
+    public enum Characteristic: String, CustomStringConvertible {
         case Popular = "Popular"
         case Positive = "Positive"
         case Negative = "Negative"
@@ -33,6 +33,17 @@ public class SongPreferences: NSObject, NSCoding, Equatable {
     
     public func encodeWithCoder(coder: NSCoder) {
         coder.encodeObject(Array(characteristics).map({ $0.rawValue }), forKey: "characteristics")
+    }
+    
+    override public func isEqual(object: AnyObject?) -> Bool {
+        let equal: Bool
+        if let songPreferences = object as? SongPreferences {
+            equal = self == songPreferences
+        } else {
+            equal = false
+        }
+        
+        return equal
     }
 }
 

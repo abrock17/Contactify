@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Song: Equatable, Hashable, Printable {
+public struct Song: Equatable, Hashable, CustomStringConvertible {
     
     static func formattedDisplayNameForArtistNames(artistNames: [String]) -> String! {
         let displayArtistName: String!
@@ -10,7 +10,7 @@ public struct Song: Equatable, Hashable, Printable {
             displayArtistName = artistNames.first
         } else {
             let allButLast = artistNames[0..<artistNames.endIndex - 1]
-            displayArtistName = ", ".join(allButLast) + " and " + artistNames.last!
+            displayArtistName = allButLast.joinWithSeparator(", ") + " and " + artistNames.last!
         }
         
         return displayArtistName

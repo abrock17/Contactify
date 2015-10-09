@@ -71,11 +71,11 @@ class SpotifyServiceSpec: QuickSpec {
                     it("updates the existing playlist") {
                         if playlistURI != nil {
                             playlist.name = "the new hotttnesss"
-                            for i in 1...37 {
+                            for _ in 1...37 {
                                 playlist.songsWithContacts.append(song: Song(title: "Carrie-Anne", artistName: "The Hollies", uri: NSURL(string: "spotify:track:0EpJ6gnNlNvTVjDuf2OyOY")!), contact: Contact(id: 1, firstName: "Carrie Anne", lastName: "Moss") as Contact?)
                                 playlist.songsWithContacts.append(song: Song(title: "Susie Q", artistName: "Creedence Clearwater Revival", uri: NSURL(string: "spotify:track:6z2AyfE9GZxoHqJVSA4NgN")!), contact: Contact(id: 2, firstName: "Susie", lastName: "B Anthony") as Contact?)
                             }
-                            for i in 1...68 {
+                            for _ in 1...68 {
                                 playlist.songsWithContacts.append(song: Song(title: "Billie Jean - Single Version", artistName: "Michael Jackson", uri: NSURL(string: "spotify:track:5ChkMS8OtdzJeqyybCc9R5")!), contact: Contact(id: 3, firstName: "Billie Jean", lastName: "King") as Contact?)
                             }
                             
@@ -128,13 +128,13 @@ class SpotifyServiceSpec: QuickSpec {
         return SPTSession(
             // fill in these fields to run these tests on demand
             userName: "abrock17",
-            accessToken: "BQDp-Ud2_UMnpmYOQcxQjUuz8unC3Z0MohvjGtBEFEtP4y7rWayI48f8eHMLb5NlaFiPnmfVBvg2c78YiXjbTuVdhzO3l6c5Uy3jai_zauhKJjZ5TPMWxBZWbDpm3VZOsKscsmMGQ_78Sr_Ea4ieQOgTXedPkuTisYyqOhjfgaB7KNCscT31sPy_p6nzHkcqbEcvekh6YidTVWlSl_rovhuZsTs8ght4eCaK7WIhkQ",
+            accessToken: "BQDqfrCt-6HUv9_bPC7eYcoJqc2t2rivJSv3Sqj3WvwGAJOAdNDJwP2y1XmmQ5xpQ8oT-IubiCTzGaP9FG4SXN-SDX9b-m4CoqFU0Y1tVTRtO3SdU8aVvKOfQjGE7I8lJqKPBdwTdYf0o8WUmvzm3L6BGSpgc7_IlVsCSt6vEBcQp83_hFI08Pt6DeT_D-SkVX_00nncvLbzfQAA6SmzdMV3FFlP0GmIszyl0L5MWQ",
             expirationDate: NSDate(timeIntervalSinceNow: 3600000))
     }
     
     func getPlaylist() -> Playlist! {
         var songsWithContacts: [(song: Song, contact: Contact?)] = []
-        for i in 1...75 {
+        for _ in 1...75 {
             songsWithContacts.append(song: Song(title: "Susie Q", artistName: "Creedence Clearwater Revival", uri: NSURL(string: "spotify:track:6z2AyfE9GZxoHqJVSA4NgN")!), contact: Contact(id: 1, firstName: "Susie", lastName: "Q") as Contact?)
             songsWithContacts.append(song: Song(title: "Suite: Judy Blue Eyes", artistName: "Crosby, Stills & Nash", uri: NSURL(string: "spotify:track:2Jf0PGy9NzR1PTXvRFfaoE")!), contact: Contact(id: 2, firstName: "Judie", lastName: "Blume") as Contact?)
         }
@@ -155,7 +155,7 @@ class SpotifyServiceSpec: QuickSpec {
                 case .Success(let playlist):
                     retrievedPlaylist = playlist
                 case .Failure(let error):
-                    println("Error retrieving playlist: \(error)")
+                    print("Error retrieving playlist: \(error)")
                 }
             }
             NSThread.sleepForTimeInterval(3)
@@ -166,7 +166,7 @@ class SpotifyServiceSpec: QuickSpec {
     }
     
     func compareSongs(expectedSongs: [Song], actualSongs: [Song]) {
-        for (index, expectedSong) in enumerate(expectedSongs) {
+        for (index, expectedSong) in expectedSongs.enumerate() {
             let actualSong = actualSongs[index]
             expect(actualSong.title).to(equal(expectedSong.title))
             expect(actualSong.displayArtistName).to(equal(expectedSong.displayArtistName))

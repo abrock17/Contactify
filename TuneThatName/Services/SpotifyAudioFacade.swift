@@ -133,7 +133,7 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
                     (error, result) in
                     
                     if error != nil {
-                        println("Error retrieving current track: \(error)")
+                        print("Error retrieving current track: \(error)")
                     }
                     let sptTrack = result as? SPTTrack
                     self.currentSpotifyTrack = sptTrack != nil ? SpotifyTrack(sptTrack: sptTrack!) : nil

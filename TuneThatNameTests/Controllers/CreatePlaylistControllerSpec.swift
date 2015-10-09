@@ -465,7 +465,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         expect(createPlaylistController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
                         let alertController = createPlaylistController.presentedViewController as! UIAlertController
                         expect(alertController.title).toEventually(equal("Unable to Create Your Playlist"))
-                        expect(alertController.message).toEventually(equal((expectedError.userInfo![NSLocalizedDescriptionKey] as! String)))
+                        expect(alertController.message).toEventually(equal((expectedError.userInfo[NSLocalizedDescriptionKey] as! String)))
                     }
                 }
                 

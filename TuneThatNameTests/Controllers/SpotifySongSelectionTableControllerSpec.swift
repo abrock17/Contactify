@@ -104,7 +104,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                         
                         self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
                         
-                        self.assertSimpleUIAlertControllerPresented(parentController: spotifySongSelectionTableController, expectedTitle: "Error Searching for Songs", expectedMessage: error.localizedDescription)
+                        self.assertSimpleUIAlertControllerPresentedOnController(spotifySongSelectionTableController, withTitle: "Error Searching for Songs", andMessage: error.localizedDescription)
                     }
                 }
 
@@ -122,7 +122,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                             spotifySongSelectionTableController.tableView(
                                 spotifySongSelectionTableController.tableView, numberOfRowsInSection: 0))
                             .toEventually(equal(resultSongList.count))
-                        for (index, song) in enumerate(resultSongList) {
+                        for (index, song) in resultSongList.enumerate() {
                             expect(
                                 spotifySongSelectionTableController.tableView(
                                     spotifySongSelectionTableController.tableView,
@@ -177,7 +177,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
         UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
     }
     
-    func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {
+    func assertSimpleUIAlertControllerPresentedOnController(parentController: UIViewController, withTitle expectedTitle: String, andMessage expectedMessage: String) {
         expect(parentController.presentedViewController).toEventuallyNot(beNil())
         expect(parentController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
         if let alertController = parentController.presentedViewController as? UIAlertController {

@@ -27,7 +27,7 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
             case .Success(let contacts):
                 self.allConctacts = contacts
             case .Failure(let error):
-                println("Unable to retrieve contacts: \(error)")
+                print("Unable to retrieve contacts: \(error)")
             }
         }
     }
@@ -57,7 +57,7 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("NameSuggestionTableCell", forIndexPath: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("NameSuggestionTableCell", forIndexPath: indexPath)
         
         let contact = suggestedContacts[indexPath.row]
         cell.textLabel?.text = contact.fullName
@@ -84,7 +84,7 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
     }
     
     @IBAction public func nameEntryTextChanged(sender: UITextField) {
-        let trimmedText = nameEntryTextField.text
+        let trimmedText = nameEntryTextField.text!
             .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
         doneButton.enabled = !trimmedText.isEmpty
         
@@ -98,7 +98,7 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
         suggestedContacts.removeAll(keepCapacity: false)
         if !text.isEmpty {
             for contact in allConctacts {
-                let contactWords = (split(contact.fullName) { $0 == " " })
+                let contactWords = contact.fullName.componentsSeparatedByString(" ")
                     .map({ $0.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) })
                 let matchingWords = contactWords.filter({ $0.lowercaseString.hasPrefix(text) })
                 if !matchingWords.isEmpty {
@@ -107,7 +107,7 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
             }
         }
         
-        suggestedContacts.sort({ $0.fullName < $1.fullName })
+        suggestedContacts.sortInPlace({ $0.fullName < $1.fullName })
         nameSuggestionTableView.hidden = suggestedContacts.isEmpty
         nameSuggestionTableView.reloadData()
     }
@@ -119,7 +119,7 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
     @IBAction public func donePressed(sender: UIBarButtonItem) {
         if selectedContact == nil {
             selectedContact = Contact(id: -1,
-                firstName: nameEntryTextField.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()),
+                firstName: nameEntryTextField.text!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()),
                 lastName: nil)
         }
         performSegueWithIdentifier("SelectSongDifferentContactSegue", sender: sender)

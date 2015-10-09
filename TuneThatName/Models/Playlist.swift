@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Playlist: Equatable, Printable {
+public struct Playlist: Equatable, CustomStringConvertible {
     
     public var name: String?
     public var uri: NSURL?

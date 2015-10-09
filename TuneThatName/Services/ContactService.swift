@@ -18,10 +18,10 @@ public class ContactService {
     }
     
     public func retrieveAllContacts(callback: ContactListResult -> Void) {
-        handleAuthorization(callback: callback, authorizedHandler: getContactList)
+        handleAuthorizationForCallback(callback, authorizedHandler: getContactList)
     }
     
-    func handleAuthorization(#callback: ContactListResult -> Void,
+    func handleAuthorizationForCallback(callback: ContactListResult -> Void,
         authorizedHandler: (ContactListResult -> Void) -> Void) {
             
         let authorizationStatus = addressBook.AddressBookGetAuthorizationStatus()
@@ -90,7 +90,7 @@ public class ContactService {
                     }
                     callback(.Success(filteredContacts))
                 case .Failure(let error):
-                    println("Error retrieving all contacts for filtering : \(filteredContacts)")
+                    print("Error retrieving all contacts for filtering : \(filteredContacts)")
                     callback(.Failure(error))
                 }
             }

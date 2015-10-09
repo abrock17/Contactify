@@ -35,15 +35,14 @@ public class PlaylistNameEntryController: UIAlertController {
         let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.Default) {
             alertAction in
             
-            completionHandler((self.textFields?.first as! UITextField).text)
+            completionHandler((self.textFields?.first?.text)!)
         }
         okAction.enabled = (name != nil)
         addAction(okAction)
     }
     
     func playlistNameTextFieldDidChange(sender: UITextField) {
-        let okAction = actions.last as! UIAlertAction
-        okAction.enabled = !sender.text.isEmpty
+        actions.last!.enabled = !sender.text!.isEmpty
     }
 
     /*

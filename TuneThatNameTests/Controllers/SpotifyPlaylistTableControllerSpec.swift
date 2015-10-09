@@ -61,7 +61,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 context("when the session is invalid and no token refresh service") {
-                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: -60)
+                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(-60)
                     spotifyAuth.tokenRefreshURL = nil
                     
                     it("prompts the user to log in") {
@@ -74,7 +74,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 context("when the session is invalid and has a token refresh service") {
-                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: -60)
+                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(-60)
                     
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -116,7 +116,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 context("when there is a valid session") {
-                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
 
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -190,14 +190,14 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             
                             self.pressSaveButton(spotifyPlaylistTableController)
 
-                            self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Unable to Save Your Playlist", expectedMessage: error.localizedDescription)
+                            self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: "Unable to Save Your Playlist", andMessage: error.localizedDescription)
                         }
                     }
                 }
             }
             
             describe("successful login") {
-                let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+                let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
                 
                 beforeEach() {
                     spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -234,7 +234,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 context("when the session is invalid") {
-                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: -60)
+                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(-60)
                     
                     context("and the session renewal succeeds") {
                         let newSession = SPTSession(userName: "user", accessToken: "token", expirationTimeInterval: 60)
@@ -257,7 +257,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
 
                 context("when there is a valid session") {
-                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
                     
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -296,7 +296,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             
                             spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                             
-                            self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Unable to Play Song", expectedMessage: error.localizedDescription)
+                            self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: "Unable to Play Song", andMessage: error.localizedDescription)
                         }
                     }
                     
@@ -319,7 +319,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             
             describe("press the play/pause button") {
                 context("when the session is invalid") {
-                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: -60)
+                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(-60)
                     
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -344,7 +344,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
 
                 context("when there is a valid session") {
-                    let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
                     
                     beforeEach() {
                         spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -381,7 +381,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                                 
                                 self.pressPlayPauseButton(spotifyPlaylistTableController)
                                 
-                                self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Unable to Play Song", expectedMessage: error.localizedDescription)
+                                self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: "Unable to Play Song", andMessage: error.localizedDescription)
                             }
                         }
                     }
@@ -389,7 +389,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
             
             describe("press the song view button") {
-                let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+                let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
                 
                 beforeEach() {
                     spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -438,7 +438,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                     
                     it("updates the selected song in the table") {
-                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow?.row)
                             .toEventually(equal(1))
                     }
                 }
@@ -458,7 +458,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                     
                     it("unselects all tracks in the table") {
-                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow())
+                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow)
                             .toEventually(beNil())
                     }
                 }
@@ -478,7 +478,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
                 
                 it("displays the current name in the playlist name entry view") {
-                    let textField = (spotifyPlaylistTableController.presentedViewController as? PlaylistNameEntryController)?.textFields?.first as? UITextField
+                    let textField = (spotifyPlaylistTableController.presentedViewController as? PlaylistNameEntryController)?.textFields?.first
                     expect(textField?.text).to(equal(playlist.name))
                 }
             }
@@ -486,7 +486,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             describe("new playlist pressed") {
                 context("when the current playlist has been saved") {
                     beforeEach() {
-                        spotifyPlaylistTableController.spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+                        spotifyPlaylistTableController.spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
                         mockSpotifyService.mocker.prepareForCallTo(MockSpotifyService.Method.savePlaylist, returnValue: SpotifyService.PlaylistResult.Success(Playlist(name: "saved playlist", uri: NSURL(string: "uri"))))
 
                         self.pressSaveButton(spotifyPlaylistTableController)
@@ -509,7 +509,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         self.pressNewPlaylistButton(spotifyPlaylistTableController)
                         self.advanceRunLoopForTimeInterval(0.0)
                         
-                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Unsaved Playlist", expectedMessage: "Abandon changes to this playlist?")
+                        self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: "Unsaved Playlist", andMessage: "Abandon changes to this playlist?")
                     }
                 }
             }
@@ -535,7 +535,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         
                         self.pressEditButton(spotifyPlaylistTableController)
 
-                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow?.row)
                             .toEventually(equal(1))
                     }
                 }
@@ -548,8 +548,8 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 var replaceAction: UITableViewRowAction!
                 
                 beforeEach() {
-                    deleteAction = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, editActionsForRowAtIndexPath: firstIndexPath)![0] as! UITableViewRowAction
-                    replaceAction = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, editActionsForRowAtIndexPath: firstIndexPath)![1] as! UITableViewRowAction
+                    deleteAction = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, editActionsForRowAtIndexPath: firstIndexPath)![0]
+                    replaceAction = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, editActionsForRowAtIndexPath: firstIndexPath)![1]
                     
                     self.pressEditButton(spotifyPlaylistTableController)
                 }
@@ -589,7 +589,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                                 spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, moveRowAtIndexPath: firstIndexPath, toIndexPath: secondIndexPath)
                                 self.advanceRunLoopForTimeInterval(0.0)
                                 
-                                expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                                expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow?.row)
                                     .toEventually(equal(expectedNewIndex))
                             }
                             
@@ -630,7 +630,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         it("updates the selected song in the table") {
                             spotifyPlaylistTableController.handleDeleteRow(deleteAction, indexPath: firstIndexPath)
                             
-                            expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                            expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow?.row)
                                 .toEventually(equal(expectedNewIndex))
                         }
                         
@@ -661,7 +661,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     it("prompts to choose to use the same name") {
                         spotifyPlaylistTableController.handleReplaceRow(replaceAction, indexPath: firstIndexPath)
                         
-                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyPlaylistTableController, expectedTitle: "Replace this Song", expectedMessage: "(For Bobby McGee)")
+                        self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: "Replace this Song", andMessage: "(For Bobby McGee)")
                     }
                     
                     context("when the song is not associated with a contact") {
@@ -704,7 +704,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                     
                     context("and play has already started") {
-                        let spotifyAuth = self.getMockSpotifyAuth(expiresIn: 60)
+                        let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
 
                         beforeEach() {
                             spotifyPlaylistTableController.spotifyAuth = spotifyAuth
@@ -771,7 +771,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         it("retains the selected song in the table") {
                             self.pressEditButton(spotifyPlaylistTableController)
                             
-                            expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                            expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow?.row)
                                 .toEventually(equal(1))
                         }
                         
@@ -782,7 +782,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                                 self.pressEditButton(spotifyPlaylistTableController)
                                 self.advanceRunLoopForTimeInterval(0.05)
 
-                                expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow())
+                                expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow)
                                     .toEventually(beNil())
                             }
                         }
@@ -802,8 +802,14 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
             
             describe("unwind to spotify playlist table") {
+                var unwindSegue: UIStoryboardSegue!
+                
+                beforeEach() {
+                    unwindSegue = UIStoryboardSegue.init(identifier: "unwindToSpotifyPlaylistTable", source: spotifyPlaylistTableController, destination: spotifyPlaylistTableController)
+                }
+
                 it("sets the controller as the playback delegate") {
-                    spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(UIStoryboardSegue())
+                    spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(unwindSegue)
                     
                     expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.setPlaybackDelegate, n: 0)?.first as? SpotifyPlaylistTableController).to(beIdenticalTo(spotifyPlaylistTableController))
                 }
@@ -813,7 +819,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: spotifyTrack)
                         mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
                         
-                        spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(UIStoryboardSegue())
+                        spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(unwindSegue)
                     }
                     
                     it("updates the song view button image") {
@@ -821,7 +827,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                     
                     it("updates the selected song in the table") {
-                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow()?.row)
+                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow?.row)
                             .toEventually(equal(1))
                     }
                 }
@@ -830,7 +836,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     it("sets the play/pause button to the 'pause' system item") {
                         mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getIsPlaying, returnValue: true)
                         
-                        spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(UIStoryboardSegue())
+                        spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(unwindSegue)
                         
                         expect(self.getPlayPauseButtonSystemItemFromToolbar(spotifyPlaylistTableController)).to(equal(UIBarButtonSystemItem.Pause))
                     }
@@ -878,7 +884,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
         }
     }
     
-    func getMockSpotifyAuth(#expiresIn: NSTimeInterval) -> MockSPTAuth {
+    func getMockSpotifyAuthThatExpiresIn(expiresIn: NSTimeInterval) -> MockSPTAuth {
         let mockSpotifyAuth = getMockSpotifyAuth()
         mockSpotifyAuth.session = SPTSession(userName: "user", accessToken: "token", expirationDate: NSDate(timeIntervalSinceNow: expiresIn))
         return mockSpotifyAuth
@@ -918,7 +924,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
         UIApplication.sharedApplication().sendAction(barButton.action, to: barButton.target, from: self, forEvent: nil)
     }
     
-    func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {
+    func assertSimpleUIAlertControllerPresentedOnController(parentController: UIViewController, withTitle expectedTitle: String, andMessage expectedMessage: String) {
         self.advanceRunLoopForTimeInterval(0.5)
         expect(parentController.presentedViewController).toEventuallyNot(beNil())
         expect(parentController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
@@ -929,12 +935,12 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     }
     
     func getPlayPauseButtonSystemItemFromToolbar(spotifyPlaylistTableController: SpotifyPlaylistTableController) -> UIBarButtonSystemItem {
-        let playPauseButton = spotifyPlaylistTableController.toolbarItems?[4] as? UIBarButtonItem
+        let playPauseButton = spotifyPlaylistTableController.toolbarItems?[4]
         return UIBarButtonSystemItem(rawValue: playPauseButton!.valueForKey("systemItem") as! Int)!
     }
     
     func getSongViewButtonBackgroundImageFromToolbar(spotifyPlaylistTableController: SpotifyPlaylistTableController) -> UIImage? {
-        let songViewButton = spotifyPlaylistTableController.toolbarItems?[0] as? UIBarButtonItem
+        let songViewButton = spotifyPlaylistTableController.toolbarItems?[0]
         return (songViewButton?.customView as? UIButton)?.currentBackgroundImage
     }
     

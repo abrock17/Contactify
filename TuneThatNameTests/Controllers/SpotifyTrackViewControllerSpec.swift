@@ -126,7 +126,7 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                         
                         self.pressPlayPauseButton(spotifyTrackViewController)
                         
-                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyTrackViewController, expectedTitle: expectedErrorTitle, expectedMessage: playbackError.localizedDescription)
+                        self.assertSimpleUIAlertControllerPresentedOnController(spotifyTrackViewController, withTitle: expectedErrorTitle, andMessage: playbackError.localizedDescription)
                     }
                 }
             }
@@ -145,7 +145,7 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                         
                         self.pressNextTrackButton(spotifyTrackViewController)
                         
-                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyTrackViewController, expectedTitle: expectedErrorTitle, expectedMessage: playbackError.localizedDescription)
+                        self.assertSimpleUIAlertControllerPresentedOnController(spotifyTrackViewController, withTitle: expectedErrorTitle, andMessage: playbackError.localizedDescription)
                     }
                 }
             }
@@ -164,7 +164,7 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                         
                         self.pressPreviousTrackButton(spotifyTrackViewController)
                         
-                        self.assertSimpleUIAlertControllerPresented(parentController: spotifyTrackViewController, expectedTitle: expectedErrorTitle, expectedMessage: playbackError.localizedDescription)
+                        self.assertSimpleUIAlertControllerPresentedOnController(spotifyTrackViewController, withTitle: expectedErrorTitle, andMessage: playbackError.localizedDescription)
                     }
                 }
             }
@@ -172,15 +172,15 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
     }
     
     func pressPlayPauseButton(spotifyTrackViewController: SpotifyTrackViewController) {
-        pressBarButtonItem(spotifyTrackViewController.toolbar.items![6] as! UIBarButtonItem)
+        pressBarButtonItem(spotifyTrackViewController.toolbar.items![6])
     }
     
     func pressNextTrackButton(spotifyTrackViewController: SpotifyTrackViewController) {
-        pressBarButtonItem(spotifyTrackViewController.toolbar.items![4] as! UIBarButtonItem)
+        pressBarButtonItem(spotifyTrackViewController.toolbar.items![4])
     }
     
     func pressPreviousTrackButton(spotifyTrackViewController: SpotifyTrackViewController) {
-        pressBarButtonItem(spotifyTrackViewController.toolbar.items![2] as! UIBarButtonItem)
+        pressBarButtonItem(spotifyTrackViewController.toolbar.items![2])
     }
     
     func pressBarButtonItem(barButtonItem: UIBarButtonItem) {
@@ -194,11 +194,11 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
     }
     
     func getPlayPauseButtonSystemItemFromToolbar(spotifyTrackViewController: SpotifyTrackViewController) -> UIBarButtonSystemItem {
-        let playPauseButton = spotifyTrackViewController.toolbar.items?[6] as? UIBarButtonItem
+        let playPauseButton = spotifyTrackViewController.toolbar.items?[6]
         return UIBarButtonSystemItem(rawValue: playPauseButton!.valueForKey("systemItem") as! Int)!
     }
     
-    func assertSimpleUIAlertControllerPresented(#parentController: UIViewController, expectedTitle: String, expectedMessage: String) {
+    func assertSimpleUIAlertControllerPresentedOnController(parentController: UIViewController, withTitle expectedTitle: String, andMessage expectedMessage: String) {
         expect(parentController.presentedViewController).toEventuallyNot(beNil())
         expect(parentController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
         if let alertController = parentController.presentedViewController as? UIAlertController {

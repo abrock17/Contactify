@@ -35,7 +35,7 @@ class MockURLProtocol: NSURLProtocol {
     }
     
     override func stopLoading() {
-        println("stopLoading")
+        print("stopLoading")
     }
     
     class func getCapturedRequest() -> NSURLRequest? {

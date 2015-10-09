@@ -1,6 +1,6 @@
 import Foundation
 
-public class PlaylistPreferences: NSObject, NSCoding, Equatable {
+public class PlaylistPreferences: NSObject, NSCoding {
     
     public var numberOfSongs: Int
     public var filterContacts: Bool
@@ -26,6 +26,17 @@ public class PlaylistPreferences: NSObject, NSCoding, Equatable {
         coder.encodeInt(Int32(self.numberOfSongs), forKey: "numberOfSongs")
         coder.encodeBool(self.filterContacts, forKey: "filterContacts")
         coder.encodeObject(self.songPreferences, forKey: "songPreferences")
+    }
+    
+    override public func isEqual(object: AnyObject?) -> Bool {
+        let equal: Bool
+        if let playlistPreferences = object as? PlaylistPreferences {
+            equal = self == playlistPreferences
+        } else {
+            equal = false
+        }
+        
+        return equal
     }
 }
 

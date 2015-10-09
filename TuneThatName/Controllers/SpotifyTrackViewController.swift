@@ -63,7 +63,7 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         if let spotifyTrack = spotifyTrack {
             updateViewElementsForSpotifyTrack(spotifyTrack)
         } else {
-            performSegueWithIdentifier("unwindToSpotifyPlaylistTable:", sender: self)
+            performSegueWithIdentifier("unwindToSpotifyPlaylistTable", sender: self)
         }
     }
     

@@ -51,7 +51,7 @@ class PreferencesServiceSpec: QuickSpec {
                 it("returns the expected preferences") {
                     let expectedPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular])))
                     
-                    expect(preferencesService.getDefaultPlaylistPreferences).to(equal(expectedPlaylistPreferences))
+                    expect(preferencesService.getDefaultPlaylistPreferences()).to(equal(expectedPlaylistPreferences))
                 }
             }
         }

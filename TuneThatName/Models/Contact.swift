@@ -1,6 +1,6 @@
 import Foundation
 
-public class Contact: NSObject, NSCoding, Equatable, Hashable {
+public class Contact: NSObject, NSCoding {
     
     public let id: Int32
     public let firstName: String?
@@ -32,6 +32,17 @@ public class Contact: NSObject, NSCoding, Equatable, Hashable {
         coder.encodeInt32(self.id, forKey: "id")
         coder.encodeObject(self.firstName, forKey: "firstName")
         coder.encodeObject(self.lastName, forKey: "lastName")
+    }
+    
+    override public func isEqual(object: AnyObject?) -> Bool {
+        let equal: Bool
+        if let contact = object as? Contact {
+            equal = self == contact
+        } else {
+            equal = false
+        }
+        
+        return equal
     }
 }
 
