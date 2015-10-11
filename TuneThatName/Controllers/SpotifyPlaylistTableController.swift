@@ -166,21 +166,25 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         songReplacementIndexPath = indexPath
         let songWithContact = playlist.songsWithContacts[indexPath.row]
         if let contact = songWithContact.contact {
-            let alertController = UIAlertController(title: "Replace this Song",
-                message: "(For \(contact.fullName))", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
-            alertController.addAction(UIAlertAction(title: "Use the Same Name", style: UIAlertActionStyle.Default) {
-                uiAlertAction in
-                    self.performSegueWithIdentifier("SelectSongSameContactSegue", sender: nil)
-                })
-            alertController.addAction(UIAlertAction(title: "Use a Different Name", style: UIAlertActionStyle.Default) {
-                uiAlertAction in
-                    self.performSegueWithIdentifier("EnterNameSegue", sender: nil)
-                })
-            presentViewController(alertController, animated: true, completion: nil)
+            presentSongReplacementAlertForContact(contact)
         } else {
             performSegueWithIdentifier("EnterNameSegue", sender: nil)
         }
+    }
+    
+    func presentSongReplacementAlertForContact(contact: Contact) {
+        let alertController = UIAlertController(title: "Replace this Song",
+            message: "(For \(contact.fullName))", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Use the Same Name", style: UIAlertActionStyle.Default) {
+            uiAlertAction in
+            self.performSegueWithIdentifier("SelectSongSameContactSegue", sender: nil)
+            })
+        alertController.addAction(UIAlertAction(title: "Use a Different Name", style: UIAlertActionStyle.Default) {
+            uiAlertAction in
+            self.performSegueWithIdentifier("EnterNameSegue", sender: nil)
+            })
+        presentViewController(alertController, animated: true, completion: nil)
     }
     
     public func completeReplacementWithSong(song: Song, andContact contact: Contact?) {
@@ -208,18 +212,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         }
     }
     
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
     override public func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
         let songWithContact = playlist.songsWithContacts.removeAtIndex(fromIndexPath.row)
         playlist.songsWithContacts.insert(songWithContact, atIndex: toIndexPath.row)
@@ -229,7 +221,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
 
     override public func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the item to be re-orderable.
         return true
     }
 

@@ -54,22 +54,27 @@
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-	    <!--Include to allow all connections (DANGER)-->
-	    <key>NSAllowsArbitraryLoads</key>
-	    <true/>		
-  	  <!-- <key>NSExceptionDomains</key>
+  	  <key>NSExceptionDomains</key>
   	  <dict>
   	    <key>developer.echonest.com</key>
   	    <dict>
 		  <key>NSIncludesSubdomains</key>
   	      <true/>
-	  <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+		  <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
   	      <true/>
-	  <key>NSTemporaryExceptionMinimumTLSVersion</key>
+		  <key>NSTemporaryExceptionMinimumTLSVersion</key>
   	      <string>TLSv1.1</string>
   	    </dict>
-	    <key>spotify.com</key>
-	  </dict> -->
+  	    <key>cloudfront.net</key>
+  	    <dict>
+		  <key>NSIncludesSubdomains</key>
+  	      <true/>
+		  <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+  	      <true/>
+		  <key>NSTemporaryExceptionMinimumTLSVersion</key>
+  	      <string>TLSv1.1</string>
+  	    </dict>
+	  </dict>
 	</dict>	
 </dict>
 </plist>
