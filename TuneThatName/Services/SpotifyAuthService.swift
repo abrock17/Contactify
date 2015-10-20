@@ -5,6 +5,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     public enum AuthResult {
         case Success(SPTSession)
         case Failure(NSError)
+        case Canceled
     }
     
     let spotifyAuth: SPTAuth
@@ -70,7 +71,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     func getTopViewControllerFrom(viewController: UIViewController) -> UIViewController {
         let topViewController: UIViewController
         if let navigationController = viewController as? UINavigationController {
-            topViewController = navigationController.topViewController!
+            topViewController = navigationController
         } else if viewController.presentedViewController != nil {
             topViewController = getTopViewControllerFrom(viewController.presentedViewController!)
         } else {
@@ -95,5 +96,8 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     }
     
     @objc public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
+        if let callback = self.postLoginCallback {
+            callback(.Canceled)
+        }
     }
 }

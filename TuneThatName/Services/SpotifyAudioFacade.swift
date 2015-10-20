@@ -81,6 +81,8 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
                 }
             case .Failure(let error):
                 callback(error)
+            case .Canceled:
+                callback(nil)
             }
         }
     }

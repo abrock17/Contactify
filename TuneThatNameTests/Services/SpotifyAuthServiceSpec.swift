@@ -6,6 +6,7 @@ class SpotifyAuthServicesSpec: QuickSpec {
     
     var callbackSession: SPTSession?
     var callbackError: NSError?
+    var callbackForCanceled = false
     
     func doWithSessionCallback(authResult: SpotifyAuthService.AuthResult) {
         switch (authResult) {
@@ -13,6 +14,8 @@ class SpotifyAuthServicesSpec: QuickSpec {
             self.callbackSession = session
         case .Failure(let error):
             self.callbackError = error
+        case .Canceled:
+            self.callbackForCanceled = true
         }
     }
     
@@ -24,6 +27,7 @@ class SpotifyAuthServicesSpec: QuickSpec {
             beforeEach() {
                 self.callbackSession = nil
                 self.callbackError = nil
+                self.callbackForCanceled = false
 
                 mockSPTAuth = MockSPTAuth()
                 spotifyAuthService = SpotifyAuthService(spotifyAuth: mockSPTAuth)
@@ -109,13 +113,14 @@ class SpotifyAuthServicesSpec: QuickSpec {
                                     
                                     expect(self.callbackSession).toEventually(equal(sessionAfterLogin))
                                     expect(self.callbackError).to(beNil())
+                                    expect(self.callbackForCanceled).to(beFalse())
                                 }
                             }
                         }
                         
                         context("and the login fails") {
                             let error = NSError(domain: "com.spotify.ios", code: 3487634, userInfo: [NSLocalizedDescriptionKey: "error logging in"])
-
+                            
                             it("calls back with the error") {
                                 spotifyAuthService.doWithSession(self.doWithSessionCallback)
                                 let sptAuthViewController = self.assertSPTAuthViewPresented()
@@ -124,6 +129,22 @@ class SpotifyAuthServicesSpec: QuickSpec {
                                     spotifyAuthService.authenticationViewController(sptAuthViewController, didFailToLogin: error)
                                     
                                     expect(self.callbackError).toEventually(equal(error))
+                                    expect(self.callbackSession).to(beNil())
+                                    expect(self.callbackForCanceled).to(beFalse())
+                                }
+                            }
+                        }
+                        
+                        context("and the login is canceled") {
+                            it("calls back with canceled result") {
+                                spotifyAuthService.doWithSession(self.doWithSessionCallback)
+                                let sptAuthViewController = self.assertSPTAuthViewPresented()
+                                
+                                if let sptAuthViewController = sptAuthViewController {
+                                    spotifyAuthService.authenticationViewControllerDidCancelLogin(sptAuthViewController)
+                                    
+                                    expect(self.callbackForCanceled).toEventually(beTrue())
+                                    expect(self.callbackError).to(beNil())
                                     expect(self.callbackSession).to(beNil())
                                 }
                             }

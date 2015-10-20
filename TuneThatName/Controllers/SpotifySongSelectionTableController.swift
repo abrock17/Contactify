@@ -84,7 +84,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
         doneButton.enabled = true
         let song = songs[indexPath.row]
 
-//        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
+        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             self.spotifyAudioFacade.playTracksForURIs([song.uri], fromIndex: 0) {
                 error in
@@ -93,7 +93,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
                     if error != nil {
                         ControllerHelper.displaySimpleAlertForTitle("Unable to Play Song", andError: error, onController: self)
                     }
-//                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                 }
             }
         }
