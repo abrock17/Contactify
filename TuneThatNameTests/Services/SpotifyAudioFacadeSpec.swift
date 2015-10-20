@@ -8,6 +8,7 @@ class SpotifyAudioFacadeSpec: QuickSpec {
             (song: Song(title: "Hit the Road Jack", artistName: "Ray Charles", uri: NSURL(string: "spotify:track:1blficLzeYlqZ7WtIxulLq")!), contact: nil),
             (song: Song(title: "Diane Young", artistName: "Vampire Weekend", uri: NSURL(string: "spotify:track:27zVV7Q7LbqsjWm40HOXuq")!), contact: nil)
         ])
+    let trackURIs = [NSURL(string: "spotify:track:1blficLzeYlqZ7WtIxulLq")!, NSURL(string: "spotify:track:27zVV7Q7LbqsjWm40HOXuq")!]
     
     var callbackErrors = [NSError?]()
     
@@ -19,21 +20,106 @@ class SpotifyAudioFacadeSpec: QuickSpec {
         describe("The Spotify Audio Facade") {
             var spotifyAudioFacade: SpotifyAudioFacade!
             var mockAudioStreamingController: MockSPTAudioStreamingController!
+            var mockSpotifyAuthService: MockSpotifyAuthService!
             var mockSpotifyPlaybackDelegate: MockSpotifyPlaybackDelegate!
             
             beforeEach() {
                 self.callbackErrors.removeAll(keepCapacity: false)
+                mockSpotifyAuthService = MockSpotifyAuthService()
                 mockAudioStreamingController = MockSPTAudioStreamingController(clientId: SpotifyService.clientID)
+                spotifyAudioFacade = SpotifyAudioFacadeImpl(spotifyAudioController: mockAudioStreamingController, spotifyAuthService: mockSpotifyAuthService)
                 mockSpotifyPlaybackDelegate = MockSpotifyPlaybackDelegate()
-                spotifyAudioFacade = SpotifyAudioFacadeImpl(spotifyAudioController: mockAudioStreamingController, spotifyPlaybackDelegate: mockSpotifyPlaybackDelegate)
+            }
+            
+            describe("set the playback delegate") {
+                beforeEach() {
+                    spotifyAudioFacade.playbackDelegate = mockSpotifyPlaybackDelegate
+                }
+                
+                it("updates the playback status for the delegate") {
+                    expect(
+                        mockSpotifyPlaybackDelegate.mocker.getCallCountFor(MockSpotifyPlaybackDelegate.Method.changedPlaybackStatus))
+                        .to(equal(1))
+                }
+                
+                it("updates the current track for the delegate") {
+                    expect(
+                        mockSpotifyPlaybackDelegate.mocker.getCallCountFor(MockSpotifyPlaybackDelegate.Method.changedCurrentTrack))
+                        .to(equal(1))
+                }
+            }
+            
+            describe("play tracks for uris from a given index") {
+                let index = 1
+                
+                context("when the auth service calls back with an error") {
+                    let error = NSError(domain: "com.spotify.ios", code: 9876, userInfo: [NSLocalizedDescriptionKey: "error logging in"])
+                    
+                    it("calls back with the error") {
+                        mockSpotifyAuthService.mocker.prepareForCallTo(MockSpotifyAuthService.Method.doWithSession, returnValue: SpotifyAuthService.AuthResult.Failure(error))
+                        
+                        spotifyAudioFacade.playTracksForURIs(self.trackURIs, fromIndex: index, callback: self.errorCallback)
+                        
+                        expect(self.callbackErrors.isEmpty).toEventually(beFalse())
+                        expect(self.callbackErrors[0]).toEventually(equal(error))
+                    }
+                }
+                
+                context("when the auth service calls back with a session") {
+                    let session = SPTSession()
+                    
+                    beforeEach() {
+                        mockSpotifyAuthService.mocker.prepareForCallTo(MockSpotifyAuthService.Method.doWithSession, returnValue: SpotifyAuthService.AuthResult.Success(session))
+                    }
+
+                    it("calls the audio streaming controller with the track URIs, index") {
+                        spotifyAudioFacade.playTracksForURIs(self.trackURIs, fromIndex: index, callback: self.errorCallback)
+                        
+                        expect(self.callbackErrors.isEmpty).toEventually(beFalse())
+                        let playURIsParameters = mockAudioStreamingController.mocker.getNthCallTo(MockSPTAudioStreamingController.Method.playURIsFromIndex, n: 0)
+                        expect(playURIsParameters?[0] as? [NSURL]).to(equal(self.trackURIs))
+                        expect(playURIsParameters?[1] as? Int32).to(equal(Int32(index)))
+                    }
+
+                    context("and the audio streaming controller is not logged in") {
+                        it("logs in with the provided session") {
+                            spotifyAudioFacade.playTracksForURIs(self.trackURIs, fromIndex: index, callback: self.errorCallback)
+                            
+                            expect(mockAudioStreamingController.mocker.getNthCallTo(MockSPTAudioStreamingController.Method.loginWithSession, n: 0)?.first as? SPTSession).to(equal(session))
+                        }
+                    }
+
+                    context("when audio streaming login calls back with an error") {
+                        let error = NSError(domain: "spotify", code: 578, userInfo: [NSLocalizedDescriptionKey: "couldn't log in to stream yo' audio"])
+                        
+                        it("calls back with the error") {
+                            mockAudioStreamingController.mocker.prepareForCallTo(MockSPTAudioStreamingController.Method.loginWithSession, returnValue: error)
+                            
+                            spotifyAudioFacade.playTracksForURIs(self.trackURIs, fromIndex: index, callback: self.errorCallback)
+                            
+                            expect(self.callbackErrors.isEmpty).to(beFalse())
+                            expect(self.callbackErrors.first!).to(equal(error))
+                        }
+                    }
+
+                    context("and play URIs calls back with an error") {
+                        let error = NSError(domain: "spotify", code: 689, userInfo: [NSLocalizedDescriptionKey: "couldn't play tracks"])
+                        
+                        it("calls back with the error") {
+                            mockAudioStreamingController.mocker.prepareForCallTo(MockSPTAudioStreamingController.Method.playURIsFromIndex, returnValue: error)
+                            
+                            spotifyAudioFacade.playTracksForURIs(self.trackURIs, fromIndex: index, callback: self.errorCallback)
+                            
+                            expect(self.callbackErrors.isEmpty).to(beFalse())
+                            expect(self.callbackErrors.first!).to(equal(error))
+                        }
+                    }
+                }
             }
             
             describe("play a playlist from a given index") {
                 let session = SPTSession()
                 let index = 1
-                
-                beforeEach() {
-                }
                 
                 it("calls the audio streaming controller with the desired song URIs and index") {
                     spotifyAudioFacade.playPlaylist(self.playlist, fromIndex: index, inSession: session, callback: self.errorCallback)
@@ -161,6 +247,8 @@ class SpotifyAudioFacadeSpec: QuickSpec {
             
             describe("audio streaming did change playback status") {
                 beforeEach() {
+                    spotifyAudioFacade.playbackDelegate = mockSpotifyPlaybackDelegate
+                    mockSpotifyPlaybackDelegate.mocker.clearRecordedCallsTo(MockSpotifyPlaybackDelegate.Method.changedPlaybackStatus)
                     spotifyAudioFacade.audioStreaming?(mockAudioStreamingController, didChangePlaybackStatus: true)
                 }
                 
@@ -176,6 +264,8 @@ class SpotifyAudioFacadeSpec: QuickSpec {
             describe("audio streaming did change to track") {
                 context("when track is nil") {
                     beforeEach() {
+                        spotifyAudioFacade.playbackDelegate = mockSpotifyPlaybackDelegate
+                        mockSpotifyPlaybackDelegate.mocker.clearRecordedCallsTo(MockSpotifyPlaybackDelegate.Method.changedCurrentTrack)
                         spotifyAudioFacade.audioStreaming?(mockAudioStreamingController, didChangeToTrack: nil)
                     }
                     

@@ -11,6 +11,10 @@
 		4164F941306C806DCB698B44 /* Pods_TuneThatNameIntegrationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A47FA193F9049FB6779A49F /* Pods_TuneThatNameIntegrationTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		441A9BF31BC1535500A57F11 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443963941A9755FA00E0C385 /* AVFoundation.framework */; };
 		441A9BF51BC1537500A57F11 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 441A9BF41BC1537500A57F11 /* SystemConfiguration.framework */; };
+		441A9BF81BCA997400A57F11 /* SpotifyAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441A9BF71BCA997400A57F11 /* SpotifyAuthService.swift */; settings = {ASSET_TAGS = (); }; };
+		441A9BFA1BCC6A8800A57F11 /* MockSpotifyAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441A9BF91BCC6A8800A57F11 /* MockSpotifyAuthService.swift */; settings = {ASSET_TAGS = (); }; };
+		441A9BFC1BD108D900A57F11 /* SpotifyAuthServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441A9BFB1BD108D900A57F11 /* SpotifyAuthServiceSpec.swift */; settings = {ASSET_TAGS = (); }; };
+		441A9BFE1BD10A9E00A57F11 /* MockSPTAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441A9BFD1BD10A9E00A57F11 /* MockSPTAuth.swift */; settings = {ASSET_TAGS = (); }; };
 		4433E6261ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */; };
 		4433E6281AC119A6006CE8B8 /* Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4433E6271AC119A6006CE8B8 /* Playlist.swift */; };
 		443F89F21AE2A3E1005920B1 /* PlaylistService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443F89F11AE2A3E1005920B1 /* PlaylistService.swift */; };
@@ -99,6 +103,10 @@
 /* Begin PBXFileReference section */
 		2C42088056DB800A75BCFC0F /* Pods_TuneThatName.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TuneThatName.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		441A9BF41BC1537500A57F11 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		441A9BF71BCA997400A57F11 /* SpotifyAuthService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAuthService.swift; sourceTree = "<group>"; };
+		441A9BF91BCC6A8800A57F11 /* MockSpotifyAuthService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSpotifyAuthService.swift; sourceTree = "<group>"; };
+		441A9BFB1BD108D900A57F11 /* SpotifyAuthServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAuthServiceSpec.swift; sourceTree = "<group>"; };
+		441A9BFD1BD10A9E00A57F11 /* MockSPTAuth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSPTAuth.swift; sourceTree = "<group>"; };
 		4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyPlaylistTableControllerSpec.swift; sourceTree = "<group>"; };
 		4433E6271AC119A6006CE8B8 /* Playlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		443963941A9755FA00E0C385 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -240,6 +248,7 @@
 				446B1C761B4964BB00E5FA22 /* PreferencesService.swift */,
 				44BE53971AACEAD50089BFCD /* SpotifyService.swift */,
 				446DFDFF1AFFE3D00022B75F /* SpotifyAudioFacade.swift */,
+				441A9BF71BCA997400A57F11 /* SpotifyAuthService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -280,6 +289,7 @@
 				44F696231AEB198F00F2C2F8 /* PlaylistServiceSpec.swift */,
 				446B1C6F1B495D5400E5FA22 /* PreferencesServiceSpec.swift */,
 				446DFE011B02183B0022B75F /* SpotifyAudioFacadeSpec.swift */,
+				441A9BFB1BD108D900A57F11 /* SpotifyAuthServiceSpec.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -293,7 +303,9 @@
 				44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */,
 				446B1C781B497FC000E5FA22 /* MockPreferencesService.swift */,
 				446DFE031B0601470022B75F /* MockSpotifyAudioFacade.swift */,
+				441A9BF91BCC6A8800A57F11 /* MockSpotifyAuthService.swift */,
 				449E66DC1B5156DC0036A9AD /* MockSpotifyPlaybackDelegate.swift */,
+				441A9BFD1BD10A9E00A57F11 /* MockSPTAuth.swift */,
 				443F9EC71AA4BCFF00705340 /* MockURLProtocol.swift */,
 				446B1C731B4961A300E5FA22 /* MockUserDefaults.swift */,
 			);
@@ -784,6 +796,7 @@
 				44E9D5EC1A952D2F001E4792 /* AppDelegate.swift in Sources */,
 				44BE53981AACEAD50089BFCD /* SpotifyService.swift in Sources */,
 				44AFD9B71B1722FC00E99FBF /* SpotifyTrack.swift in Sources */,
+				441A9BF81BCA997400A57F11 /* SpotifyAuthService.swift in Sources */,
 				449E66DB1B5135340036A9AD /* SpotifyTrackViewController.swift in Sources */,
 				44B00FB51BA44CAA00C4F7BA /* SingleNameEntryController.swift in Sources */,
 				44AEBC981AE89DFF00D96CD1 /* ControllerHelper.swift in Sources */,
@@ -802,6 +815,7 @@
 				44AFD9B51B16B99500E99FBF /* MockControllerHelper.swift in Sources */,
 				446B1C791B497FC000E5FA22 /* MockPreferencesService.swift in Sources */,
 				44FDE0BE1A9EB3410052C6D1 /* EchoNestServiceSpec.swift in Sources */,
+				441A9BFE1BD10A9E00A57F11 /* MockSPTAuth.swift in Sources */,
 				4440E4A11B32DC8E005A4333 /* PlaylistPreferencesSpec.swift in Sources */,
 				44FBFE981AC650EE0087C9FF /* SongSpec.swift in Sources */,
 				446B1C701B495D5400E5FA22 /* PreferencesServiceSpec.swift in Sources */,
@@ -817,10 +831,12 @@
 				4484B5291AD1AD1600F33C8F /* ContactServiceSpec.swift in Sources */,
 				4440E4A51B339725005A4333 /* MockContactService.swift in Sources */,
 				446DFE041B0601470022B75F /* MockSpotifyAudioFacade.swift in Sources */,
+				441A9BFC1BD108D900A57F11 /* SpotifyAuthServiceSpec.swift in Sources */,
 				4433E6261ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift in Sources */,
 				44C93D5B1B1D5D2E008FDCDB /* SongPreferencesSpec.swift in Sources */,
 				443F9EC81AA4BCFF00705340 /* MockURLProtocol.swift in Sources */,
 				44A0A8D51AEC57F900E7A2A1 /* MockEchoNestService.swift in Sources */,
+				441A9BFA1BCC6A8800A57F11 /* MockSpotifyAuthService.swift in Sources */,
 				447963521B3CD432003541BE /* PlaylistNameEntryControllerSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

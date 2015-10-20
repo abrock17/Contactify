@@ -2,9 +2,11 @@ import Foundation
 
 public protocol SpotifyAudioFacade: SPTAudioStreamingPlaybackDelegate {
     
-    var playbackDelegate: SpotifyPlaybackDelegate { get set }
+    var playbackDelegate: SpotifyPlaybackDelegate? { get set }
     var isPlaying: Bool { get }
     var currentSpotifyTrack: SpotifyTrack? { get }
+
+    func playTracksForURIs(uris: [NSURL], fromIndex index: Int, callback: SPTErrorableOperationCallback)
     
     func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback)
     
@@ -38,20 +40,49 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
         spotifyAudioController.diskCache = SPTDiskCache(capacity: 67108864)
         return spotifyAudioController
         }()
+    
+    static let sharedInstance = SpotifyAudioFacadeImpl(spotifyAudioController: sharedSpotifyAudioController, spotifyAuthService: SpotifyAuthService())
 
     let spotifyAudioController: SPTAudioStreamingController
-    public var playbackDelegate: SpotifyPlaybackDelegate
+    let spotifyAuthService: SpotifyAuthService
+    public var playbackDelegate: SpotifyPlaybackDelegate? {
+        didSet {
+            playbackDelegate?.changedPlaybackStatus(isPlaying)
+            playbackDelegate?.changedCurrentTrack(self.currentSpotifyTrack)
+        }
+    }
     
     public var isPlaying = false
     public var currentSpotifyTrack: SpotifyTrack?
     
-    public init(
-        spotifyAudioController: SPTAudioStreamingController = sharedSpotifyAudioController,
-        spotifyPlaybackDelegate: SpotifyPlaybackDelegate) {
+    public init(spotifyAudioController: SPTAudioStreamingController, spotifyAuthService: SpotifyAuthService) {
             self.spotifyAudioController = spotifyAudioController
-            self.playbackDelegate = spotifyPlaybackDelegate
+            self.spotifyAuthService = spotifyAuthService
             super.init()
             self.spotifyAudioController.playbackDelegate = self
+    }
+    
+    public func playTracksForURIs(uris: [NSURL], fromIndex index: Int, callback: SPTErrorableOperationCallback) {
+        spotifyAuthService.doWithSession() {
+            authResult in
+            
+            switch (authResult) {
+            case .Success(let spotifySession):
+                self.prepareToPlayInSession(spotifySession) {
+                    error in
+                    if error != nil {
+                        callback(error)
+                    } else {
+                        self.spotifyAudioController.playURIs(uris, fromIndex: Int32(index)) {
+                            error in
+                            callback(error)
+                        }
+                    }
+                }
+            case .Failure(let error):
+                callback(error)
+            }
+        }
     }
     
     public func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback) {
@@ -123,7 +154,7 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
     
     public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didChangePlaybackStatus isPlaying: Bool) {
         self.isPlaying = isPlaying
-        playbackDelegate.changedPlaybackStatus(isPlaying)
+        playbackDelegate?.changedPlaybackStatus(isPlaying)
     }
     
     public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didChangeToTrack trackMetadata: [NSObject : AnyObject]!) {
@@ -137,12 +168,12 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
                     }
                     let sptTrack = result as? SPTTrack
                     self.currentSpotifyTrack = sptTrack != nil ? SpotifyTrack(sptTrack: sptTrack!) : nil
-                    self.playbackDelegate.changedCurrentTrack(self.currentSpotifyTrack)
+                    self.playbackDelegate?.changedCurrentTrack(self.currentSpotifyTrack)
                 }
             }
         } else {
             self.currentSpotifyTrack = nil
-            self.playbackDelegate.changedCurrentTrack(self.currentSpotifyTrack)
+            self.playbackDelegate?.changedCurrentTrack(self.currentSpotifyTrack)
         }
     }
 }

@@ -28,7 +28,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     public var spotifyService = SpotifyService()
     public var spotifyAudioFacadeOverride: SpotifyAudioFacade!
     lazy var spotifyAudioFacade: SpotifyAudioFacade! = {
-        return self.spotifyAudioFacadeOverride != nil ? self.spotifyAudioFacadeOverride : SpotifyAudioFacadeImpl(spotifyPlaybackDelegate: self)
+        return self.spotifyAudioFacadeOverride != nil ? self.spotifyAudioFacadeOverride : SpotifyAudioFacadeImpl.sharedInstance
     }()
     public var controllerHelper = ControllerHelper()
 
@@ -50,6 +50,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     override public func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        spotifyAudioFacade.playbackDelegate = self
+
         self.navigationController?.setToolbarHidden(false, animated: animated)
     }
 

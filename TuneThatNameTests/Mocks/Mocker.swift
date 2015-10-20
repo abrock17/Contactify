@@ -65,4 +65,8 @@ class Mocker {
     func clearRecordedCallsTo(methodName: String) {
         recordedParameters[methodName]?.removeAll(keepCapacity: false)
     }
+    
+    func clearMockedReturnsFor(methodName: String) {
+        mockedReturns[methodName]?.removeAll(keepCapacity: false)
+    }
 }

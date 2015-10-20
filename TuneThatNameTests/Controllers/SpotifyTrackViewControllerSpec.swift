@@ -32,27 +32,11 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                 mockControllerHelper = MockControllerHelper()
                 spotifyTrackViewController.controllerHelper = mockControllerHelper
                 
-                mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: spotifyTrack)
-                mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
-                mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getIsPlaying, returnValue: true)
-                
                 UIApplication.sharedApplication().keyWindow!.rootViewController = spotifyTrackViewController
             }
             
             it("sets itself as the playback delegate on the spotifyAudioFacade") {
                 expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.setPlaybackDelegate, n: 0)?.first as? SpotifyTrackViewController).to(beIdenticalTo(spotifyTrackViewController))
-            }
-            
-            it("sets the title, artist, and album label text for the current spotify track") {
-                self.assertCorrectLabelTextOnSpotifyTrackViewController(spotifyTrackViewController, forSpotifyTrack: spotifyTrack)
-            }
-            
-            it("sets the album cover image for the current spotify track") {
-                expect(spotifyTrackViewController.albumImageView.image).toEventually(equal(image))
-            }
-            
-            it("sets the play/pause button for the current playback status") {
-                expect(self.getPlayPauseButtonSystemItemFromToolbar(spotifyTrackViewController)).to(equal(UIBarButtonSystemItem.Pause))
             }
             
             describe("current track change") {
@@ -66,6 +50,11 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
                 let otherImage = UIImage(named: "skull.png", inBundle: NSBundle(forClass: SpotifyPlaylistTableControllerSpec.self), compatibleWithTraitCollection: nil)
                 
                 beforeEach() {
+                    // this first call will happen when the view appears
+                    mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: spotifyTrack)
+                    mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
+                    spotifyTrackViewController.changedCurrentTrack(spotifyTrack)
+                    
                     mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: otherImage)
                 }
                 
@@ -95,6 +84,12 @@ class SpotifyTrackViewControllerSpec: QuickSpec {
             }
             
             describe("playback status change") {
+                beforeEach() {
+                    // this first call will happen when the view appears
+                    mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getIsPlaying, returnValue: true)
+                    spotifyTrackViewController.changedPlaybackStatus(true)
+                }
+                
                 context("when is playing") {
                     it("sets the play/pause button to the 'pause' system item") {
                         spotifyTrackViewController.changedPlaybackStatus(true)

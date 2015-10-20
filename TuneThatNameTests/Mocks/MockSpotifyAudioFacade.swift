@@ -9,6 +9,7 @@ class MockSpotifyAudioFacade: NSObject, SpotifyAudioFacade {
         static let setPlaybackDelegate = "setPlaybackDelegate"
         static let getIsPlaying = "getIsPlaying"
         static let getCurrentSpotifyTrack = "getCurrentSpotifyTrack"
+        static let playTracksForURIs = "playTracksForURIs"
         static let playPlaylist = "playPlaylist"
         static let updatePlaylist = "updatePlaylist"
         static let togglePlay = "togglePlay"
@@ -17,9 +18,9 @@ class MockSpotifyAudioFacade: NSObject, SpotifyAudioFacade {
         static let toPreviousTrack = "toPreviousTrack"
     }
     
-    var playbackDelegate: SpotifyPlaybackDelegate {
+    var playbackDelegate: SpotifyPlaybackDelegate? {
         get {
-            if let mockedResult = mocker.mockCallTo(Method.getPlaybackDelegate) as? SpotifyPlaybackDelegate {
+            if let mockedResult = mocker.mockCallTo(Method.getPlaybackDelegate) as? SpotifyPlaybackDelegate? {
                 return mockedResult
             } else {
                 return MockSpotifyPlaybackDelegate()
@@ -42,6 +43,11 @@ class MockSpotifyAudioFacade: NSObject, SpotifyAudioFacade {
         get {
             return mocker.mockCallTo(Method.getCurrentSpotifyTrack) as? SpotifyTrack
         }
+    }
+    
+    func playTracksForURIs(uris: [NSURL], fromIndex index: Int, callback: SPTErrorableOperationCallback) {
+        mocker.recordCall(Method.playTracksForURIs, parameters: uris, index)
+        callback(getMockedError(Method.playTracksForURIs))
     }
     
     func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback) {

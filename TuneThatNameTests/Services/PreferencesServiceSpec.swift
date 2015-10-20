@@ -5,7 +5,7 @@ import Nimble
 class PreferencesServiceSpec: QuickSpec {
     
     override func spec() {
-        describe("PreferencesService") {
+        describe("The Preferences Service") {
             var preferencesService: PreferencesService!
             var mockUserDefaults: MockUserDefaults!
             let playlistPreferences = PlaylistPreferences(numberOfSongs: 999, filterContacts: false, songPreferences: SongPreferences())

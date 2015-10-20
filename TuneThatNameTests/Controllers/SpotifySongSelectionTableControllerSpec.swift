@@ -18,6 +18,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
             var navigationController: UINavigationController!
             var mockEchoNestService: MockEchoNestService!
             var mockPreferencesService: MockPreferencesService!
+            var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             let searchContact = Contact(id: 23, firstName: "Michael", lastName: "Jordan")
             let defaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences:
                 SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Positive])))
@@ -40,6 +41,8 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 spotifySongSelectionTableController.echoNestService = mockEchoNestService
                 mockPreferencesService = MockPreferencesService()
                 spotifySongSelectionTableController.preferencesService = mockPreferencesService
+                mockSpotifyAudioFacade = MockSpotifyAudioFacade()
+                spotifySongSelectionTableController.spotifyAudioFacadeOverride = mockSpotifyAudioFacade
             }
             
             describe("view load") {
@@ -155,6 +158,26 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                         spotifySongSelectionTableController.tableView(spotifySongSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
                         
                         expect(spotifySongSelectionTableController.doneButton.enabled).toEventually(beTrue())
+                    }
+                    
+                    it("plays the track") {
+                        spotifySongSelectionTableController.tableView(spotifySongSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+
+                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playTracksForURIs, n: 0)?[0] as? [NSURL]).toEventually(equal([resultSongList[1].uri]))
+                        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playTracksForURIs, n: 0)?[1] as? Int).toEventually(equal(0))
+                    }
+                    
+                    context("when the audio facade returns an error") {
+                        let error = NSError(domain: "com.spotify.ios", code: 888, userInfo: [NSLocalizedDescriptionKey: "how can you listen to this garbage"])
+                        
+                        it("displays the error message in an alert") {
+                            mockSpotifyAudioFacade.mocker.prepareForCallTo(
+                                MockSpotifyAudioFacade.Method.playTracksForURIs, returnValue: error)
+                            
+                            spotifySongSelectionTableController.tableView(spotifySongSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                            
+                            self.assertSimpleUIAlertControllerPresentedOnController(spotifySongSelectionTableController, withTitle: "Unable to Play Song", andMessage: error.localizedDescription)
+                        }
                     }
                 }
                 

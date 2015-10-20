@@ -1,6 +1,6 @@
 import UIKit
 
-public class SpotifySongSelectionTableController: UITableViewController {
+public class SpotifySongSelectionTableController: UITableViewController, SpotifyPlaybackDelegate {
     
     public var searchContact: Contact!
     public var songSelectionCompletionHandler: ((Song, Contact?) -> Void)!
@@ -8,6 +8,10 @@ public class SpotifySongSelectionTableController: UITableViewController {
     
     public var echoNestService = EchoNestService()
     public var preferencesService = PreferencesService()
+    public var spotifyAudioFacadeOverride: SpotifyAudioFacade!
+    lazy var spotifyAudioFacade: SpotifyAudioFacade! = {
+        return self.spotifyAudioFacadeOverride != nil ? self.spotifyAudioFacadeOverride : SpotifyAudioFacadeImpl.sharedInstance
+        }()
     
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.navigationController!.view)
     
@@ -16,6 +20,8 @@ public class SpotifySongSelectionTableController: UITableViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         
+        clearsSelectionOnViewWillAppear = false
+        spotifyAudioFacade.playbackDelegate = self
         doneButton.enabled = false
         populateSongs()
     }
@@ -76,6 +82,21 @@ public class SpotifySongSelectionTableController: UITableViewController {
     
     override public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         doneButton.enabled = true
+        let song = songs[indexPath.row]
+
+//        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            self.spotifyAudioFacade.playTracksForURIs([song.uri], fromIndex: 0) {
+                error in
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    if error != nil {
+                        ControllerHelper.displaySimpleAlertForTitle("Unable to Play Song", andError: error, onController: self)
+                    }
+//                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                }
+            }
+        }
     }
     
     /*
@@ -130,5 +151,13 @@ public class SpotifySongSelectionTableController: UITableViewController {
     @IBAction func donePressed(sender: UIBarButtonItem) {
         let selectedSong = songs[tableView.indexPathForSelectedRow!.row]
         songSelectionCompletionHandler(selectedSong, searchContact)
+    }
+    
+    public func changedPlaybackStatus(isPlaying: Bool) {
+        
+    }
+    
+    public func changedCurrentTrack(spotifyTrack: SpotifyTrack?) {
+
     }
 }

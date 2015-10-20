@@ -23,13 +23,8 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
 
     public override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        spotifyAudioFacade.playbackDelegate = self
         albumImageActivityIndicator = ControllerHelper.newActivityIndicatorForView(albumImageView)
-        
-        if let spotifyTrack = spotifyAudioFacade.currentSpotifyTrack {
-            updateViewElementsForSpotifyTrack(spotifyTrack)
-        }
-        changedPlaybackStatus(spotifyAudioFacade.isPlaying)
+        spotifyAudioFacade.playbackDelegate = self
     }
     
     public override func didReceiveMemoryWarning() {
@@ -79,7 +74,8 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
             controllerHelper.getImageForURL(spotifyTrack.albumLargestCoverImageURL) {
                 image in
                 
-                if spotifyTrack.albumLargestCoverImageURL == self.spotifyAudioFacade.currentSpotifyTrack?.albumLargestCoverImageURL {
+                let facadeCurrentSpotifyTrack = self.spotifyAudioFacade.currentSpotifyTrack
+                if spotifyTrack.albumLargestCoverImageURL == facadeCurrentSpotifyTrack?.albumLargestCoverImageURL {
                     self.albumImageView.image = image
                     ControllerHelper.handleCompleteBackgroundActivityForView(self.albumImageView,
                         activityIndicator: self.albumImageActivityIndicator)

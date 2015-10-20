@@ -30,11 +30,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
 
                 navigationController.pushViewController(createPlaylistController, animated: false)
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
-                NSRunLoop.mainRunLoop().runUntilDate(NSDate())
-            }
-            
-            afterEach() {
-                NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+                NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: 0.1))
             }
             
             it("loads playlist preferences from preferences service") {
@@ -507,6 +503,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
         withMockPlaylistService mockPlaylistService: MockPlaylistService,
         songPreferencesDoNotContainCharacteristic characteristic: SongPreferences.Characteristic) {
             createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+            NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: 0.25))
             expect(
                 (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)
                 .toEventuallyNot(contain(characteristic))
