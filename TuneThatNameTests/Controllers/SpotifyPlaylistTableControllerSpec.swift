@@ -306,7 +306,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             
                             spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                             
-                            self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: "Unable to Play Song", andMessage: error.localizedDescription)
+                            self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: Constants.Error.GenericPlaybackMessage, andMessage: error.localizedDescription)
                         }
                     }
                     
@@ -808,48 +808,6 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     
                     expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
                         MockSpotifyAudioFacade.Method.stopPlay)).to(equal(1))
-                }
-            }
-            
-            describe("unwind to spotify playlist table") {
-                var unwindSegue: UIStoryboardSegue!
-                
-                beforeEach() {
-                    unwindSegue = UIStoryboardSegue.init(identifier: "unwindToSpotifyPlaylistTable", source: spotifyPlaylistTableController, destination: spotifyPlaylistTableController)
-                }
-
-                it("sets the controller as the playback delegate") {
-                    spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(unwindSegue)
-                    
-                    expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.setPlaybackDelegate, n: 0)?.first as? SpotifyPlaylistTableController).to(beIdenticalTo(spotifyPlaylistTableController))
-                }
-                
-                context("and the current spotify track is not nil on the audio facade") {
-                    beforeEach() {
-                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: spotifyTrack)
-                        mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
-                        
-                        spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(unwindSegue)
-                    }
-                    
-                    it("updates the song view button image") {
-                        expect(self.getSongViewButtonBackgroundImageFromToolbar(spotifyPlaylistTableController)).toEventually(equal(image))
-                    }
-                    
-                    it("updates the selected song in the table") {
-                        expect(spotifyPlaylistTableController.tableView.indexPathForSelectedRow?.row)
-                            .toEventually(equal(1))
-                    }
-                }
-
-                context("and is playing") {
-                    it("sets the play/pause button to the 'pause' system item") {
-                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getIsPlaying, returnValue: true)
-                        
-                        spotifyPlaylistTableController.unwindToSpotifyPlaylistTable(unwindSegue)
-                        
-                        expect(self.getPlayPauseButtonSystemItemFromToolbar(spotifyPlaylistTableController)).to(equal(UIBarButtonSystemItem.Pause))
-                    }
                 }
             }
             

@@ -12,18 +12,33 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
     lazy var spotifyAudioFacade: SpotifyAudioFacade! = {
         return self.spotifyAudioFacadeOverride != nil ? self.spotifyAudioFacadeOverride : SpotifyAudioFacadeImpl.sharedInstance
         }()
+    public var controllerHelper = ControllerHelper()
     
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.navigationController!.view)
     
     @IBOutlet public weak var doneButton: UIBarButtonItem!
+    @IBOutlet public weak var playPauseButton: UIBarButtonItem!
+    @IBOutlet public weak var songViewButton: UIBarButtonItem!
     
     override public func viewDidLoad() {
         super.viewDidLoad()
         
         clearsSelectionOnViewWillAppear = false
-        spotifyAudioFacade.playbackDelegate = self
         doneButton.enabled = false
         populateSongs()
+    }
+    
+    override public func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        spotifyAudioFacade.playbackDelegate = self
+        
+        self.navigationController?.setToolbarHidden(false, animated: animated)
+    }
+    
+    override public func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setToolbarHidden(true, animated: animated)
     }
     
     func populateSongs() {
@@ -82,8 +97,12 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
     
     override public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         doneButton.enabled = true
-        let song = songs[indexPath.row]
-
+        playFromIndex(indexPath.row)
+    }
+    
+    func playFromIndex(index: Int) {
+        let song = songs[index]
+        
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             self.spotifyAudioFacade.playTracksForURIs([song.uri], fromIndex: 0) {
@@ -134,15 +153,15 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
     }
     */
 
-    /*
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+    override public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        let destinationViewController: AnyObject = segue.destinationViewController
+        if let spotifyTrackViewController = destinationViewController as? SpotifyTrackViewController {
+            spotifyTrackViewController.spotifyAudioFacade = spotifyAudioFacade
+            spotifyTrackViewController.hidePreviousAndNextTrackButtons = true
+        }
     }
-    */
     
     @IBAction func cancelPressed(sender: UIBarButtonItem) {
         navigationController?.popViewControllerAnimated(true)
@@ -153,11 +172,50 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
         songSelectionCompletionHandler(selectedSong, searchContact)
     }
     
+    @IBAction func playPausePressed(sender: UIBarButtonItem) {
+        if spotifyAudioFacade.currentSpotifyTrack != nil {
+            spotifyAudioFacade.togglePlay() {
+                error in
+                if error != nil {
+                    ControllerHelper.displaySimpleAlertForTitle("Unable to Play Song", andError: error, onController: self)
+                }
+            }
+        } else {
+            playFromIndex(0)
+        }
+    }
+    
     public func changedPlaybackStatus(isPlaying: Bool) {
-        
+        ControllerHelper.updatePlayPauseButtonOnTarget(self, withAction: "playPausePressed:", forIsPlaying: isPlaying)
     }
     
     public func changedCurrentTrack(spotifyTrack: SpotifyTrack?) {
-
+        selectRowForSpotifyTrack(spotifyTrack)
+        updateSongViewButtonForTrack(spotifyTrack)
+    }
+    
+    func selectRowForSpotifyTrack(spotifyTrack: SpotifyTrack?) {
+        if let index = ControllerHelper.getIndexForSpotifyTrack(spotifyTrack, inSongs: songs) {
+            self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.None)
+        }
+    }
+    
+    func updateSongViewButtonForTrack(spotifyTrack: SpotifyTrack?) {
+        if let albumImageURL = spotifyTrack?.albumSmallestCoverImageURL {
+            controllerHelper.getImageForURL(albumImageURL) {
+                image in
+                self.updateSongViewButtonForImage(image)
+            }
+        } else {
+            updateSongViewButtonForImage(nil)
+        }
+    }
+    
+    func updateSongViewButtonForImage(image: UIImage?) {
+        ControllerHelper.updateBarButtonItemOnTarget(self, action: "songViewPressed:", atToolbarIndex: 0, withImage: image)
+    }
+    
+    @IBAction func songViewPressed(sender: UIBarButtonItem) {
+        performSegueWithIdentifier("ShowSpotifyTrackFromSongSelectionSegue", sender: nil)
     }
 }

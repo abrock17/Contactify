@@ -6,6 +6,7 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     
     public var spotifyAudioFacade: SpotifyAudioFacade!
     public var controllerHelper = ControllerHelper()
+    public var hidePreviousAndNextTrackButtons = false
 
     @IBOutlet public weak var albumImageView: UIImageView!
     @IBOutlet public weak var titleLabel: UILabel!
@@ -25,6 +26,10 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         super.viewWillAppear(animated)
         albumImageActivityIndicator = ControllerHelper.newActivityIndicatorForView(albumImageView)
         spotifyAudioFacade.playbackDelegate = self
+        if hidePreviousAndNextTrackButtons {
+            toolbar.items?.removeAtIndex(4)
+            toolbar.items?.removeAtIndex(2)
+        }
     }
     
     public override func didReceiveMemoryWarning() {
@@ -44,21 +49,13 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     */
 
     public func changedPlaybackStatus(isPlaying: Bool) {
-        updatePlayPauseButton(isPlaying)
-    }
-    
-    func updatePlayPauseButton(isPlaying: Bool) {
-        let buttonSystemItem = isPlaying ? UIBarButtonSystemItem.Pause : UIBarButtonSystemItem.Play
-        let updatedButton = UIBarButtonItem(barButtonSystemItem: buttonSystemItem, target: self, action: "playPausePressed:")
         self.toolbar.items?.removeLast()
-        self.toolbar.items?.append(updatedButton)
+        self.toolbar.items?.append(ControllerHelper.createPlayPauseButtonForTarget(self, withAction: "playPausePressed:", andIsPlaying: isPlaying))
     }
     
     public func changedCurrentTrack(spotifyTrack: SpotifyTrack?) {
         if let spotifyTrack = spotifyTrack {
             updateViewElementsForSpotifyTrack(spotifyTrack)
-        } else {
-            performSegueWithIdentifier("unwindToSpotifyPlaylistTable", sender: self)
         }
     }
     
@@ -109,5 +106,9 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
                 ControllerHelper.displaySimpleAlertForTitle(self.playbackErrorTitle, andError: error, onController: self)
             }
         }
+    }
+    
+    @IBAction func closePressed(sender: UIBarButtonItem) {
+        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
 }

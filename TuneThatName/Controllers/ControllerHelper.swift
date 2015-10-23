@@ -2,6 +2,8 @@ import UIKit
 
 public class ControllerHelper {
     
+    static let barButtonWidth: CGFloat = 29
+    
     public init() {
     }
     
@@ -33,6 +35,44 @@ public class ControllerHelper {
     public class func handleCompleteBackgroundActivityForView(view: UIView, activityIndicator: UIActivityIndicatorView) {
         view.userInteractionEnabled = true
         activityIndicator.stopAnimating()
+    }
+    
+    public class func getIndexForSpotifyTrack(spotifyTrack: SpotifyTrack?, inSongs songs: [Song]) -> Int? {
+        var indexForURI: Int?
+        if let uri = spotifyTrack?.uri {
+            for (index, song) in songs.enumerate() {
+                if song.uri == uri {
+                    indexForURI = index
+                    break
+                }
+            }
+        }
+        
+        return indexForURI
+    }
+    
+    public class func createPlayPauseButtonForTarget(target: UIViewController, withAction action: Selector, andIsPlaying isPlaying: Bool) -> UIBarButtonItem {
+        let buttonSystemItem = isPlaying ? UIBarButtonSystemItem.Pause : UIBarButtonSystemItem.Play
+        return UIBarButtonItem(barButtonSystemItem: buttonSystemItem, target: target, action: action)
+    }
+    
+    public class func updatePlayPauseButtonOnTarget(target: UIViewController, withAction action: Selector, forIsPlaying isPlaying: Bool) {
+        target.toolbarItems?.removeLast()
+        target.toolbarItems?.append(createPlayPauseButtonForTarget(target, withAction: action, andIsPlaying: isPlaying))
+    }
+    
+    public class func updateBarButtonItemOnTarget(target: UIViewController, action: Selector, atToolbarIndex index: Int, withImage image: UIImage?) {
+        let imageButton: UIButton
+        if let image = image {
+            imageButton = UIButton(frame: CGRectMake(0, 0, barButtonWidth, barButtonWidth))
+            imageButton.setBackgroundImage(image, forState: UIControlState.Normal)
+        } else {
+            imageButton = UIButton()
+            imageButton.enabled = false
+        }
+        imageButton.addTarget(target, action: action, forControlEvents: UIControlEvents.TouchUpInside)
+        target.toolbarItems?.removeAtIndex(index)
+        target.toolbarItems?.insert(UIBarButtonItem(customView: imageButton), atIndex: index)
     }
     
     public func getImageForURL(url: NSURL, completionHandler: UIImage? -> Void) {

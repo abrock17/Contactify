@@ -11,7 +11,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         case Unsaved, Editing, Saving, Saved
     }
     
-    let playSongErrorTitle = "Unable to Play Song"
     let songViewButtonWidth: CGFloat = 29
     
     public var playlist: Playlist!
@@ -50,9 +49,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     override public func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
         spotifyAudioFacade.playbackDelegate = self
-
         self.navigationController?.setToolbarHidden(false, animated: animated)
     }
 
@@ -108,7 +105,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     func syncEditedPlaylist() {
         selectRowForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack)
-        let currentIndex = getIndexForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack)
+        let currentIndex = ControllerHelper.getIndexForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack, inSongs: playlist.songs)
         self.spotifyAudioFacade.updatePlaylist(self.playlist, withIndex: currentIndex ?? 0) {
             error in
             
@@ -119,30 +116,17 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     func selectRowForSpotifyTrack(spotifyTrack: SpotifyTrack?) {
-        let currentTrackIndex = getIndexForSpotifyTrack(spotifyTrack)
+        let currentTrackIndex = ControllerHelper.getIndexForSpotifyTrack(spotifyTrack, inSongs: playlist.songs)
         let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
         dispatch_after(delayTime, dispatch_get_main_queue()) {
             if let index = currentTrackIndex {
-                self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: false, scrollPosition: UITableViewScrollPosition.None)
+                self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: true, scrollPosition: UITableViewScrollPosition.Middle)
             } else if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
                 self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: false)
             }
         }
     }
     
-    func getIndexForSpotifyTrack(spotifyTrack: SpotifyTrack?) -> Int? {
-        var indexForURI: Int?
-        if let uri = spotifyTrack?.uri {
-            for (index, song) in self.playlist.songs.enumerate() {
-                if song.uri == uri {
-                    indexForURI = index
-                }
-            }
-        }
-        
-        return indexForURI
-    }
-
     override public func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         return true
     }
@@ -417,7 +401,8 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
             spotifyAudioFacade.togglePlay() {
                 error in
                 if error != nil {
-                    ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
+                    ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericPlaybackMessage,
+                        andError: error, onController: self)
                 }
             }
         }
@@ -433,9 +418,10 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                     
                     dispatch_async(dispatch_get_main_queue()) {
                         if error != nil {
-                            ControllerHelper.displaySimpleAlertForTitle(self.playSongErrorTitle, andError: error, onController: self)
+                            ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericPlaybackMessage,
+                                andError: error, onController: self)
                         } else if !self.editing {
-                            self.performSegueWithIdentifier("ShowSpotifyTrackSegue", sender: nil)
+                            self.performSegueWithIdentifier("ShowSpotifyTrackFromPlaylistSegue", sender: nil)
                         }
                         ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                     }
@@ -447,18 +433,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     @IBAction func songViewPressed(sender: UIBarButtonItem) {
-        self.performSegueWithIdentifier("ShowSpotifyTrackSegue", sender: sender)
+        self.performSegueWithIdentifier("ShowSpotifyTrackFromPlaylistSegue", sender: sender)
     }
     
     public func changedPlaybackStatus(isPlaying: Bool) {
-        updatePlayPauseButton(isPlaying)
-    }
-    
-    func updatePlayPauseButton(isPlaying: Bool) {
-        let buttonSystemItem = isPlaying ? UIBarButtonSystemItem.Pause : UIBarButtonSystemItem.Play
-        let updatedButton = UIBarButtonItem(barButtonSystemItem: buttonSystemItem, target: self, action: "playPausePressed:")
-        self.toolbarItems?.removeLast()
-        self.toolbarItems?.append(updatedButton)
+        ControllerHelper.updatePlayPauseButtonOnTarget(self, withAction: "playPausePressed:", forIsPlaying: isPlaying)
     }
     
     public func changedCurrentTrack(spotifyTrack: SpotifyTrack?) {
@@ -478,23 +457,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     func updateSongViewButtonForImage(image: UIImage?) {
-        let imageButton: UIButton
-        if let image = image {
-            imageButton = UIButton(frame: CGRectMake(0, 0, self.songViewButtonWidth, self.songViewButtonWidth))
-            imageButton.setBackgroundImage(image, forState: UIControlState.Normal)
-        } else {
-            imageButton = UIButton()
-            imageButton.enabled = false
-        }
-        imageButton.addTarget(self, action: "songViewPressed:", forControlEvents: UIControlEvents.TouchUpInside)
-        let updatedBarButton = UIBarButtonItem(customView: imageButton)
-        self.toolbarItems?.removeAtIndex(0)
-        self.toolbarItems?.insert(updatedBarButton, atIndex: 0)
-    }
-    
-    @IBAction public func unwindToSpotifyPlaylistTable(sender: UIStoryboardSegue) {
-        spotifyAudioFacade.playbackDelegate = self
-        changedCurrentTrack(spotifyAudioFacade.currentSpotifyTrack)
-        changedPlaybackStatus(spotifyAudioFacade.isPlaying)
+        ControllerHelper.updateBarButtonItemOnTarget(self, action: "songViewPressed:", atToolbarIndex: 0, withImage: image)
     }
 }
