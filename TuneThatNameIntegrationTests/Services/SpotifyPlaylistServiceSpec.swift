@@ -2,45 +2,42 @@ import TuneThatName
 import Quick
 import Nimble
 
-class SpotifyServiceSpec: QuickSpec {
+class SpotifyPlaylistServiceSpec: QuickSpec {
 
     var callbackPlaylist: Playlist?
     var callbackError: NSError?
-    var session: SPTSession!
+    var callbackForCanceled = false
     
-    func playlistCallback(playlistResult: SpotifyService.PlaylistResult) {
+    func playlistCallback(playlistResult: SpotifyPlaylistService.PlaylistResult) {
         switch (playlistResult) {
         case .Success(let playlist):
             callbackPlaylist = playlist
         case .Failure(let error):
             callbackError = error
+        case .Canceled:
+            callbackForCanceled = true
         }
     }
     
     override func spec() {
-        describe("SpotifyService") {
-            var spotifyService: SpotifyService!
+        describe("SpotifyPlaylistService") {
+            var spotifyPlaylistService: SpotifyPlaylistService!
             
-            beforeSuite() {
-                SpotifyService.initializeDefaultSPTAuth()
-                self.session = self.getSession()
-            }
-
             beforeEach() {
                 self.clearCallbackVariables()
-                spotifyService = SpotifyService()
+                spotifyPlaylistService = SpotifyPlaylistService()
             }
             
             describe("save a playlist") {
                 var playlist = self.getPlaylist()
                 
                 beforeEach() {
-                    spotifyService.savePlaylist(playlist, session: self.session, callback: self.playlistCallback)
+                    spotifyPlaylistService.savePlaylist(playlist, callback: self.playlistCallback)
                 }
                 
                 afterEach() {
                     if let playlistURI = self.callbackPlaylist?.uri {
-                        spotifyService.unfollowPlaylistURI(playlistURI, inSession: self.session)
+                        spotifyPlaylistService.unfollowPlaylistURI(playlistURI)
                     }
                 }
 
@@ -53,7 +50,7 @@ class SpotifyServiceSpec: QuickSpec {
                         expect(self.callbackError).to(beNil())
                         
                         if let createdPlaylist = self.callbackPlaylist {
-                            self.assertSavedPlaylist(createdPlaylist, canBeRetrievedFromSpotifyService: spotifyService)
+                            self.assertSavedPlaylist(createdPlaylist, canBeRetrievedFromSpotifyPlaylistService: spotifyPlaylistService)
                         }
                     }
                 }
@@ -79,7 +76,7 @@ class SpotifyServiceSpec: QuickSpec {
                                 playlist.songsWithContacts.append(song: Song(title: "Billie Jean - Single Version", artistName: "Michael Jackson", uri: NSURL(string: "spotify:track:5ChkMS8OtdzJeqyybCc9R5")!), contact: Contact(id: 3, firstName: "Billie Jean", lastName: "King") as Contact?)
                             }
                             
-                            spotifyService.savePlaylist(playlist, session: self.session, callback: self.playlistCallback)
+                            spotifyPlaylistService.savePlaylist(playlist, callback: self.playlistCallback)
                             
                             expect(self.callbackPlaylist).toEventuallyNot(beNil(), timeout: 10)
                             expect(self.callbackPlaylist?.uri).toEventually(equal(playlistURI))
@@ -88,7 +85,7 @@ class SpotifyServiceSpec: QuickSpec {
                             expect(self.callbackError).to(beNil())
 
                             if let updated = self.callbackPlaylist {
-                                self.assertSavedPlaylist(updated, canBeRetrievedFromSpotifyService: spotifyService)
+                                self.assertSavedPlaylist(updated, canBeRetrievedFromSpotifyPlaylistService: spotifyPlaylistService)
                             }
                         }
                     }
@@ -101,7 +98,7 @@ class SpotifyServiceSpec: QuickSpec {
                         it("calls back with the playlist") {
                             let playlistURI = NSURL(string: "spotify:user:1125623010:playlist:0iNHNVUbb8k9oOPeIiOrT9")
                             
-                            spotifyService.retrievePlaylist(playlistURI, session: self.session, callback: self.playlistCallback)
+                            spotifyPlaylistService.retrievePlaylist(playlistURI, callback: self.playlistCallback)
                             
                             expect(self.callbackPlaylist).toEventuallyNot(beNil(), timeout: 10)
                             expect(self.callbackPlaylist?.uri).toEventually(equal(playlistURI), timeout: 10)
@@ -124,14 +121,6 @@ class SpotifyServiceSpec: QuickSpec {
         }
     }
     
-    func getSession() -> SPTSession! {
-        return SPTSession(
-            // fill in these fields to run these tests on demand
-            userName: "abrock17",
-            accessToken: "BQDqfrCt-6HUv9_bPC7eYcoJqc2t2rivJSv3Sqj3WvwGAJOAdNDJwP2y1XmmQ5xpQ8oT-IubiCTzGaP9FG4SXN-SDX9b-m4CoqFU0Y1tVTRtO3SdU8aVvKOfQjGE7I8lJqKPBdwTdYf0o8WUmvzm3L6BGSpgc7_IlVsCSt6vEBcQp83_hFI08Pt6DeT_D-SkVX_00nncvLbzfQAA6SmzdMV3FFlP0GmIszyl0L5MWQ",
-            expirationDate: NSDate(timeIntervalSinceNow: 3600000))
-    }
-    
     func getPlaylist() -> Playlist! {
         var songsWithContacts: [(song: Song, contact: Contact?)] = []
         for _ in 1...75 {
@@ -144,18 +133,21 @@ class SpotifyServiceSpec: QuickSpec {
     func clearCallbackVariables() {
         callbackPlaylist = nil
         callbackError = nil
+        callbackForCanceled = false
     }
     
-    func assertSavedPlaylist(savedPlaylist: Playlist, canBeRetrievedFromSpotifyService spotifyService: SpotifyService) {
+    func assertSavedPlaylist(savedPlaylist: Playlist, canBeRetrievedFromSpotifyPlaylistService spotifyPlaylistService: SpotifyPlaylistService) {
         var retrievedPlaylist: Playlist?
         waitUntil(timeout: 4) { done in
-            spotifyService.retrievePlaylist(savedPlaylist.uri, session: self.session) {
+            spotifyPlaylistService.retrievePlaylist(savedPlaylist.uri) {
                 (playlistResult) in
                 switch (playlistResult) {
                 case .Success(let playlist):
                     retrievedPlaylist = playlist
                 case .Failure(let error):
                     print("Error retrieving playlist: \(error)")
+                case .Canceled:
+                    print("Playlist retrieval was canceled")
                 }
             }
             NSThread.sleepForTimeInterval(3)

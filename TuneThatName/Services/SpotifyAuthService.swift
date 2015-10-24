@@ -2,6 +2,19 @@ import Foundation
 
 public class SpotifyAuthService: SPTAuthViewDelegate {
     
+    public static let clientID = "02b72a9ba42742acbebb0d3277c9996f"
+
+    static let sharedDefaultSPTAuth: SPTAuth = {
+        let auth = SPTAuth.defaultInstance()
+        auth.clientID = clientID
+        auth.requestedScopes = [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope]
+        auth.redirectURL = NSURL(string: "name-playlist-creator-login://return")
+        auth.tokenSwapURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/swap")
+        auth.tokenRefreshURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/refresh")
+        auth.sessionUserDefaultsKey = "SpotifySessionData"
+        return auth
+    }()
+    
     public enum AuthResult {
         case Success(SPTSession)
         case Failure(NSError)
@@ -12,7 +25,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     
     var postLoginCallback: (AuthResult -> Void)?
     
-    public init(spotifyAuth: SPTAuth = SPTAuth.defaultInstance()) {
+    public init(spotifyAuth: SPTAuth = sharedDefaultSPTAuth) {
         self.spotifyAuth = spotifyAuth
     }
     

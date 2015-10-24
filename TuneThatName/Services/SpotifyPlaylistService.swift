@@ -1,66 +1,70 @@
 import Foundation
 
-public class SpotifyService {
+public class SpotifyPlaylistService {
     
     public enum PlaylistResult {
         case Success(Playlist)
         case Failure(NSError)
+        case Canceled
     }
     
-    public static let clientID = "02b72a9ba42742acbebb0d3277c9996f"
     let trackMaxBatchSize = 34
     
-    public init() {
+    let spotifyAuthService: SpotifyAuthService
+    
+    public init(spotifyAuthService: SpotifyAuthService = SpotifyAuthService()) {
+        self.spotifyAuthService = spotifyAuthService
     }
     
-    public class func initializeDefaultSPTAuth() {
-        let auth = SPTAuth.defaultInstance()
-        auth.clientID = self.clientID
-        auth.requestedScopes = [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope]
-        auth.redirectURL = NSURL(string: "name-playlist-creator-login://return")
-        auth.tokenSwapURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/swap")
-        auth.tokenRefreshURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/refresh")
-        auth.sessionUserDefaultsKey = "SpotifySessionData"
-    }
-    
-    public func savePlaylist(playlist: Playlist, session: SPTSession, callback: (PlaylistResult) -> Void) {
-        if let uri = playlist.uri {
-            SPTPlaylistSnapshot.playlistWithURI(uri, session: session) {
-                (error, result) in
-                
-                if error != nil {
-                    callback(.Failure(error))
-                } else if let spotifyPlaylistSnapshot = result as? SPTPlaylistSnapshot {
-                    self.updatePlaylistName(playlist.name!, forPlaylistSnapshot: spotifyPlaylistSnapshot, inSession: session)
-                    self.replaceTracksForURIs(playlist.songURIs,
-                        inSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
-                        andResultPlaylist: Playlist(name: playlist.name!, uri: playlist.uri!,
-                            songsWithContacts: playlist.songsWithContacts),
-                        withSession: session,
-                        callback: callback)
-                } else {
-                    callback(.Failure(self.errorForMessage("Unable to retrieve existing playlist", andFailureReason: "Playlist snapshot was nil")))
-                }
+    public func savePlaylist(playlist: Playlist, callback: (PlaylistResult) -> Void) {
+        handleAuthenticationForCallback(callback) {
+            session in
+
+            if playlist.uri != nil {
+                self.updatePlaylist(playlist, session: session, callback: callback)
+            } else {
+                self.createPlaylist(playlist, session: session, callback: callback)
             }
-        } else {
-            SPTPlaylistList.createPlaylistWithName(playlist.name, publicFlag: false, session: session) {
-                (error, spotifyPlaylistSnapshot) in
-                
-                if error != nil {
-                    callback(.Failure(error))
-                } else {
-                    self.addTracksForURIs(playlist.songURIs,
-                        toSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
-                        andResultPlaylist: Playlist(name: spotifyPlaylistSnapshot.name, uri: spotifyPlaylistSnapshot.uri,
-                            songsWithContacts: playlist.songsWithContacts),
-                        withSession: session,
-                        callback: callback)
-                }
-            }
-            
         }
     }
     
+    func createPlaylist(playlist: Playlist, session: SPTSession, callback: (PlaylistResult) -> Void) {
+        SPTPlaylistList.createPlaylistWithName(playlist.name, publicFlag: false, session: session) {
+            (error, spotifyPlaylistSnapshot) in
+            
+            if error != nil {
+                callback(.Failure(error))
+            } else {
+                self.addTracksForURIs(playlist.songURIs,
+                    toSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
+                    andResultPlaylist: Playlist(name: spotifyPlaylistSnapshot.name, uri: spotifyPlaylistSnapshot.uri,
+                        songsWithContacts: playlist.songsWithContacts),
+                    withSession: session,
+                    callback: callback)
+            }
+        }
+    }
+    
+    func updatePlaylist(playlist: Playlist, session: SPTSession, callback: (PlaylistResult) -> Void) {
+        SPTPlaylistSnapshot.playlistWithURI(playlist.uri!, session: session) {
+            (error, result) in
+            
+            if error != nil {
+                callback(.Failure(error))
+            } else if let spotifyPlaylistSnapshot = result as? SPTPlaylistSnapshot {
+                self.updatePlaylistName(playlist.name!, forPlaylistSnapshot: spotifyPlaylistSnapshot, inSession: session)
+                self.replaceTracksForURIs(playlist.songURIs,
+                    inSpotifyPlaylistSnapshot: spotifyPlaylistSnapshot,
+                    andResultPlaylist: Playlist(name: playlist.name!, uri: playlist.uri!,
+                        songsWithContacts: playlist.songsWithContacts),
+                    withSession: session,
+                    callback: callback)
+            } else {
+                callback(.Failure(self.errorForMessage("Unable to retrieve existing playlist", andFailureReason: "Playlist snapshot was nil")))
+            }
+        }
+    }
+
     func addTracksForURIs(uris: [NSURL],
         toSpotifyPlaylistSnapshot spotifyPlaylistSnapshot: SPTPlaylistSnapshot,
         var andResultPlaylist resultPlaylist: Playlist,
@@ -177,33 +181,41 @@ public class SpotifyService {
         }
     }
     
-    public func unfollowPlaylistURI(playlistURI: NSURL, inSession session: SPTSession) {
-        do {
-            let request = try SPTFollow.createRequestForUnfollowingPlaylist(playlistURI, withAccessToken: session.accessToken)
-            SPTRequest.sharedHandler().performRequest(request) {
-                (error, response, data) in
-                
-                if error != nil {
-                    print("Error unfollowing playlist: \(error)")
-                } else if (response as? NSHTTPURLResponse)?.statusCode != 200 {
-                    print("Bad response code trying to un-follow playlist: \((response as? NSHTTPURLResponse)?.statusCode)")
+    public func unfollowPlaylistURI(playlistURI: NSURL) {
+        handleAuthenticationForCallback(nil) {
+            session in
+            
+            do {
+                let request = try SPTFollow.createRequestForUnfollowingPlaylist(playlistURI, withAccessToken: session.accessToken)
+                SPTRequest.sharedHandler().performRequest(request) {
+                    (error, response, data) in
+                    
+                    if error != nil {
+                        print("Error unfollowing playlist: \(error)")
+                    } else if (response as? NSHTTPURLResponse)?.statusCode != 200 {
+                        print("Bad response code trying to un-follow playlist: \((response as? NSHTTPURLResponse)?.statusCode)")
+                    }
                 }
+            } catch let error as NSError {
+                print("Error while creating request: \(error)")
             }
-        } catch let error as NSError {
-            print("Error while creating request: \(error)")
         }
     }
     
-    public func retrievePlaylist(uri: NSURL!, session: SPTSession!, callback: (PlaylistResult) -> Void) {
-        SPTPlaylistSnapshot.playlistWithURI(uri, session: session) {
-            (error, playlistSnapshot) in
+    public func retrievePlaylist(uri: NSURL!, callback: (PlaylistResult) -> Void) {
+        handleAuthenticationForCallback(callback) {
+            session in
             
-            if error != nil {
-                callback(.Failure(error))
-            } else if let playlistSnapshot = playlistSnapshot as? SPTPlaylistSnapshot {
-                var playlist = Playlist(name: playlistSnapshot.name, uri: playlistSnapshot.uri)
+            SPTPlaylistSnapshot.playlistWithURI(uri, session: session) {
+                (error, playlistSnapshot) in
                 
-                self.completePlaylistRetrieval(playlist, withPlaylistSnapshotPage: playlistSnapshot.firstTrackPage, withSession: session, callback: callback)
+                if error != nil {
+                    callback(.Failure(error))
+                } else if let playlistSnapshot = playlistSnapshot as? SPTPlaylistSnapshot {
+                    var playlist = Playlist(name: playlistSnapshot.name, uri: playlistSnapshot.uri)
+                    
+                    self.completePlaylistRetrieval(playlist, withPlaylistSnapshotPage: playlistSnapshot.firstTrackPage, withSession: session, callback: callback)
+                }
             }
         }
     }
@@ -229,6 +241,21 @@ public class SpotifyService {
         } else {
             callback(.Success(playlist))
         }
+    }
+    
+    func handleAuthenticationForCallback(finalPlaylistResultCallback: (PlaylistResult -> Void)?, authSuccessHandler: SPTSession -> Void) {
+            spotifyAuthService.doWithSession() {
+                authResult in
+                
+                switch (authResult) {
+                case .Success(let session):
+                    authSuccessHandler(session)
+                case . Failure(let error):
+                    finalPlaylistResultCallback?(.Failure(error))
+                case .Canceled:
+                    finalPlaylistResultCallback?(.Canceled)
+                }
+            }
     }
     
     func getArtistNamesFromTrack(sptTrack: SPTTrack) -> [String] {

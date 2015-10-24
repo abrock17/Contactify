@@ -34,7 +34,7 @@ public protocol SpotifyPlaybackDelegate {
 public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
     
     static let sharedSpotifyAudioController: SPTAudioStreamingController = {
-        let spotifyAudioController = SPTAudioStreamingController(clientId: SpotifyService.clientID)
+        let spotifyAudioController = SPTAudioStreamingController(clientId: SpotifyAuthService.clientID)
         spotifyAudioController.diskCache = SPTDiskCache(capacity: 67108864)
         return spotifyAudioController
         }()

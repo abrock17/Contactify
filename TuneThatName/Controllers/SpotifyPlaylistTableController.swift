@@ -1,12 +1,10 @@
 import UIKit
 
-public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewDelegate, SpotifyPlaybackDelegate {
+public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlaybackDelegate {
     
     enum PlaylistState {
         case Unsaved, Editing, Saving, Saved
     }
-    
-    let songViewButtonWidth: CGFloat = 29
     
     public var playlist: Playlist!
     var playlistState: PlaylistState!
@@ -15,10 +13,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     public var songReplacementIndexPath: NSIndexPath?
     
-    public var spotifyAuth: SPTAuth! = SPTAuth.defaultInstance()
-    var spotifyAuthController: SPTAuthViewController!
-    
-    public var spotifyService = SpotifyService()
+    public var spotifyPlaylistService = SpotifyPlaylistService()
     public var spotifyAudioFacadeOverride: SpotifyAudioFacade!
     lazy var spotifyAudioFacade: SpotifyAudioFacade! = {
         return self.spotifyAudioFacadeOverride != nil ? self.spotifyAudioFacadeOverride : SpotifyAudioFacadeImpl.sharedInstance
@@ -60,14 +55,10 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     // MARK: - Table view data source
 
     override public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
-        // Return the number of sections.
         return 1
     }
 
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete method implementation.
-        // Return the number of rows in the section.
         return playlist.songs.count
     }
 
@@ -246,65 +237,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     @IBAction public func savePlaylistPressed(sender: AnyObject) {
-        if sessionIsValid() {
-            savePlaylist()
-        } else {
-            refreshSession()
-        }
-    }
-    
-    func sessionIsValid() -> Bool {
-        return spotifyAuth.session != nil && spotifyAuth.session.isValid()
-    }
-    
-    func refreshSession() {
-        if spotifyAuth.hasTokenRefreshService {
-            ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-                self.spotifyAuth.renewSession(self.spotifyAuth.session) {
-                    error, session in
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        if error != nil {
-                            print("Error renewing session: \(error)")
-                        }
-                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
-                        if session != nil {
-                            self.spotifyAuth.session = session
-                            self.savePlaylist()
-                        } else {
-                            self.openLogin()
-                        }
-                    }
-                }
-            }
-        } else {
-            self.openLogin()
-        }
-    }
-    
-    func openLogin() {
-        spotifyAuthController = SPTAuthViewController.authenticationViewControllerWithAuth(spotifyAuth)
-        spotifyAuthController.delegate = self
-        spotifyAuthController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
-        spotifyAuthController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
-        
-        self.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
-        self.definesPresentationContext = true
-        
-        presentViewController(self.spotifyAuthController, animated: false, completion: nil)
-    }
-    
-    public func authenticationViewController(viewController: SPTAuthViewController, didFailToLogin error: NSError) {
-        print("Login failed... error: \(error)")
-    }
-    
-    public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
-        print("Login succeeded... session: \(session)")
         savePlaylist()
-    }
-    
-    public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
     }
     
     @IBAction func playlistNamePressed(sender: UIButton) {
@@ -331,10 +264,8 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         if playlist.name != nil {
             updatePlaylistState(.Saving)
             ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-            let session = spotifyAuth.session
-            print("access token: \(session?.accessToken)")
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-                self.spotifyService.savePlaylist(self.playlist, session: session) {
+                self.spotifyPlaylistService.savePlaylist(self.playlist) {
                     playlistResult in
                     
                     dispatch_async(dispatch_get_main_queue()) {
@@ -345,6 +276,8 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                         case .Failure(let error):
                             print("Error saving playlist: \(error)")
                             ControllerHelper.displaySimpleAlertForTitle("Unable to Save Your Playlist", andError: error, onController: self)
+                            self.updatePlaylistState(.Unsaved)
+                        case .Canceled:
                             self.updatePlaylistState(.Unsaved)
                         }
                         ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)

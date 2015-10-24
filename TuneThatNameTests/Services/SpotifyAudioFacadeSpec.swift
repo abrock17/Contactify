@@ -26,7 +26,7 @@ class SpotifyAudioFacadeSpec: QuickSpec {
             beforeEach() {
                 self.callbackErrors.removeAll(keepCapacity: false)
                 mockSpotifyAuthService = MockSpotifyAuthService()
-                mockAudioStreamingController = MockSPTAudioStreamingController(clientId: SpotifyService.clientID)
+                mockAudioStreamingController = MockSPTAudioStreamingController(clientId: SpotifyAuthService.clientID)
                 spotifyAudioFacade = SpotifyAudioFacadeImpl(spotifyAudioController: mockAudioStreamingController, spotifyAuthService: mockSpotifyAuthService)
                 mockSpotifyPlaybackDelegate = MockSpotifyPlaybackDelegate()
             }
