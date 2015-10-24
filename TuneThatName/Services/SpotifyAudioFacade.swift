@@ -8,8 +8,6 @@ public protocol SpotifyAudioFacade: SPTAudioStreamingPlaybackDelegate {
 
     func playTracksForURIs(uris: [NSURL], fromIndex index: Int, callback: SPTErrorableOperationCallback)
     
-    func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback)
-    
     func updatePlaylist(playlist: Playlist, withIndex index: Int, callback: SPTErrorableOperationCallback)
     
     func togglePlay(callback: SPTErrorableOperationCallback)
@@ -83,20 +81,6 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
                 callback(error)
             case .Canceled:
                 callback(nil)
-            }
-        }
-    }
-    
-    public func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback) {
-        prepareToPlayInSession(session) {
-            error in
-            if error != nil {
-                callback(error)
-            } else {
-                self.spotifyAudioController.playURIs(playlist.songURIs, fromIndex: Int32(index)) {
-                    error in
-                    callback(error)
-                }
             }
         }
     }

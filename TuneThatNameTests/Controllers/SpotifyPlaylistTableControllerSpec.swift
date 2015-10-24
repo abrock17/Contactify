@@ -199,200 +199,90 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 }
             }
             
-            describe("successful login") {
-                let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
-                
-                beforeEach() {
-                    spotifyPlaylistTableController.spotifyAuth = spotifyAuth
-                }
-
-                context("when post login action is SavePlaylist") {
-                    it("calls the service to save the playlist") {
-                        spotifyPlaylistTableController.spotifySessionAction = SpotifyPlaylistTableController.SpotifySessionAction.SavePlaylist
-
-                        spotifyPlaylistTableController.authenticationViewController(SPTAuthViewController(), didLoginWithSession: spotifyAuth.session)
-                        self.advanceRunLoopForTimeInterval(0.0)
-                        
-                        expect(mockSpotifyService.mocker.getNthCallTo(MockSpotifyService.Method.savePlaylist, n: 0)?.first as? Playlist).toEventually(equal(playlist))
-                    }
-                }
-                
-                context("when the post login action is PlayPlaylist") {
-                    let index = 1
-                    it("plays the playlist from the given index") {
-                        spotifyPlaylistTableController.spotifySessionAction = SpotifyPlaylistTableController.SpotifySessionAction.PlayPlaylist(index: index)
-                        
-                        spotifyPlaylistTableController.authenticationViewController(SPTAuthViewController(), didLoginWithSession: spotifyAuth.session)
-                        
-                        self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: index, expectedSession: spotifyAuth.session)
-                    }
-                }
-            }
-            
             describe("select a song") {
                 let indexPath = NSIndexPath(forRow: 1, inSection: 0)
                 
                 beforeEach() {
                     mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
                 }
-                
-                context("when the session is invalid") {
-                    let invalidSession = self.getSPTSessionThatExpiresIn(-60)
-                    let spotifyAuth = self.getMockSpotifyAuth()
+            
+                it("calls to play the playlist from the given index") {
+                    spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                     
-                    context("and the session renewal succeeds") {
-                        let newSession = self.getSPTSessionThatExpiresIn(60)
+                    self.verifyCallsToPlayTracksForURIsOn(mockSpotifyAudioFacade, expectedURIs: playlist.songURIs, expectedIndex: indexPath.row)
+                }
+                
+                context("and upon playing the playlist") {
+                    it("shows the spotify track view") {
+                        spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                         
-                        beforeEach() {
-                            spotifyPlaylistTableController.spotifyAuth = spotifyAuth
-
-                            spotifyAuth.mocker.clearMockedReturnsFor(MockSPTAuth.Method.getSession)
-                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.getSession, returnValue: invalidSession)
-                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.getSession, returnValue: invalidSession)
-                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.getSession, returnValue: newSession)
-
-                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.renewSession, returnValue: newSession)
-
-                            spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                        }
-                        
-                        it("does not prompt the user to log in") {
-                            expect(spotifyPlaylistTableController.presentedViewController).to(beNil())
-                        }
-                        
-                        it("calls to play the playlist from the given index") {
-                            self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: indexPath.row, expectedSession: newSession)
-                        }
+                        expect(spotifyPlaylistTableController.presentedViewController).toEventually(
+                            beAnInstanceOf(SpotifyTrackViewController))
+                        let spotifyTrackViewController = spotifyPlaylistTableController.presentedViewController as? SpotifyTrackViewController
+                        expect(spotifyTrackViewController?.spotifyAudioFacade as? MockSpotifyAudioFacade).to(beIdenticalTo(mockSpotifyAudioFacade))
                     }
                 }
-
-                context("when there is a valid session") {
-                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
+                
+                context("and upon failing to play the playlist") {
+                    let error = NSError(domain: "com.spotify.ios", code: 888, userInfo: [NSLocalizedDescriptionKey: "this list is unplayable"])
                     
-                    beforeEach() {
-                        spotifyPlaylistTableController.spotifyAuth = spotifyAuth
-                        mockControllerHelper.mocker.prepareForCallTo(MockControllerHelper.Method.getImageForURL, returnValue: image)
-                    }
-                    
-                    it("does not prompt the user to log in") {
+                    it("displays the error message in an alert") {
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(
+                            MockSpotifyAudioFacade.Method.playTracksForURIs, returnValue: error)
+                        
                         spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
                         
-                        expect(spotifyPlaylistTableController.presentedViewController).to(beNil())
+                        self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: Constants.Error.GenericPlaybackMessage, andMessage: error.localizedDescription)
                     }
-                    
-                    it("calls to play the playlist from the given index") {
+                }
+                
+                context("and editing") {
+                    it("does not show the spotify track view") {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
                         spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                        
-                        self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: indexPath.row, expectedSession: spotifyAuth.session)
-                    }
-                    
-                    context("and upon playing the playlist") {
-                        it("shows the spotify track view") {
-                            spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                            
-                            expect(spotifyPlaylistTableController.presentedViewController).toEventually(
-                                beAnInstanceOf(SpotifyTrackViewController))
-                            let spotifyTrackViewController = spotifyPlaylistTableController.presentedViewController as? SpotifyTrackViewController
-                            expect(spotifyTrackViewController?.spotifyAudioFacade as? MockSpotifyAudioFacade).to(beIdenticalTo(mockSpotifyAudioFacade))
-                        }
-                    }
-                    
-                    context("and upon failing to play the playlist") {
-                        let error = NSError(domain: "com.spotify.ios", code: 888, userInfo: [NSLocalizedDescriptionKey: "this list is unplayable"])
-                        
-                        it("displays the error message in an alert") {
-                            mockSpotifyAudioFacade.mocker.prepareForCallTo(
-                                MockSpotifyAudioFacade.Method.playPlaylist, returnValue: error)
-                            
-                            spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                            
-                            self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: Constants.Error.GenericPlaybackMessage, andMessage: error.localizedDescription)
-                        }
-                    }
-                    
-                    context("and editing") {
-                        it("does not show the spotify track view") {
-                            self.pressEditButton(spotifyPlaylistTableController)
-                            
-                            spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
 
-                            waitUntil() { done in
-                                NSThread.sleepForTimeInterval(0.1)
-                                done()
-                            }
-                            expect(spotifyPlaylistTableController.presentedViewController)
-                                .toEventually(beNil())
+                        waitUntil() { done in
+                            NSThread.sleepForTimeInterval(0.1)
+                            done()
                         }
+                        expect(spotifyPlaylistTableController.presentedViewController)
+                            .toEventually(beNil())
                     }
                 }
             }
             
             describe("press the play/pause button") {
-                context("when the session is invalid") {
-                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(-60)
-                    
-                    beforeEach() {
-                        spotifyPlaylistTableController.spotifyAuth = spotifyAuth
-                    }
-                    
-                    it("tries to renew the session") {
+                context("and the playlist has not played yet") {
+                    it("calls to play the playlist from the first index") {
                         self.pressPlayPauseButton(spotifyPlaylistTableController)
                         
-                        expect(spotifyAuth.mocker.getNthCallTo(MockSPTAuth.Method.renewSession, n: 0)?.first as? SPTSession).toEventually(equal(spotifyAuth.session))
-                    }
-                    
-                    context("and the session renewal fails (no session in callback") {
-                        it("prompts the user to log in") {
-                            spotifyPlaylistTableController.spotifyAuth = spotifyAuth
-                            spotifyAuth.mocker.prepareForCallTo(MockSPTAuth.Method.renewSession, returnValue: nil)
-                            
-                            self.pressPlayPauseButton(spotifyPlaylistTableController)
-                            
-                            expect(spotifyPlaylistTableController.presentedViewController).toEventuallyNot(beNil())
-                        }
+                        self.verifyCallsToPlayTracksForURIsOn(mockSpotifyAudioFacade, expectedURIs: playlist.songURIs, expectedIndex: 0)
                     }
                 }
-
-                context("when there is a valid session") {
-                    let spotifyAuth = self.getMockSpotifyAuthThatExpiresIn(60)
-                    
+                
+                context("and play has already started") {
                     beforeEach() {
-                        spotifyPlaylistTableController.spotifyAuth = spotifyAuth
+                        mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: spotifyTrack)
                     }
                     
-                    context("and the playlist has not played yet") {
-                        it("calls to play the playlist from the first index") {
-                            self.pressPlayPauseButton(spotifyPlaylistTableController)
-                            
-                            self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade, expectedPlaylist: playlist, expectedIndex: 0, expectedSession: spotifyAuth.session)
-                        }
+                    it("toggles play") {
+                        self.pressPlayPauseButton(spotifyPlaylistTableController)
+                        
+                        expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
+                            MockSpotifyAudioFacade.Method.togglePlay)).toEventually(equal(1))
                     }
                     
-                    context("and play has already started") {
-                        let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+                    context("and upon failing to toggle play") {
+                        let error = NSError(domain: "com.spotify.ios", code: 999, userInfo: [NSLocalizedDescriptionKey: "couldn't toggle play"])
                         
-                        beforeEach() {
-                            mockSpotifyAudioFacade.mocker.prepareForCallTo(MockSpotifyAudioFacade.Method.getCurrentSpotifyTrack, returnValue: spotifyTrack)
-                        }
-
-                        it("toggles play") {
+                        it("displays the error message in an alert") {
+                            mockSpotifyAudioFacade.mocker.prepareForCallTo(
+                                MockSpotifyAudioFacade.Method.togglePlay, returnValue: error)
+                            
                             self.pressPlayPauseButton(spotifyPlaylistTableController)
                             
-                            expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
-                                MockSpotifyAudioFacade.Method.togglePlay)).toEventually(equal(1))
-                        }
-                        
-                        context("and upon failing to toggle play") {
-                            let error = NSError(domain: "com.spotify.ios", code: 999, userInfo: [NSLocalizedDescriptionKey: "couldn't toggle play"])
-                            
-                            it("displays the error message in an alert") {
-                                mockSpotifyAudioFacade.mocker.prepareForCallTo(
-                                    MockSpotifyAudioFacade.Method.togglePlay, returnValue: error)
-                                
-                                self.pressPlayPauseButton(spotifyPlaylistTableController)
-                                
-                                self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: "Unable to Play Song", andMessage: error.localizedDescription)
-                            }
+                            self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: "Unable to Play Song", andMessage: error.localizedDescription)
                         }
                     }
                 }
@@ -733,7 +623,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             
                             it("does not restart play") {
                                 expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
-                                    MockSpotifyAudioFacade.Method.playPlaylist)).to(equal(0))
+                                    MockSpotifyAudioFacade.Method.playTracksForURIs)).to(equal(0))
                             }
                         }
                         
@@ -749,10 +639,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             }
                             
                             it("starts playing the new song") {
-                                self.verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade,
-                                    expectedPlaylist: spotifyPlaylistTableController.playlist,
-                                    expectedIndex: 1,
-                                    expectedSession: spotifyAuth.session)
+                                self.verifyCallsToPlayTracksForURIsOn(mockSpotifyAudioFacade, expectedURIs: spotifyPlaylistTableController.playlist.songURIs, expectedIndex: 1)
                             }
                         }
                     }
@@ -918,10 +805,9 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
         return (songViewButton?.customView as? UIButton)?.currentBackgroundImage
     }
     
-    func verifyCallToPlayPlaylistOn(mockSpotifyAudioFacade: MockSpotifyAudioFacade, expectedPlaylist: Playlist, expectedIndex: Int, expectedSession: SPTSession) {
-        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[0] as? Playlist).toEventually(equal(expectedPlaylist))
-        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[1] as? Int).toEventually(equal(expectedIndex))
-        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playPlaylist, n: 0)?[2] as? SPTSession).toEventually(equal(expectedSession))
+    func verifyCallsToPlayTracksForURIsOn(mockSpotifyAudioFacade: MockSpotifyAudioFacade, expectedURIs: [NSURL], expectedIndex: Int) {
+        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playTracksForURIs, n: 0)?[0] as? [NSURL]).toEventually(equal(expectedURIs))
+        expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playTracksForURIs, n: 0)?[1] as? Int).toEventually(equal(expectedIndex))
     }
     
     func verifyCallToUpdatePlaylistOn(mockSpotifyAudioFacade: MockSpotifyAudioFacade, expectedPlaylist: Playlist, expectedIndex: Int) {

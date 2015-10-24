@@ -10,7 +10,6 @@ class MockSpotifyAudioFacade: NSObject, SpotifyAudioFacade {
         static let getIsPlaying = "getIsPlaying"
         static let getCurrentSpotifyTrack = "getCurrentSpotifyTrack"
         static let playTracksForURIs = "playTracksForURIs"
-        static let playPlaylist = "playPlaylist"
         static let updatePlaylist = "updatePlaylist"
         static let togglePlay = "togglePlay"
         static let stopPlay = "stopPlay"
@@ -48,11 +47,6 @@ class MockSpotifyAudioFacade: NSObject, SpotifyAudioFacade {
     func playTracksForURIs(uris: [NSURL], fromIndex index: Int, callback: SPTErrorableOperationCallback) {
         mocker.recordCall(Method.playTracksForURIs, parameters: uris, index)
         callback(getMockedError(Method.playTracksForURIs))
-    }
-    
-    func playPlaylist(playlist: Playlist, fromIndex index: Int, inSession session: SPTSession, callback: SPTErrorableOperationCallback) {
-        mocker.recordCall(Method.playPlaylist, parameters: playlist, index, session)
-        callback(getMockedError(Method.playPlaylist))
     }
     
     func updatePlaylist(playlist: Playlist, withIndex index: Int, callback: SPTErrorableOperationCallback) {

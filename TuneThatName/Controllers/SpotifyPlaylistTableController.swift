@@ -2,11 +2,6 @@ import UIKit
 
 public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewDelegate, SpotifyPlaybackDelegate {
     
-    public enum SpotifySessionAction {
-        case PlayPlaylist(index: Int)
-        case SavePlaylist
-    }
-    
     enum PlaylistState {
         case Unsaved, Editing, Saving, Saved
     }
@@ -14,7 +9,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     let songViewButtonWidth: CGFloat = 29
     
     public var playlist: Playlist!
-    public var spotifySessionAction: SpotifySessionAction!
     var playlistState: PlaylistState!
     var hasPlayed: Bool {
         return self.spotifyAudioFacade.currentSpotifyTrack != nil
@@ -255,7 +249,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         if sessionIsValid() {
             savePlaylist()
         } else {
-            refreshSession(SpotifySessionAction.SavePlaylist)
+            refreshSession()
         }
     }
     
@@ -263,9 +257,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
         return spotifyAuth.session != nil && spotifyAuth.session.isValid()
     }
     
-    func refreshSession(spotifySessionAction: SpotifySessionAction) {
-        self.spotifySessionAction = spotifySessionAction
-
+    func refreshSession() {
         if spotifyAuth.hasTokenRefreshService {
             ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
@@ -279,7 +271,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
                         ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                         if session != nil {
                             self.spotifyAuth.session = session
-                            self.doSpotifySessionAction()
+                            self.savePlaylist()
                         } else {
                             self.openLogin()
                         }
@@ -309,16 +301,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     
     public func authenticationViewController(viewController: SPTAuthViewController, didLoginWithSession session: SPTSession) {
         print("Login succeeded... session: \(session)")
-        doSpotifySessionAction()
-    }
-    
-    func doSpotifySessionAction() {
-        switch (spotifySessionAction!) {
-        case .PlayPlaylist(let index):
-            playFromIndex(index)
-        case .SavePlaylist:
-            savePlaylist()
-        }
+        savePlaylist()
     }
     
     public func authenticationViewControllerDidCancelLogin(viewController: SPTAuthViewController) {
@@ -409,26 +392,22 @@ public class SpotifyPlaylistTableController: UITableViewController, SPTAuthViewD
     }
     
     func playFromIndex(index: Int) {
-        if sessionIsValid() {
-            ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-            
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-                self.spotifyAudioFacade.playPlaylist(self.playlist, fromIndex: index, inSession: self.spotifyAuth.session) {
-                    error in
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        if error != nil {
-                            ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericPlaybackMessage,
-                                andError: error, onController: self)
-                        } else if !self.editing {
-                            self.performSegueWithIdentifier("ShowSpotifyTrackFromPlaylistSegue", sender: nil)
-                        }
-                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            self.spotifyAudioFacade.playTracksForURIs(self.playlist.songURIs, fromIndex: index) {
+                error in
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    if error != nil {
+                        ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericPlaybackMessage,
+                            andError: error, onController: self)
+                    } else if !self.editing {
+                        self.performSegueWithIdentifier("ShowSpotifyTrackFromPlaylistSegue", sender: nil)
                     }
+                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                 }
             }
-        } else {
-            refreshSession(SpotifySessionAction.PlayPlaylist(index: index))
         }
     }
     
