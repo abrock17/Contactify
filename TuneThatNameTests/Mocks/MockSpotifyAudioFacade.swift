@@ -85,24 +85,5 @@ class MockSpotifyAudioFacade: NSObject, SpotifyAudioFacade {
         
         return error
     }
-    
-    func getMockedSpotifyTrackResult(method: String) -> SpotifyTrackResult {
-        let spotifyTrackResult: SpotifyTrackResult
-        let mockedResult = mocker.returnValueForCallTo(method)
-        if let mockedResult = mockedResult as? SpotifyTrackResult {
-            spotifyTrackResult = mockedResult
-        } else {
-            spotifyTrackResult = SpotifyTrackResult.Success(
-                SpotifyTrack(
-                    uri: NSURL(string: "un_important_mocked_uri")!,
-                    name: "unimportant mocked track",
-                    artistNames: [],
-                    albumName: nil,
-                    albumLargestCoverImageURL: nil,
-                    albumSmallestCoverImageURL: nil))
-        }
-        
-        return spotifyTrackResult
-    }
 }
 

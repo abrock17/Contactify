@@ -333,8 +333,10 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     if error != nil {
-                        ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericPlaybackMessage,
-                            andError: error, onController: self)
+                        if error.code != Constants.Error.SpotifyLoginCanceledCode {
+                            ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericPlaybackMessage,
+                                andError: error, onController: self)
+                        }
                     } else if !self.editing {
                         self.performSegueWithIdentifier("ShowSpotifyTrackFromPlaylistSegue", sender: nil)
                     }

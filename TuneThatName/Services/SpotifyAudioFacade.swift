@@ -19,11 +19,6 @@ public protocol SpotifyAudioFacade: SPTAudioStreamingPlaybackDelegate {
     func toPreviousTrack(callback: SPTErrorableOperationCallback)
 }
 
-public enum SpotifyTrackResult {
-    case Success(SpotifyTrack)
-    case Failure(NSError)
-}
-
 public protocol SpotifyPlaybackDelegate {
     
     func changedPlaybackStatus(isPlaying: Bool)
@@ -80,7 +75,7 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
             case .Failure(let error):
                 callback(error)
             case .Canceled:
-                callback(nil)
+                callback(NSError(domain: Constants.Error.Domain, code: Constants.Error.SpotifyLoginCanceledCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.SpotifyLoginCanceledMessage]))
             }
         }
     }

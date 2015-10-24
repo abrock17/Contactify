@@ -178,6 +178,20 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         
                         self.assertSimpleUIAlertControllerPresentedOnController(spotifyPlaylistTableController, withTitle: Constants.Error.GenericPlaybackMessage, andMessage: error.localizedDescription)
                     }
+                    
+                    context("and the error is due to login cancellation") {
+                        let loginCanceledError = NSError(domain: Constants.Error.Domain, code: Constants.Error.SpotifyLoginCanceledCode, userInfo: [:])
+                        
+                        it("does not present any controller") {
+                            mockSpotifyAudioFacade.mocker.prepareForCallTo(
+                                MockSpotifyAudioFacade.Method.playTracksForURIs, returnValue: loginCanceledError)
+                            
+                            spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                            self.advanceRunLoopForTimeInterval(0.1)
+                            
+                            expect(spotifyPlaylistTableController.presentedViewController).toEventually(beNil())
+                        }
+                    }
                 }
                 
                 context("while editing") {

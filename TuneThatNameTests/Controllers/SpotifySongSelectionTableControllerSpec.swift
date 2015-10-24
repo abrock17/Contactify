@@ -190,6 +190,20 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                             
                             self.assertSimpleUIAlertControllerPresentedOnController(spotifySongSelectionTableController, withTitle: "Unable to Play Song", andMessage: error.localizedDescription)
                         }
+                        
+                        context("and the error is due to login cancellation") {
+                            let loginCanceledError = NSError(domain: Constants.Error.Domain, code: Constants.Error.SpotifyLoginCanceledCode, userInfo: [:])
+                            
+                            it("does not present any controller") {
+                                mockSpotifyAudioFacade.mocker.prepareForCallTo(
+                                    MockSpotifyAudioFacade.Method.playTracksForURIs, returnValue: loginCanceledError)
+                                
+                                spotifySongSelectionTableController.tableView(spotifySongSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                                NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: 0.1))
+                                
+                                expect(spotifySongSelectionTableController.presentedViewController).toEventually(beNil())
+                            }
+                        }
                     }
                 }
                 

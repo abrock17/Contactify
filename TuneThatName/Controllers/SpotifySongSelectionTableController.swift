@@ -109,8 +109,8 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
                 error in
                 
                 dispatch_async(dispatch_get_main_queue()) {
-                    if error != nil {
-                        ControllerHelper.displaySimpleAlertForTitle("Unable to Play Song", andError: error, onController: self)
+                    if error != nil && error.code != Constants.Error.SpotifyLoginCanceledCode {
+                        ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericPlaybackMessage, andError: error, onController: self)
                     }
                     ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
                 }

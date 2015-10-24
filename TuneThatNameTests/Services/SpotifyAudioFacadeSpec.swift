@@ -73,7 +73,9 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                         
                         expect(self.callbackErrors.isEmpty).to(beFalse())
                         if !self.callbackErrors.isEmpty {
-                            expect(self.callbackErrors.first!).to(beNil())
+                            expect(self.callbackErrors.first!).to(equal(
+                                NSError(domain: Constants.Error.Domain, code: Constants.Error.SpotifyLoginCanceledCode,
+                                    userInfo: [NSLocalizedDescriptionKey: Constants.Error.SpotifyLoginCanceledMessage])))
                         }
                     }
                 }
