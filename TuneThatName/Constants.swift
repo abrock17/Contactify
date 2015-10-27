@@ -24,6 +24,7 @@ public struct Constants {
         public static let SpotifyLoginCanceledMessage = "Login to spotify was canceled."
         
         public static let GenericPlaybackMessage = "Unable to Play Song"
+        public static let GenericSongSearchMessage = "Unable to Search for Songs"
     }
     
     public struct StorageKeys {

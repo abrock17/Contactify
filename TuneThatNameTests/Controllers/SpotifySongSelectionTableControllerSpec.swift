@@ -19,8 +19,11 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
             var mockEchoNestService: MockEchoNestService!
             var mockPreferencesService: MockPreferencesService!
             var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
+            var mockSpotifyUserService: MockSpotifyUserService!
             var mockControllerHelper: MockControllerHelper!
+            var mockSPTUser: MockSPTUser!
 
+            let userLocale = "SE"
             let searchContact = Contact(id: 23, firstName: "Michael", lastName: "Jordan")
             let defaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences:
                 SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Positive])))
@@ -44,7 +47,6 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
                 
                 spotifySongSelectionTableController = storyboard.instantiateViewControllerWithIdentifier("SpotifySongSelectionTableController") as!  SpotifySongSelectionTableController
-                
                 spotifySongSelectionTableController.searchContact = searchContact
                 spotifySongSelectionTableController.songSelectionCompletionHandler = self.songSelectionCompletionHandler
                 mockEchoNestService = MockEchoNestService()
@@ -53,8 +55,13 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 spotifySongSelectionTableController.preferencesService = mockPreferencesService
                 mockSpotifyAudioFacade = MockSpotifyAudioFacade()
                 spotifySongSelectionTableController.spotifyAudioFacadeOverride = mockSpotifyAudioFacade
+                mockSpotifyUserService = MockSpotifyUserService()
+                spotifySongSelectionTableController.spotifyUserService = mockSpotifyUserService
                 mockControllerHelper = MockControllerHelper()
                 spotifySongSelectionTableController.controllerHelper = mockControllerHelper
+
+                mockSPTUser = MockSPTUser()
+                mockSPTUser.mocker.prepareForCallTo(MockSPTUser.Method.getTerritory, returnValue: userLocale)
             }
             
             describe("view load") {
@@ -87,67 +94,96 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                         
                         expect(
                             mockPreferencesService.mocker.getCallCountFor(
-                                MockPreferencesService.Method.getDefaultPlaylistPreferences)).toEventually(equal(1))
+                                MockPreferencesService.Method.getDefaultPlaylistPreferences))
+                            .toEventually(equal(1))
                     }
                 }
                 
-                it("searches for songs from the echo nest service") {
+                it("retrieves the current user from the user service") {
                     mockPreferencesService.mocker.prepareForCallTo(
                         MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
 
                     self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
-
-                    expect(mockEchoNestService.mocker.getCallCountFor(MockEchoNestService.Method.findSongs))
-                        .toEventually(equal(1))
-                    expect(mockEchoNestService.mocker.getNthCallTo(
-                        MockEchoNestService.Method.findSongs, n: 0)?[0] as? String)
-                        .toEventually(equal(searchContact.firstName))
-                    expect(mockEchoNestService.mocker.getNthCallTo(
-                        MockEchoNestService.Method.findSongs, n: 0)?[1] as? SongPreferences)
-                        .toEventually(equal(defaultPlaylistPreferences.songPreferences))
-                    expect(mockEchoNestService.mocker.getNthCallTo(
-                        MockEchoNestService.Method.findSongs, n: 0)?[2] as? Int)
-                        .toEventually(equal(20))
+                    
+                    expect(mockSpotifyUserService.mocker.getCallCountFor(MockSpotifyUserService.Method.retrieveCurrentUser)).toEventually(equal(1))
                 }
                 
-                context("when the song search returns an error") {
-                    let error = NSError(domain: "domain", code: 0, userInfo: [NSLocalizedDescriptionKey: "ain't no songs for this name"])
-                    it("displays the error message in an alert") {
+                context("and the user service calls back with an error") {
+                    let userServiceError = NSError(domain: "DOMAIN", code: 234, userInfo: [NSLocalizedDescriptionKey: "couldn't get no user"])
+                    
+                    it("calls back with the same error") {
                         mockPreferencesService.mocker.prepareForCallTo(
                             MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
-                        mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Failure(error))
+
+                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Failure(userServiceError))
                         
                         self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
                         
-                        self.assertSimpleUIAlertControllerPresentedOnController(spotifySongSelectionTableController, withTitle: "Error Searching for Songs", andMessage: error.localizedDescription)
+                        self.assertSimpleUIAlertControllerPresentedOnController(
+                            spotifySongSelectionTableController, withTitle: "Unable to Search for Songs", andMessage: userServiceError.localizedDescription)
                     }
                 }
-
-                context("when the song search returns a successful result") {
+                
+                context("and user service calls back with a user") {
                     beforeEach() {
                         mockPreferencesService.mocker.prepareForCallTo(
                             MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
-                        mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success(resultSongList))
-                        
-                        self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
+                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
                     }
                     
-                    it("displays the expected results in the table") {
-                        expect(
-                            spotifySongSelectionTableController.tableView(
-                                spotifySongSelectionTableController.tableView, numberOfRowsInSection: 0))
-                            .toEventually(equal(resultSongList.count))
-                        for (index, song) in resultSongList.enumerate() {
+                    it("searches for songs from the echo nest service") {
+                        self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
+                        
+                        expect(mockEchoNestService.mocker.getCallCountFor(MockEchoNestService.Method.findSongs))
+                            .toEventually(equal(1))
+                        expect(mockEchoNestService.mocker.getNthCallTo(
+                            MockEchoNestService.Method.findSongs, n: 0)?[0] as? String)
+                            .toEventually(equal(searchContact.firstName))
+                        expect(mockEchoNestService.mocker.getNthCallTo(
+                            MockEchoNestService.Method.findSongs, n: 0)?[1] as? SongPreferences)
+                            .toEventually(equal(defaultPlaylistPreferences.songPreferences))
+                        expect(mockEchoNestService.mocker.getNthCallTo(
+                            MockEchoNestService.Method.findSongs, n: 0)?[2] as? Int)
+                            .toEventually(equal(20))
+                        expect(mockEchoNestService.mocker.getNthCallTo(
+                            MockEchoNestService.Method.findSongs, n: 0)?[3] as? String)
+                            .toEventually(equal(userLocale))
+                    }
+                    
+                    context("when the song search returns an error") {
+                        let error = NSError(domain: "domain", code: 0, userInfo: [NSLocalizedDescriptionKey: "ain't no songs for this name"])
+                        it("displays the error message in an alert") {
+                            mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Failure(error))
+                            
+                            self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
+                            
+                            self.assertSimpleUIAlertControllerPresentedOnController(
+                                spotifySongSelectionTableController, withTitle: "Unable to Search for Songs", andMessage: error.localizedDescription)
+                        }
+                    }
+                    
+                    context("when the song search returns a successful result") {
+                        it("displays the expected results in the table") {
+                            mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success(resultSongList))
+                            
+                            self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
+                            
                             expect(
                                 spotifySongSelectionTableController.tableView(
-                                    spotifySongSelectionTableController.tableView,
-                                    cellForRowAtIndexPath: NSIndexPath(forRow: index, inSection: 0)).textLabel?.text)
-                                .toEventually(equal(song.title))
-                            expect(
-                                spotifySongSelectionTableController.tableView(
-                                    spotifySongSelectionTableController.tableView,
-                                    cellForRowAtIndexPath: NSIndexPath(forRow: index, inSection: 0)).detailTextLabel?.text)
-                                .toEventually(equal(song.displayArtistName))
+                                    spotifySongSelectionTableController.tableView, numberOfRowsInSection: 0))
+                                .toEventually(equal(resultSongList.count))
+                            for (index, song) in resultSongList.enumerate() {
+                                expect(
+                                    spotifySongSelectionTableController.tableView(
+                                        spotifySongSelectionTableController.tableView,
+                                        cellForRowAtIndexPath: NSIndexPath(forRow: index, inSection: 0)).textLabel?.text)
+                                    .toEventually(equal(song.title))
+                                expect(
+                                    spotifySongSelectionTableController.tableView(
+                                        spotifySongSelectionTableController.tableView,
+                                        cellForRowAtIndexPath: NSIndexPath(forRow: index, inSection: 0)).detailTextLabel?.text)
+                                    .toEventually(equal(song.displayArtistName))
+                            }
                         }
                     }
                 }
@@ -159,6 +195,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 beforeEach() {
                     mockPreferencesService.mocker.prepareForCallTo(
                         MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
+                    mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
                     mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success(resultSongList))
                     
                     self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
@@ -173,7 +210,8 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                     }
                     
                     it("plays the track") {
-                        spotifySongSelectionTableController.tableView(spotifySongSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                        spotifySongSelectionTableController.tableView(
+                            spotifySongSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
 
                         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playTracksForURIs, n: 0)?[0] as? [NSURL]).toEventually(equal([resultSongList[1].uri]))
                         expect(mockSpotifyAudioFacade.mocker.getNthCallTo(MockSpotifyAudioFacade.Method.playTracksForURIs, n: 0)?[1] as? Int).toEventually(equal(0))

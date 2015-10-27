@@ -12,6 +12,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
     lazy var spotifyAudioFacade: SpotifyAudioFacade! = {
         return self.spotifyAudioFacadeOverride != nil ? self.spotifyAudioFacadeOverride : SpotifyAudioFacadeImpl.sharedInstance
         }()
+    public var spotifyUserService = SpotifyUserService()
     public var controllerHelper = ControllerHelper()
     
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.navigationController!.view)
@@ -48,21 +49,46 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
         }
         
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-        echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, withSongPreferences: playlistPreferences!.songPreferences, desiredNumberOfSongs: 20) {
-            songResult in
-            
-            switch (songResult) {
-            case .Success(let songs):
-                self.songs = songs
-                self.tableView.reloadData()
-            case .Failure(let error):
-                ControllerHelper.displaySimpleAlertForTitle("Error Searching for Songs", andError: error, onController: self) {
-                    alertAction in
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            self.retrieveCurrentUser() {
+                user in
+                
+                self.echoNestService.findSongs(titleSearchTerm: self.searchContact.firstName!, withSongPreferences: playlistPreferences!.songPreferences, desiredNumberOfSongs: 20, inLocale: user.territory) {
+                    songResult in
                     
-                    self.navigationController?.popViewControllerAnimated(true)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        switch (songResult) {
+                        case .Success(let songs):
+                            self.songs = songs
+                            self.tableView.reloadData()
+                        case .Failure(let error):
+                            ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericSongSearchMessage, andError: error, onController: self) {
+                                alertAction in
+                                
+                                self.navigationController?.popViewControllerAnimated(true)
+                            }
+                        }
+                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                    }
                 }
             }
-            ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+        }
+    }
+    
+    func retrieveCurrentUser(userRetrievalHandler: SPTUser -> Void) {
+        self.spotifyUserService.retrieveCurrentUser() {
+            userResult in
+            
+            switch (userResult) {
+            case .Success(let user):
+                userRetrievalHandler(user)
+            case .Failure(let error):
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericSongSearchMessage, andError: error, onController: self)
+                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                }
+            }
         }
     }
 
@@ -177,7 +203,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
             spotifyAudioFacade.togglePlay() {
                 error in
                 if error != nil {
-                    ControllerHelper.displaySimpleAlertForTitle("Unable to Play Song", andError: error, onController: self)
+                    ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericPlaybackMessage, andError: error, onController: self)
                 }
             }
         } else {
