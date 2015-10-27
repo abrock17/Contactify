@@ -7,7 +7,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     static let sharedDefaultSPTAuth: SPTAuth = {
         let auth = SPTAuth.defaultInstance()
         auth.clientID = clientID
-        auth.requestedScopes = [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope]
+        auth.requestedScopes = [SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope, SPTAuthStreamingScope, SPTAuthUserReadPrivateScope]
         auth.redirectURL = NSURL(string: "name-playlist-creator-login://return")
         auth.tokenSwapURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/swap")
         auth.tokenRefreshURL = NSURL(string: "https://name-playlist-spt-token-swap.herokuapp.com/refresh")
@@ -43,21 +43,17 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     
     func refreshSession(callback: AuthResult -> Void) {
         if spotifyAuth.hasTokenRefreshService {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-                self.spotifyAuth.renewSession(self.spotifyAuth.session) {
-                    error, session in
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        if error != nil {
-                            print("Error renewing session: \(error)")
-                        }
-                        if session != nil {
-                            self.spotifyAuth.session = session
-                            callback(.Success(session!))
-                        } else {
-                            self.openLogin(callback)
-                        }
-                    }
+            self.spotifyAuth.renewSession(self.spotifyAuth.session) {
+                error, session in
+                
+                if error != nil {
+                    print("Error renewing session: \(error)")
+                }
+                if session != nil {
+                    self.spotifyAuth.session = session
+                    callback(.Success(session!))
+                } else {
+                    self.openLogin(callback)
                 }
             }
         } else {

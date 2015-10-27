@@ -12,10 +12,13 @@ public class PlaylistService {
     
     let contactService: ContactService
     let echoNestService: EchoNestService
+    let spotifyUserService: SpotifyUserService
     
-    public init(contactService: ContactService = ContactService(), echoNestService: EchoNestService = EchoNestService()) {
+    public init(contactService: ContactService = ContactService(), echoNestService: EchoNestService = EchoNestService(),
+        spotifyUserService: SpotifyUserService = SpotifyUserService()) {
         self.contactService = contactService
         self.echoNestService = echoNestService
+        self.spotifyUserService = spotifyUserService
     }
     
     public func createPlaylistWithPreferences(playlistPreferences: PlaylistPreferences, callback: PlaylistResult -> Void) {
@@ -25,7 +28,10 @@ public class PlaylistService {
                 if contactList.isEmpty {
                     callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.NoContactsCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.NoContactsMessage])))
                 } else {
-                    self.createPlaylistForContactList(contactList, playlistPreferences: playlistPreferences, callback: callback)
+                    self.retrieveCurrentUser({
+                        user in
+                        self.createPlaylistForContactList(contactList, withPlaylistPreferences: playlistPreferences, inLocale: user.territory, callback: callback)
+                    }, finalPlaylistResultCallback: callback)
                 }
             case .Failure(let error):
                 callback(.Failure(error))
@@ -39,7 +45,23 @@ public class PlaylistService {
         }
     }
     
-    func createPlaylistForContactList(contactList: [Contact], playlistPreferences: PlaylistPreferences, callback: PlaylistResult -> Void) {
+    func retrieveCurrentUser(userRetrievalHandler: SPTUser -> Void, finalPlaylistResultCallback: PlaylistResult -> Void) {
+        self.spotifyUserService.retrieveCurrentUser() {
+            userResult in
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                switch (userResult) {
+                case .Success(let user):
+                    userRetrievalHandler(user)
+                case .Failure(let error):
+                    finalPlaylistResultCallback(.Failure(error))
+                }
+            }
+        }
+    }
+    
+    func createPlaylistForContactList(contactList: [Contact], withPlaylistPreferences playlistPreferences: PlaylistPreferences,
+        inLocale locale: String?, callback: PlaylistResult -> Void) {
         let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).isEmpty})
         let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: playlistPreferences.numberOfSongs, numberOfContacts: searchableContacts.count)
         var contactSongsMap = [Contact: [Song]]()
@@ -49,7 +71,7 @@ public class PlaylistService {
         
         var contactLists = separateNRandomForSearch(playlistPreferences.numberOfSongs, fromContacts: searchableContacts)
         repeat {
-            let contactSongsResultMap = findSongsForContacts(contactLists.searchContacts, withPreferences: playlistPreferences.songPreferences, andSearchNumber: searchNumber)
+            let contactSongsResultMap = findSongsForContacts(contactLists.searchContacts, withPreferences: playlistPreferences.songPreferences, andSearchNumber: searchNumber, inLocale: locale)
             for (contact, songsResult) in contactSongsResultMap {
                 switch (songsResult) {
                 case .Success(let songs):
@@ -97,13 +119,14 @@ public class PlaylistService {
         return (randomContacts, remainingContacts)
     }
     
-    func findSongsForContacts(contacts: [Contact], withPreferences songPreferences: SongPreferences, andSearchNumber searchNumber: Int) -> [Contact: EchoNestService.SongsResult] {
+    func findSongsForContacts(contacts: [Contact], withPreferences songPreferences: SongPreferences,
+        andSearchNumber searchNumber: Int, inLocale locale: String?) -> [Contact: EchoNestService.SongsResult] {
 
         var contactSongsResultMap = Dictionary<Contact, EchoNestService.SongsResult>()
         let group = dispatch_group_create()
         for contact in contacts {
             dispatch_group_enter(group)
-            self.echoNestService.findSongs(titleSearchTerm: contact.firstName!, songPreferences: songPreferences, desiredNumberOfSongs: searchNumber) {
+            self.echoNestService.findSongs(titleSearchTerm: contact.firstName!, withSongPreferences: songPreferences, desiredNumberOfSongs: searchNumber, inLocale: locale) {
                 songsResult in
                 
                 contactSongsResultMap[contact] = songsResult

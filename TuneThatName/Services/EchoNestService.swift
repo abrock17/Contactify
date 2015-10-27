@@ -22,7 +22,7 @@ public class EchoNestService {
     let maxResultNumber = 100
     let apiKey = "GVZ7FFJUMMXBG58VQ"
     let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
-    let songSearchBuckets = ["tracks", "id:spotify-US", "song_discovery", "artist_discovery"]
+    let songSearchBuckets = ["tracks", "song_discovery", "artist_discovery"]
     
     let unexpectedResponseMessage = "Unexpected response from the Echo Nest."
     
@@ -32,9 +32,10 @@ public class EchoNestService {
         self.alamoFireManager = alamoFireManager
     }
     
-    public func findSongs(titleSearchTerm titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int, callback: (SongsResult) -> Void) {
+    public func findSongs(titleSearchTerm titleSearchTerm: String, withSongPreferences songPreferences: SongPreferences,
+        desiredNumberOfSongs: Int, inLocale locale: String? = nil, callback: (SongsResult) -> Void) {
         
-        let urlString = buildSongSearchEndpointStringWithBucketParameters() as URLStringConvertible
+        let urlString = buildSongSearchEndpointStringWithBucketParametersInLocale(locale) as URLStringConvertible
         let parameters = getSongSearchParametersForTitleSearchTerm(titleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)
         
         alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
@@ -209,13 +210,11 @@ public class EchoNestService {
         return resultNumber
     }
     
-    func buildSongSearchEndpointStringWithBucketParameters() -> String! {
+    func buildSongSearchEndpointStringWithBucketParametersInLocale(locale: String?) -> String! {
         var urlString = "\(songSearchEndpoint)?"
-        var separator = ""
-        for bucket in songSearchBuckets {
-            urlString += "\(separator)bucket=\(bucket)"
-            separator = "&"
-        }
+        let buckets = songSearchBuckets + [locale != nil ? "id:spotify-\(locale!)" : "id:spotify"]
+        let bucketParameterStrings = buckets.map({ "bucket=\($0)" })
+        urlString += bucketParameterStrings.joinWithSeparator("&")
         return urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
     }
 }

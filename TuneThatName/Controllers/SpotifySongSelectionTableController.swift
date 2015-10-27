@@ -48,7 +48,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
         }
         
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
-        echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, songPreferences: playlistPreferences!.songPreferences, desiredNumberOfSongs: 20) {
+        echoNestService.findSongs(titleSearchTerm: searchContact.firstName!, withSongPreferences: playlistPreferences!.songPreferences, desiredNumberOfSongs: 20) {
             songResult in
             
             switch (songResult) {

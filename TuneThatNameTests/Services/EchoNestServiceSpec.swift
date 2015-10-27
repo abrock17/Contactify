@@ -45,7 +45,7 @@ class EchoNestServiceSpec: QuickSpec {
             describe("find songs for title search term") {
                 context("when performing a search") {
                     beforeEach() {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                     }
                     
                     it("creates a request that contains the correct title string") {
@@ -58,6 +58,8 @@ class EchoNestServiceSpec: QuickSpec {
                             .toEventually(contain("bucket=tracks"))
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
                             .toEventually(contain("bucket=id:spotify"))
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
+                            .toEventuallyNot(contain("bucket=id:spotify-"))
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
                             .toEventually(contain("bucket=song_discovery"))
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
@@ -72,7 +74,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor popular songs") {
                     it("creates a request that sorts by song hotttnesss descending") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
 
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventually(contain("sort=song_hotttnesss-desc"))
@@ -81,7 +83,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor positive songs") {
                     it("creates a request that has a min valence parameter of 0.5") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Positive])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Positive])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventually(contain("min_valence=0.5"))
@@ -90,7 +92,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor negative songs") {
                     it("creates a request that has a max valence parameter of 0.5") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Negative])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Negative])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventually(contain("max_valence=0.5"))
@@ -99,7 +101,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor neither negative or positive songs") {
                     it("creates a request that makes no mention of the valence parameter") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: SongPreferences(), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventuallyNot(contain("valence"))
@@ -108,7 +110,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor energetic songs") {
                     it("creates a request that has a min energy parameter of 0.5") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Energetic])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Energetic])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventually(contain("min_energy=0.5"))
@@ -117,7 +119,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor chill songs") {
                     it("creates a request that has a max energy parameter of 0.5") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Chill])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Chill])), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventually(contain("max_energy=0.5"))
@@ -126,16 +128,25 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the song preferences favor neither energetic or chill songs") {
                     it("creates a request that makes no mention of the energy parameter") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: SongPreferences(), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: SongPreferences(), desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL?.absoluteString)
                             .toEventuallyNot(contain("energy"))
                     }
                 }
                 
+                context("when a locale is specified") {
+                    it("creates a request that has the appropriate spotify bucket") {
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, inLocale: "AD", callback: self.findSongsCallback)
+
+                        expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
+                            .toEventually(contain("bucket=id:spotify-AD"))
+                    }
+                }
+                
                 context("when the desired number of songs is greater than half the default search number") {
                     it("creates a request that contains a 'results' parameter double the necessary minimum") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 26, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 26, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
                             .toEventually(contain("results=52"))
@@ -144,7 +155,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the desired number of songs is greater than half the max results number") {
                     it("creates a request that contains the max 'results' parameter") {
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 51, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 51, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
                             .toEventually(contain("results=100"))
@@ -153,7 +164,7 @@ class EchoNestServiceSpec: QuickSpec {
                 
                 context("when the search term has special characters") {
                     it("encodes them propery in the URL request") {
-                        echoNestService.findSongs(titleSearchTerm: "\"Special, Characters ... (&)\"", songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: "\"Special, Characters ... (&)\"", withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(MockURLProtocol.getCapturedRequest()?.URL!.absoluteString)
                             .toEventually(contain("title=%22Special%2C%20Characters%20...%20%28%26%29%22"))
@@ -164,7 +175,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with an error message") {
                         MockURLProtocol.setMockResponseData("".dataUsingEncoding(NSUTF8StringEncoding))
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                     
                         expect(self.callbackError).toEventuallyNot(beNil())
@@ -178,7 +189,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("passes back the same error") {
                         MockURLProtocol.setMockError(expectedError)
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackError?.domain).toEventually(equal(expectedError.domain))
                         expect(self.callbackError?.code).toEventually(equal(expectedError.code))
@@ -192,7 +203,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with an error with the status message") {
                         MockURLProtocol.setMockResponseData(data)
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
                         expect(self.callbackError?.userInfo[NSLocalizedDescriptionKey] as? String).toEventually(equal("Non-zero status code from the Echo Nest."))
@@ -211,7 +222,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with an empty song array") {
                         self.callbackSongs.append(Song(title: "non-empty song list so we can check for empty later", artistName: nil, uri: NSURL(string: "uri")!))
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackSongs).toEventually(beEmpty())
                     }
@@ -223,7 +234,7 @@ class EchoNestServiceSpec: QuickSpec {
                     
                     beforeEach() {
                         MockURLProtocol.setMockResponseData(data)
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                     }
                     
                     it("calls back with a song") {
@@ -254,7 +265,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with nil Song") {
                         MockURLProtocol.setMockResponseData(data)
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackSongs).toEventually(beEmpty())
                     }
@@ -267,7 +278,7 @@ class EchoNestServiceSpec: QuickSpec {
                     it("calls back with the expected song") {
                         MockURLProtocol.setMockResponseData(data)
                         
-                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackSongs.count).toEventually(equal(1))
                         expect(self.callbackSongs[0].title).toEventually(equal("Susie Q"))
@@ -284,7 +295,7 @@ class EchoNestServiceSpec: QuickSpec {
                         beforeEach() {
                             MockURLProtocol.setMockResponseData(data)
                             
-                            echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
+                            echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
                         }
                         
                         it("calls back with the requested number of songs") {
@@ -309,7 +320,7 @@ class EchoNestServiceSpec: QuickSpec {
                         it("calls back with songs sorted by a combination of song and artist discovery") {
                             MockURLProtocol.setMockResponseData(data)
                             
-                            echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
+                            echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: songPreferences, desiredNumberOfSongs: numberOfSongs, callback: self.findSongsCallback)
                             
                             let expectedSortedSongs = [
                                 Song(title: "Janet", artistName: "Just Paul", uri: NSURL(string: "spotify:track:3PJmjxPVW2Hv4voMmmceeI")!),

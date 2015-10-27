@@ -66,7 +66,7 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                 }
                 
                 context("when the auth service calls back with canceled") {
-                    it("calls back with no error") {
+                    it("calls back with the expected error") {
                         mockSpotifyAuthService.mocker.prepareForCallTo(MockSpotifyAuthService.Method.doWithSession, returnValue: SpotifyAuthService.AuthResult.Canceled)
                         
                         spotifyAudioFacade.playTracksForURIs(self.trackURIs, fromIndex: index, callback: self.errorCallback)

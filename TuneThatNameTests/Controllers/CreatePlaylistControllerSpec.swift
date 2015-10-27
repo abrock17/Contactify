@@ -518,7 +518,8 @@ class MockPlaylistService: PlaylistService {
         static let createPlaylistWithPreferences = "createPlaylistWithPreferences"
     }
     
-    override func createPlaylistWithPreferences(playlistPreferences: PlaylistPreferences, callback: PlaylistService.PlaylistResult -> Void) {
+    override func createPlaylistWithPreferences(playlistPreferences: PlaylistPreferences,
+        callback: PlaylistService.PlaylistResult -> Void) {
         mocker.recordCall(Method.createPlaylistWithPreferences, parameters: playlistPreferences)
         let mockedResult = mocker.returnValueForCallTo(Method.createPlaylistWithPreferences)
         if let mockedResult = mockedResult as? PlaylistService.PlaylistResult {
