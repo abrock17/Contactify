@@ -24,6 +24,9 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
 
     public override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        // adjust album frame to proper size since autolayout has not taken effect yet
+        albumImageView.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.x, self.view.frame.width, self.view.frame.width)
         albumImageActivityIndicator = ControllerHelper.newActivityIndicatorForView(albumImageView)
         spotifyAudioFacade.playbackDelegate = self
         if hidePreviousAndNextTrackButtons {
@@ -64,7 +67,6 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
         artistLabel.text = spotifyTrack.displayArtistName
         albumLabel.text = spotifyTrack.albumName
         if spotifyTrack.albumLargestCoverImageURL != nil {
-            albumImageActivityIndicator.frame = albumImageView.bounds
             ControllerHelper.handleBeginBackgroundActivityForView(albumImageView,
                 activityIndicator: albumImageActivityIndicator)
 
