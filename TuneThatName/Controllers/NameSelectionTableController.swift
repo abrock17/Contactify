@@ -27,31 +27,40 @@ public class NameSelectionTableController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
-    func populateContacts() {
-        contactService.retrieveAllContacts() {
-            contactListResult in
-            
-            switch(contactListResult) {
-            case .Success(let contacts):
-                self.buildContactSectionMap(contacts)
-            case .Failure(let error):
-                print("Error retrieving all contacts: \(error)")
-            }
-        }
+    func addMassSelectionButtons() {
+        selectAllButton = UIBarButtonItem(title: "All", style: UIBarButtonItemStyle.Plain, target: self, action: "selectAllPressed:")
+        selectNoneButton = UIBarButtonItem(title: "None", style: UIBarButtonItemStyle.Plain, target: self, action: "selectNonePressed:")
+        navigationItem.rightBarButtonItems = [selectNoneButton, selectAllButton]
+    }
 
-        contactService.retrieveFilteredContacts() {
-            contactListResult in
-            
-            switch(contactListResult) {
-            case .Success(let contacts):
-                self.filteredContacts = Set<Contact>(contacts)
-            case .Failure(let error):
-                print("Error retrieving filtered contacts: \(error)")
+    func populateContacts() {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            self.contactService.retrieveAllContacts() {
+                contactListResult in
+                
+                switch(contactListResult) {
+                case .Success(let contacts):
+                    self.buildContactSectionMap(contacts)
+                    self.contactService.retrieveFilteredContacts() {
+                        contactListResult in
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            switch(contactListResult) {
+                            case .Success(let contacts):
+                                self.filteredContacts = Set<Contact>(contacts)
+                                if self.filteredContacts.isEmpty {
+                                    self.selectAllPressed(self.selectAllButton)
+                                }
+                                self.tableView.reloadData()
+                            case .Failure(let error):
+                                self.handleFilteredContactRetrievalError(error)
+                            }
+                        }
+                    }
+                case .Failure(let error):
+                    self.handleAllContactRetrievalError(error)
+                }
             }
-        }
-        
-        if filteredContacts.isEmpty {
-            selectAllPressed(selectAllButton)
         }
     }
     
@@ -80,11 +89,25 @@ public class NameSelectionTableController: UITableViewController {
         }
         contactSectionMap[key]?.append(contact)
     }
-
-    func addMassSelectionButtons() {
-        selectAllButton = UIBarButtonItem(title: "All", style: UIBarButtonItemStyle.Plain, target: self, action: "selectAllPressed:")
-        selectNoneButton = UIBarButtonItem(title: "None", style: UIBarButtonItemStyle.Plain, target: self, action: "selectNonePressed:")
-        navigationItem.rightBarButtonItems = [selectNoneButton, selectAllButton]
+    
+    func handleAllContactRetrievalError(error: NSError) {
+        dispatch_async(dispatch_get_main_queue()) {
+            print("Error retrieving all contacts: \(error)")
+            ControllerHelper.displaySimpleAlertForTitle("Unable to Retrieve Your Contacts",
+                andError: error, onController: self) {
+                action in
+                
+                self.navigationController?.popViewControllerAnimated(true)
+            }
+        }
+    }
+    
+    func handleFilteredContactRetrievalError(error: NSError) {
+        dispatch_async(dispatch_get_main_queue()) {
+            print("Error retrieving filtered contacts: \(error)")
+            ControllerHelper.displaySimpleAlertForTitle("Unable to Retrieve Your Selected Names",
+                andError: error, onController: self)
+        }
     }
 
     override public func didReceiveMemoryWarning() {

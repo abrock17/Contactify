@@ -42,12 +42,11 @@ class NameSelectionTableControllerSpec: QuickSpec {
             }
             
             describe("table view") {
-                beforeEach() {
-                    mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
-                }
                 
                 context("when contacts load successfully") {
                     beforeEach() {
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
+
                         self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
                     }
                     
@@ -97,17 +96,17 @@ class NameSelectionTableControllerSpec: QuickSpec {
                 context("when no contacts are filtered") {
                     let filteredContactList = [Contact]()
                     
-                    beforeEach() {
-                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Success(filteredContactList))
-                        self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
-                    }
-                    
                     it("adds a checkmark for all rows") {
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Success(filteredContactList))
+
+                        self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
+
                         for section in 0...26 {
                             for (rowIndex, text) in expectedSectionRowText[section].enumerate() {
                                 let indexPath = NSIndexPath(forRow: rowIndex, inSection: section)
                                 let expectedAccessoryType: UITableViewCellAccessoryType = .Checkmark
-                                expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType.rawValue).to(equal(expectedAccessoryType.rawValue))
+                                expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType.rawValue).toEventually(equal(expectedAccessoryType.rawValue))
                             }
                         }
                     }
@@ -116,63 +115,76 @@ class NameSelectionTableControllerSpec: QuickSpec {
                 context("when contacts are filtered") {
                     let filteredContactList = [contactList[2]]
                     
-                    beforeEach() {
-                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Success(filteredContactList))
-                        self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
-                    }
-                    
                     it("adds a checkmark accessory only for the filtered contact rows") {
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Success(filteredContactList))
+
+                        self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
+
                         for section in 0...26 {
                             for (rowIndex, text) in expectedSectionRowText[section].enumerate() {
                                 let indexPath = NSIndexPath(forRow: rowIndex, inSection: section)
                                 let expectedAccessoryType: UITableViewCellAccessoryType = indexPath.section == 5 && indexPath.row == 0 ? .Checkmark : .None
-                                expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType.rawValue).to(equal(expectedAccessoryType.rawValue))
+                                expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType.rawValue).toEventually(equal(expectedAccessoryType.rawValue))
                             }
                         }
                     }
+                }
+                
+                context("when contact retrieval results in error") {
+                    let contactRetrievalError = NSError(domain: "DOMAIN", code: 2345, userInfo: [NSLocalizedDescriptionKey: "you have no friends"])
                     
-                    describe("unwind to create playlist") {
-                        it("saves filtered contacts") {
-                            nameSelectionTableController.performSegueWithIdentifier("UnwindToCreatePlaylistFromNameSelectionSegue", sender: nil)
-                            NSRunLoop.mainRunLoop().runUntilDate(NSDate())
-                            
-                            expect(mockContactService.mocker.getNthCallTo(MockContactService.Method.saveFilteredContacts, n: 0)?.first as? [Contact]).to(equal(filteredContactList))
-                        }
+                    it("displays the error message in an alert") {
+                        mockContactService.mocker.prepareForCallTo(
+                            MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Failure(contactRetrievalError))
+
+                        self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
+                        
+                        self.assertSimpleUIAlertControllerPresentedOnController(nameSelectionTableController, withTitle: "Unable to Retrieve Your Contacts", andMessage: contactRetrievalError.localizedDescription)
+                    }
+                }
+                
+                context("when filtered contact retrieval results in error") {
+                    let filteredContactRetrievalError = NSError(domain: "DOMAIN", code: 3456, userInfo: [NSLocalizedDescriptionKey: "only shallow people would filter out friends"])
+                    
+                    it("displays the error message in an alert") {
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
+                        mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Failure(filteredContactRetrievalError))
+                        
+                        self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
+                        
+                        self.assertSimpleUIAlertControllerPresentedOnController(nameSelectionTableController, withTitle: "Unable to Retrieve Your Selected Names", andMessage: filteredContactRetrievalError.localizedDescription)
                     }
                 }
             }
             
             describe("select a name") {
                 let filteredContactList = [Contact]()
+                let indexPath = NSIndexPath(forRow: 0, inSection: 1)
                 
                 beforeEach() {
                     mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
                     // all names selected
                     mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Success(filteredContactList))
                     self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
+                    NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: 0.25))
+                    expect(nameSelectionTableController.numberOfSectionsInTableView(nameSelectionTableController.tableView))
+                        .toEventually(equal(27))
                 }
 
                 context("when the name has been selected") {
-                    let indexPath = NSIndexPath(forRow: 0, inSection: 1)
-                    
-                    beforeEach() {
-                        nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                    }
-                    
                     it("removes the checkmark accessory") {
+                        nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+
                         expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType).to(equal(UITableViewCellAccessoryType.None))
                     }
                 }
                 
                 context("when the name has not been selected") {
-                    let indexPath = NSIndexPath(forRow: 0, inSection: 1)
-                    
-                    beforeEach() {
-                        nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                        nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
-                    }
-                    
                     it("adds the checkmark accessory") {
+                        nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+                        nameSelectionTableController.tableView(nameSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
+
                         expect(nameSelectionTableController.tableView(nameSelectionTableController.tableView, cellForRowAtIndexPath: indexPath).accessoryType).to(equal(UITableViewCellAccessoryType.Checkmark))
                     }
                 }
@@ -216,6 +228,27 @@ class NameSelectionTableControllerSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("unwind to create playlist") {
+                let filteredContactList = [contactList[2]]
+
+                beforeEach() {
+                    mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
+                    // one name selected
+                    mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveFilteredContacts, returnValue: ContactService.ContactListResult.Success(filteredContactList))
+                    self.loadViewForController(nameSelectionTableController, withNavigationController: navigationController)
+                    NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: 0.25))
+                }
+
+                it("saves filtered contacts") {
+                    nameSelectionTableController.performSegueWithIdentifier(
+                        "UnwindToCreatePlaylistFromNameSelectionSegue", sender: nil)
+                    
+                    expect(mockContactService.mocker.getNthCallTo(
+                        MockContactService.Method.saveFilteredContacts, n: 0)?.first as? [Contact])
+                        .toEventually(equal(filteredContactList))
+                }
+            }
         }
     }
     
@@ -223,6 +256,15 @@ class NameSelectionTableControllerSpec: QuickSpec {
         navigationController.pushViewController(viewController, animated: false)
         UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
         NSRunLoop.mainRunLoop().runUntilDate(NSDate())
+    }
+    
+    func assertSimpleUIAlertControllerPresentedOnController(parentController: UIViewController, withTitle expectedTitle: String, andMessage expectedMessage: String) {
+        expect(parentController.presentedViewController).toEventuallyNot(beNil())
+        expect(parentController.presentedViewController).toEventually(beAnInstanceOf(UIAlertController))
+        if let alertController = parentController.presentedViewController as? UIAlertController {
+            expect(alertController.title).toEventually(equal(expectedTitle))
+            expect(alertController.message).toEventually(equal(expectedMessage))
+        }
     }
     
     func pressBarButton(barButton: UIBarButtonItem) {
