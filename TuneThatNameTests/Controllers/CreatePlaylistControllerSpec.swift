@@ -391,7 +391,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     }
                     
                     it("updates the filter contacts flag") {
-                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        self.pressBarButton(createPlaylistController.createPlaylistButton)
+                        
                         expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.filterContacts).toEventually(beTrue())
                     }
                     
@@ -412,7 +413,8 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     }
                     
                     it("updates the filter contacts flag") {
-                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        self.pressBarButton(createPlaylistController.createPlaylistButton)
+
                         expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.filterContacts).toEventually(beFalse())
                     }
 
@@ -439,7 +441,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
 
             describe("press the create playlist button") {
                 it("calls the playlist service with the correct number of songs") {
-                    createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                    self.pressBarButton(createPlaylistController.createPlaylistButton)
 
                     expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.numberOfSongs).toEventually(equal(defaultPlaylistPreferences.numberOfSongs))
                 }
@@ -449,7 +451,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     beforeEach() {
                         mockPlaylistService.mocker.prepareForCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, returnValue: PlaylistService.PlaylistResult.Failure(expectedError))
                         
-                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        self.pressBarButton(createPlaylistController.createPlaylistButton)
                     }
                     
                     it("does not segue to the playlist table view") {
@@ -470,7 +472,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     beforeEach() {
                         mockPlaylistService.mocker.prepareForCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, returnValue: PlaylistService.PlaylistResult.Success(expectedPlaylist))
                         
-                        createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+                        self.pressBarButton(createPlaylistController.createPlaylistButton)
                         NSRunLoop.mainRunLoop().runUntilDate(NSDate())
                     }
                     
@@ -490,10 +492,14 @@ class CreatePlaylistControllerSpec: QuickSpec {
         }
     }
     
+    func pressBarButton(barButton: UIBarButtonItem) {
+        UIApplication.sharedApplication().sendAction(barButton.action, to: barButton.target, from: self, forEvent: nil)
+    }
+    
     func assertUponPlaylistCreationInController(createPlaylistController: CreatePlaylistController,
         withMockPlaylistService mockPlaylistService: MockPlaylistService,
         songPreferencesContainsCharacteristic characteristic: SongPreferences.Characteristic) {
-            createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+            self.pressBarButton(createPlaylistController.createPlaylistButton)
             expect(
                 (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)
                 .toEventually(contain(characteristic))
@@ -502,7 +508,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
     func assertUponPlaylistCreationInController(createPlaylistController: CreatePlaylistController,
         withMockPlaylistService mockPlaylistService: MockPlaylistService,
         songPreferencesDoNotContainCharacteristic characteristic: SongPreferences.Characteristic) {
-            createPlaylistController.createPlaylistButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+            self.pressBarButton(createPlaylistController.createPlaylistButton)
             NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: 0.25))
             expect(
                 (mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.songPreferences.characteristics)

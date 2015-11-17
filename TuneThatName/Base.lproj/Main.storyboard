@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ldX-ZI-ufm">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ldX-ZI-ufm">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -31,20 +31,6 @@
                                     <action selector="numberOfSongsValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="xwU-KV-PMc"/>
                                 </connections>
                             </slider>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HeA-qY-xM1">
-                                <rect key="frame" x="16" y="538" width="568" height="42"/>
-                                <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="42" id="rIG-j8-kvb"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                <state key="normal" title="Create Playlist">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="createPlaylistPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y5J-wG-RA3"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hbq-o6-8bp">
                                 <rect key="frame" x="517" y="84" width="29" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -275,17 +261,27 @@
                                     <constraint firstAttribute="height" constant="33" id="nTV-SM-16n"/>
                                 </constraints>
                             </view>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EZj-91-YOG">
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Com-hg-I9H"/>
+                                    <barButtonItem title="Create Playlist" id="TWp-ka-wg8">
+                                        <connections>
+                                            <action selector="createPlaylistPressed:" destination="BYZ-38-t0r" id="HKP-Db-5Nd"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="nqJ-dV-x3J"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="nfX-RX-EaD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="0RQ-pG-4x4"/>
                             <constraint firstAttribute="trailingMargin" secondItem="KtW-H2-U9H" secondAttribute="trailing" id="0Zn-Fs-jUL"/>
                             <constraint firstItem="y5E-JQ-5i5" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2eT-ED-cqu"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="HeA-qY-xM1" secondAttribute="bottom" constant="20" id="3LM-zo-t1k"/>
                             <constraint firstItem="3uB-hS-GmW" firstAttribute="baseline" secondItem="y5E-JQ-5i5" secondAttribute="baseline" id="4HW-Ll-DgO"/>
                             <constraint firstItem="y5E-JQ-5i5" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="4Qm-xY-aud"/>
                             <constraint firstItem="OMw-Iy-CFp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="59b-73-pcE"/>
-                            <constraint firstItem="HeA-qY-xM1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="5Li-Sw-Ih5"/>
                             <constraint firstItem="3uB-hS-GmW" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="7do-ck-qiT"/>
                             <constraint firstItem="ef7-yO-7xx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="8ZR-nk-yRA"/>
                             <constraint firstItem="oq7-t3-HXS" firstAttribute="centerY" secondItem="OMw-Iy-CFp" secondAttribute="centerY" id="9Kc-Td-CG5"/>
@@ -293,9 +289,11 @@
                             <constraint firstItem="lOX-7J-hjx" firstAttribute="centerY" secondItem="F2P-yw-r0P" secondAttribute="centerY" id="BOr-Ik-1Eb"/>
                             <constraint firstItem="F2P-yw-r0P" firstAttribute="leading" secondItem="lOX-7J-hjx" secondAttribute="trailing" id="BkN-uX-Ooq"/>
                             <constraint firstItem="lOX-7J-hjx" firstAttribute="width" secondItem="nfX-RX-EaD" secondAttribute="width" id="CvS-uK-vWY"/>
+                            <constraint firstAttribute="trailing" secondItem="EZj-91-YOG" secondAttribute="trailing" id="D8Z-wh-Lyn"/>
                             <constraint firstItem="KtW-H2-U9H" firstAttribute="centerY" secondItem="xRL-Tx-hX6" secondAttribute="centerY" id="DSy-aB-sPc"/>
                             <constraint firstItem="lOX-7J-hjx" firstAttribute="width" secondItem="F2P-yw-r0P" secondAttribute="width" id="F7j-RC-fo1"/>
                             <constraint firstItem="oq7-t3-HXS" firstAttribute="leading" secondItem="OMw-Iy-CFp" secondAttribute="trailing" id="Frx-Ox-FLT"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="EZj-91-YOG" secondAttribute="bottom" id="Jwv-Cs-i5K"/>
                             <constraint firstItem="kaM-ul-QLi" firstAttribute="leading" secondItem="xRL-Tx-hX6" secondAttribute="trailing" id="Kaz-pe-0V0"/>
                             <constraint firstItem="ef7-yO-7xx" firstAttribute="top" secondItem="OMw-Iy-CFp" secondAttribute="bottom" constant="13" id="L8G-v8-vcE"/>
                             <constraint firstItem="oq7-t3-HXS" firstAttribute="centerY" secondItem="3MR-0i-EX6" secondAttribute="centerY" id="MGs-CC-f54"/>
@@ -319,7 +317,6 @@
                             <constraint firstItem="nfX-RX-EaD" firstAttribute="top" secondItem="ef7-yO-7xx" secondAttribute="bottom" constant="13" id="gXF-MS-XDb"/>
                             <constraint firstItem="KtW-H2-U9H" firstAttribute="width" secondItem="ef7-yO-7xx" secondAttribute="width" id="hFO-oc-qCJ"/>
                             <constraint firstItem="3uB-hS-GmW" firstAttribute="leading" secondItem="hbq-o6-8bp" secondAttribute="trailing" constant="8" id="hLA-YR-yn3"/>
-                            <constraint firstItem="HeA-qY-xM1" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="hr8-oz-PrJ"/>
                             <constraint firstItem="oq7-t3-HXS" firstAttribute="width" secondItem="OMw-Iy-CFp" secondAttribute="width" id="kaL-gr-m0s"/>
                             <constraint firstItem="wIA-kH-EhL" firstAttribute="top" secondItem="lEK-sa-zpd" secondAttribute="bottom" constant="13" id="lfm-4G-PGQ"/>
                             <constraint firstItem="P5d-Pz-Tpy" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="nSA-kh-Md6"/>
@@ -334,13 +331,14 @@
                             <constraint firstItem="3MR-0i-EX6" firstAttribute="leading" secondItem="oq7-t3-HXS" secondAttribute="trailing" id="w49-uB-YGR"/>
                             <constraint firstItem="lEK-sa-zpd" firstAttribute="top" secondItem="4jn-1I-rWE" secondAttribute="bottom" constant="16" id="wFO-WE-Fky"/>
                             <constraint firstItem="hbq-o6-8bp" firstAttribute="leading" secondItem="JK9-5F-GeH" secondAttribute="trailing" constant="8" id="x1s-f8-S4b"/>
+                            <constraint firstItem="EZj-91-YOG" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="xFh-e8-aKB"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="New Playlist" id="FFN-9L-8gU">
                         <barButtonItem key="backBarButtonItem" title="Done" id="XbV-A9-SOg"/>
                     </navigationItem>
                     <connections>
-                        <outlet property="createPlaylistButton" destination="HeA-qY-xM1" id="A3O-oK-qk0"/>
+                        <outlet property="createPlaylistButton" destination="TWp-ka-wg8" id="2jL-qD-rc4"/>
                         <outlet property="decrementNumberOfSongsButton" destination="JK9-5F-GeH" id="iBD-qO-tFy"/>
                         <outlet property="favorChillSwitch" destination="sRQ-qd-kB0" id="ALS-eV-DhI"/>
                         <outlet property="favorEnergeticSwitch" destination="BaG-lf-r12" id="VmP-7X-huM"/>

@@ -3,8 +3,8 @@
 
 use_frameworks!
 
-pod 'SwiftyJSON', :git => 'https://github.com/SwiftyJSON/SwiftyJSON.git', :branch => 'xcode7'
-pod 'Alamofire', '2.0.2'
+pod 'SwiftyJSON', '2.3.1'
+pod 'Alamofire', '3.1.2'
 #pod 'Spotify-iOS-SDK', '0.8.0'
 
 target 'TuneThatName' do
@@ -13,8 +13,8 @@ end
 
 def testing_pods
    
-   pod 'Quick', '0.6.0'
-   pod 'Nimble', '2.0.0-rc.3'
+   pod 'Quick', '0.8.0'
+   pod 'Nimble', '3.0.0'
    
 end
 

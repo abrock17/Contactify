@@ -652,19 +652,12 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     spotifyPlaylistTableController.performSegueWithIdentifier("SelectSongSameContactSegue", sender: nil)
                 }
                 
-                it("shows the spotify song selection table") {
+                it("shows the spotify song selection table and sets the expected properties") {
                     expect(navigationController.topViewController)
                         .toEventually(beAnInstanceOf(SpotifySongSelectionTableController))
-                }
-                
-                it("sets the search contact on the song selection table controller") {
-                    let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
-                    expect(spotifySongSelectionTableController?.searchContact).to(equal(playlist.songsWithContacts[0].contact))
-                }
-                
-                it("sets the song selection completion handler on the song selection table controller") {
-                    let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
-                    expect(spotifySongSelectionTableController?.songSelectionCompletionHandler).toNot(beNil())
+                    let spotifySongSelectionTableController = navigationController.topViewController as! SpotifySongSelectionTableController
+                    expect(spotifySongSelectionTableController.searchContact).to(equal(playlist.songsWithContacts[0].contact))
+                    expect(spotifySongSelectionTableController.songSelectionCompletionHandler).toNot(beNil())
                 }
             }
             
@@ -674,14 +667,10 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     spotifyPlaylistTableController.performSegueWithIdentifier("EnterNameSegue", sender: nil)
                 }
                 
-                it("shows the single name entry view") {
+                it("shows the single name entry view and sets the completion handler") {
                     expect(navigationController.topViewController)
                         .toEventually(beAnInstanceOf(SingleNameEntryController))
-                }
-                
-                it("sets the song selection completion handler on the song selection table controller") {
-                    let singleNameEntryController = navigationController.topViewController as? SingleNameEntryController
-                    expect(singleNameEntryController?.songSelectionCompletionHandler).toNot(beNil())
+                    expect((navigationController.topViewController as? SingleNameEntryController)?.songSelectionCompletionHandler).toEventuallyNot(beNil())
                 }
             }
         }

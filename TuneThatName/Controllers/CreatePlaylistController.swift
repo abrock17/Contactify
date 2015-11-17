@@ -25,7 +25,7 @@ public class CreatePlaylistController: UIViewController {
     @IBOutlet public weak var favorNegativeSwitch: UISwitch!
     @IBOutlet public weak var favorEnergeticSwitch: UISwitch!
     @IBOutlet public weak var favorChillSwitch: UISwitch!
-    @IBOutlet public weak var createPlaylistButton: UIButton!
+    @IBOutlet public weak var createPlaylistButton: UIBarButtonItem!
 
     override public func viewDidLoad() {
         super.viewDidLoad()
@@ -157,7 +157,7 @@ public class CreatePlaylistController: UIViewController {
         }
     }
     
-    @IBAction public func createPlaylistPressed(sender: AnyObject) {
+    @IBAction public func createPlaylistPressed(sender: UIBarButtonItem) {
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             self.playlistService.createPlaylistWithPreferences(self.playlistPreferences) {

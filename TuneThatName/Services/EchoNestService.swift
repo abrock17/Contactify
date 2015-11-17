@@ -39,12 +39,12 @@ public class EchoNestService {
         let parameters = getSongSearchParametersForTitleSearchTerm(titleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)
         
         alamoFireManager.request(.GET, urlString, parameters: parameters).responseJSON {
-            request, response, result in
+            response in //request, response, result in
             
-            switch (result) {
-            case .Failure(let data, let errorType):
-                print("request url : \(request?.URL) \nresponse status code : \(response?.statusCode) \nheaders : \(response?.allHeaderFields)")
-                print("data : \(data)")
+            switch (response.result) {
+            case .Failure(let errorType):
+                print("request url : \(response.request?.URL) \nresponse status code : \(response.response?.statusCode) \nheaders : \(response.response?.allHeaderFields)")
+                print("data : \(response.data)")
                 
                 callback(.Failure(errorType as NSError))
             case .Success(let data):
