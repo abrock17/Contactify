@@ -59,6 +59,7 @@
 		44A0A8D51AEC57F900E7A2A1 /* MockEchoNestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */; };
 		44A0A8DB1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44A0A8DA1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt */; };
 		44A0A8DD1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44A0A8DC1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt */; };
+		44ACBEF31BFB568700946B31 /* Dakirby309-Simply-Styled-Spotify.ico in Resources */ = {isa = PBXBuildFile; fileRef = 44ACBEF21BFB568700946B31 /* Dakirby309-Simply-Styled-Spotify.ico */; };
 		44AEBC981AE89DFF00D96CD1 /* ControllerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */; };
 		44AFD9B51B16B99500E99FBF /* MockControllerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AFD9B41B16B99500E99FBF /* MockControllerHelper.swift */; };
 		44AFD9B71B1722FC00E99FBF /* SpotifyTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AFD9B61B1722FC00E99FBF /* SpotifyTrack.swift */; };
@@ -159,6 +160,7 @@
 		44A0A8D41AEC57F900E7A2A1 /* MockEchoNestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockEchoNestService.swift; sourceTree = "<group>"; };
 		44A0A8DA1AF23D9200E7A2A1 /* echonest-response-data-multiple-songs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-multiple-songs.txt"; sourceTree = "<group>"; };
 		44A0A8DC1AF2400500E7A2A1 /* echonest-response-data-no-songs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-no-songs.txt"; sourceTree = "<group>"; };
+		44ACBEF21BFB568700946B31 /* Dakirby309-Simply-Styled-Spotify.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = "Dakirby309-Simply-Styled-Spotify.ico"; sourceTree = "<group>"; };
 		44AEBC971AE89DFF00D96CD1 /* ControllerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerHelper.swift; sourceTree = "<group>"; };
 		44AFD9B41B16B99500E99FBF /* MockControllerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockControllerHelper.swift; sourceTree = "<group>"; };
 		44AFD9B61B1722FC00E99FBF /* SpotifyTrack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyTrack.swift; sourceTree = "<group>"; };
@@ -354,6 +356,22 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		44ACBEE01BFADF3800946B31 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				44ACBEE11BFADFA100946B31 /* Images */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		44ACBEE11BFADFA100946B31 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				44ACBEF21BFB568700946B31 /* Dakirby309-Simply-Styled-Spotify.ico */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
 		44AFD9BA1B18823000E99FBF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -420,6 +438,7 @@
 				44E9D5F21A952D2F001E4792 /* Images.xcassets */,
 				44E9D5F41A952D2F001E4792 /* LaunchScreen.xib */,
 				44E9D5E91A952D2F001E4792 /* Supporting Files */,
+				44ACBEE01BFADF3800946B31 /* Resources */,
 				443963981A97567100E0C385 /* TuneThatName-Bridging-Header.h */,
 			);
 			path = TuneThatName;
@@ -617,6 +636,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44E9D5F11A952D2F001E4792 /* Main.storyboard in Resources */,
+				44ACBEF31BFB568700946B31 /* Dakirby309-Simply-Styled-Spotify.ico in Resources */,
 				44E9D5F61A952D2F001E4792 /* LaunchScreen.xib in Resources */,
 				44E9D5F31A952D2F001E4792 /* Images.xcassets in Resources */,
 			);

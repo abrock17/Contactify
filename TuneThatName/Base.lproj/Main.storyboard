@@ -264,7 +264,14 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EZj-91-YOG">
                                 <rect key="frame" x="0.0" y="556" width="600" height="44"/>
                                 <items>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Com-hg-I9H"/>
+                                    <barButtonItem style="plain" id="UCQ-6o-Vh8">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="AeR-z7-XwA">
+                                            <rect key="frame" x="20" y="6" width="32" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" backgroundImage="Dakirby309-Simply-Styled-Spotify.ico"/>
+                                        </button>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="kwu-Te-aai"/>
                                     <barButtonItem title="Create Playlist" id="TWp-ka-wg8">
                                         <connections>
                                             <action selector="createPlaylistPressed:" destination="BYZ-38-t0r" id="HKP-Db-5Nd"/>
@@ -790,6 +797,9 @@
             <point key="canvasLocation" x="404" y="340"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Dakirby309-Simply-Styled-Spotify.ico" width="256" height="256"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Xtd-C4-B77"/>
         <segue reference="mu1-Yo-RgQ"/>
