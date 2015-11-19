@@ -37,6 +37,10 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
         }
     }
     
+    public func logout() {
+        
+    }
+    
     func sessionIsValid() -> Bool {
         return spotifyAuth.session != nil && spotifyAuth.session.isValid()
     }

@@ -183,6 +183,12 @@ public class CreatePlaylistController: UIViewController {
         self.performSegueWithIdentifier("CreatePlaylistSegue", sender: sender)
     }
     
+    @IBAction public func spotifyActionsPressed(sender: AnyObject) {
+        let spotifyActionSheet = SpotifyActionSheetController(application: UIApplication.sharedApplication(), spotifyAuthService: SpotifyAuthService())
+
+        presentViewController(spotifyActionSheet, animated: true, completion: nil)
+    }
+    
     @IBAction public func unwindToCreatePlaylist(sender: UIStoryboardSegue) {
     }
 }
