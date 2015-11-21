@@ -33,7 +33,7 @@ class SpotifyAuthServicesSpec: QuickSpec {
                 mockSPTAuth = MockSPTAuth()
                 spotifyAuthService = SpotifyAuthService(spotifyAuth: mockSPTAuth)
                 mockSpotifyAudioFacade = MockSpotifyAudioFacade()
-                spotifyAuthService.spotifyAudioFacadeRetriever = { () in return mockSpotifyAudioFacade }
+                spotifyAuthService.getSpotifyAudioFacade = { () in return mockSpotifyAudioFacade }
             }
             
             describe("do with session") {
@@ -152,6 +152,24 @@ class SpotifyAuthServicesSpec: QuickSpec {
                                 }
                             }
                         }
+                    }
+                }
+            }
+            
+            describe("has session") {
+                context("when SPT auth session is nil") {
+                    it("is false") {
+                        mockSPTAuth.mocker.prepareForCallTo(MockSPTAuth.Method.getSession, returnValue: nil)
+
+                        expect(spotifyAuthService.hasSession).to(beFalse())
+                    }
+                }
+                
+                context("when SPT auth session is not nil") {
+                    it("is true") {
+                        mockSPTAuth.mocker.prepareForCallTo(MockSPTAuth.Method.getSession, returnValue: self.getSPTSessionThatExpiresIn(0))
+                        
+                        expect(spotifyAuthService.hasSession).to(beTrue())
                     }
                 }
             }

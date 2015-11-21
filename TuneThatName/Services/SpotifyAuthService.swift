@@ -22,7 +22,13 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     }
     
     let spotifyAuth: SPTAuth
-    var spotifyAudioFacadeRetriever: (() -> SpotifyAudioFacade) = { return SpotifyAudioFacadeImpl.sharedInstance }
+    var getSpotifyAudioFacade: (() -> SpotifyAudioFacade) = { return SpotifyAudioFacadeImpl.sharedInstance }
+    
+    public var hasSession: Bool {
+        get {
+            return spotifyAuth.session != nil
+        }
+    }
     
     var postLoginCallback: (AuthResult -> Void)?
     
@@ -40,7 +46,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     
     public func logout() {
         spotifyAuth.session = nil
-        spotifyAudioFacadeRetriever().reset() {
+        getSpotifyAudioFacade().reset() {
             error in
             if error != nil {
                 print("Error resetting spotify audio facade: \(error)")

@@ -44,6 +44,23 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                 self.advanceRunLoopForTimeInterval(0.1)
             }
             
+            describe("spotify actions button") {
+                var spotifyActionsButton: UIBarButtonItem!
+                
+                beforeEach() {
+                    spotifyActionsButton = spotifyPlaylistTableController.toolbarItems?[1]
+                }
+                
+                it("has the expected image") {
+                    let expectedImage = UIImage(named: "Dakirby309-Simply-Styled-Spotify.ico")!
+                    expect((spotifyActionsButton?.customView as? UIButton)?.currentBackgroundImage).to(equal(expectedImage))
+                }
+                
+                it("has the expected action") {
+                    expect((spotifyActionsButton?.customView as? UIButton)?.actionsForTarget(spotifyPlaylistTableController, forControlEvent: .TouchUpInside)).to(equal(["spotifyActionsPressed:"]))
+                }
+            }
+            
             describe("save button pressed") {
                 context("when the playlist has a name") {
                     it("calls the service to save the playlist") {

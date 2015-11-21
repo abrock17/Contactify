@@ -139,10 +139,8 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
         spotifyAudioController.logout() {
             error in
             
-            // TODO: if error, don't do this stuff
             self.audioStreaming(self.spotifyAudioController, didChangePlaybackStatus: false)
             self.audioStreaming(self.spotifyAudioController, didChangeToTrack: nil)
-            
             callback(error)
         }
     }

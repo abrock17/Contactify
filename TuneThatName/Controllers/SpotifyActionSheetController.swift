@@ -35,7 +35,9 @@ public class SpotifyActionSheetController: UIAlertController {
 
     func addActions() {
         addAction(UIAlertAction(title: "Go to Spotify", style: .Default, handler: goToSpotify))
-        addAction(UIAlertAction(title: "Log out of Spotify", style: .Default, handler: logout))
+        if spotifyAuthService.hasSession {
+            addAction(UIAlertAction(title: "Log out of Spotify", style: .Default, handler: logout))
+        }
         addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
     }
     

@@ -6,7 +6,18 @@ class MockSpotifyAuthService: SpotifyAuthService {
     
     struct Method {
         static let doWithSession = "doWithSession"
+        static let getHasSession = "getHasSession"
         static let logout = "logout"
+    }
+    
+    override var hasSession: Bool {
+        get {
+            if let mockedLoggedIn = mocker.mockCallTo(Method.getHasSession) as? Bool {
+                return mockedLoggedIn
+            } else {
+                return true
+            }
+        }
     }
     
     override func doWithSession(callback: AuthResult -> Void) {

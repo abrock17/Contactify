@@ -236,7 +236,6 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                     
                     it("sets isPlaying to false") {
                         expect(spotifyAudioFacade.isPlaying).to(beFalse())
-                        
                     }
                     
                     it("passes the value to changedPlaybackStatus on the playback delegate") {
