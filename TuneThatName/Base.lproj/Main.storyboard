@@ -449,6 +449,11 @@
                                 <action selector="songViewPressed:" destination="197-cV-9aq" id="Y2S-Dd-PDO"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem id="ibd-p2-n2o">
+                            <connections>
+                                <action selector="spotifyActionsPressed:" destination="197-cV-9aq" id="yPK-GV-Ndx"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="9ZZ-s8-bZs"/>
                         <barButtonItem style="plain" id="kyd-NY-KvY">
                             <connections>
@@ -489,6 +494,7 @@
                         <outlet property="playlistNameButton" destination="kO6-zi-WbG" id="qyd-dR-Etd"/>
                         <outlet property="saveButton" destination="kyd-NY-KvY" id="7Cy-NB-X9a"/>
                         <outlet property="songViewButton" destination="vZD-FT-x7g" id="dYO-ld-fQl"/>
+                        <outlet property="spotifyActionsButton" destination="ibd-p2-n2o" id="HrJ-Nz-qVF"/>
                         <segue destination="njU-17-JH3" kind="presentation" identifier="ShowSpotifyTrackFromPlaylistSegue" id="thZ-EL-OxA"/>
                         <segue destination="49h-Wb-X4D" kind="unwind" identifier="UnwindToCreatePlaylistFromPlaylistTableSegue" unwindAction="unwindToCreatePlaylist:" id="Ynz-83-V4a"/>
                         <segue destination="zTz-r1-XjC" kind="show" identifier="SelectSongSameContactSegue" id="Xtd-C4-B77"/>
@@ -805,6 +811,6 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Xtd-C4-B77"/>
-        <segue reference="mu1-Yo-RgQ"/>
+        <segue reference="thZ-EL-OxA"/>
     </inferredMetricsTieBreakers>
 </document>

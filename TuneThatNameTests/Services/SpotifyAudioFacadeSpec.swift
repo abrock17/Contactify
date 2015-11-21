@@ -205,6 +205,54 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                 }
             }
             
+            describe("reset") {
+                it("logs out of the spotify audio controller") {
+                    spotifyAudioFacade.reset(self.errorCallback)
+
+                    expect(mockAudioStreamingController.mocker.getCallCountFor(
+                        MockSPTAudioStreamingController.Method.logout)).to(equal(1))
+                }
+                
+                context("when logout calls back with an error") {
+                    let error = NSError(domain: "spotify", code: 802, userInfo: [NSLocalizedDescriptionKey: "couldn't logout"])
+                    
+                    it("calls back with the error") {
+                        mockAudioStreamingController.mocker.prepareForCallTo(MockSPTAudioStreamingController.Method.logout, returnValue: error)
+                        
+                        spotifyAudioFacade.reset(self.errorCallback)
+                        
+                        expect(self.callbackErrors.isEmpty).to(beFalse())
+                        expect(self.callbackErrors.first!).to(equal(error))
+                    }
+                }
+                
+                context("when is playing") {
+                    beforeEach() {
+                        spotifyAudioFacade.playbackDelegate = mockSpotifyPlaybackDelegate
+                        spotifyAudioFacade.audioStreaming?(mockAudioStreamingController, didChangePlaybackStatus: true)
+                        
+                        spotifyAudioFacade.reset(self.errorCallback)
+                    }
+                    
+                    it("sets isPlaying to false") {
+                        expect(spotifyAudioFacade.isPlaying).to(beFalse())
+                        
+                    }
+                    
+                    it("passes the value to changedPlaybackStatus on the playback delegate") {
+                        expect(mockSpotifyPlaybackDelegate.mocker.getNthCallTo(MockSpotifyPlaybackDelegate.Method.changedPlaybackStatus, n: 0)?.first as? Bool).to(equal(false))
+                    }
+                    
+                    it("sets the current spotify track to nil") {
+                        expect(spotifyAudioFacade.currentSpotifyTrack).to(beNil())
+                    }
+                    
+                    it("passes the nil value to changedCurrentTrack on the playback delegate") {
+                        expect(mockSpotifyPlaybackDelegate.mocker.getNthCallTo(MockSpotifyPlaybackDelegate.Method.changedCurrentTrack, n: 0)!.first!).to(beNil())
+                    }
+                }
+            }
+            
             describe("audio streaming did change playback status") {
                 beforeEach() {
                     spotifyAudioFacade.playbackDelegate = mockSpotifyPlaybackDelegate
@@ -248,6 +296,7 @@ class MockSPTAudioStreamingController: SPTAudioStreamingController {
     
     struct Method {
         static let loginWithSession = "loginWithSession"
+        static let logout = "logout"
         static let playURIsFromIndex = "playURIsFromIndex"
         static let replaceURIsWithCurrentTrack = "replaceURIsWithCurrentTrack"
         static let setIsPlaying = "setIsPlaying"
@@ -257,6 +306,11 @@ class MockSPTAudioStreamingController: SPTAudioStreamingController {
     override func loginWithSession(session: SPTSession!, callback block: SPTErrorableOperationCallback!) {
         mocker.recordCall(Method.loginWithSession, parameters: session)
         block(mocker.returnValueForCallTo(Method.loginWithSession) as! NSError!)
+    }
+    
+    override func logout(block: SPTErrorableOperationCallback!) {
+        mocker.recordCall(Method.logout)
+        block(mocker.returnValueForCallTo(Method.logout) as! NSError!)
     }
     
     override func playURIs(uris: [AnyObject]!, fromIndex index: Int32, callback block: SPTErrorableOperationCallback!) {

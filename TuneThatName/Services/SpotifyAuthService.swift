@@ -22,6 +22,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     }
     
     let spotifyAuth: SPTAuth
+    var spotifyAudioFacadeRetriever: (() -> SpotifyAudioFacade) = { return SpotifyAudioFacadeImpl.sharedInstance }
     
     var postLoginCallback: (AuthResult -> Void)?
     
@@ -38,7 +39,13 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     }
     
     public func logout() {
-        
+        spotifyAuth.session = nil
+        spotifyAudioFacadeRetriever().reset() {
+            error in
+            if error != nil {
+                print("Error resetting spotify audio facade: \(error)")
+            }
+        }
     }
     
     func sessionIsValid() -> Bool {
@@ -72,6 +79,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
         spotifyAuthController.delegate = self
         spotifyAuthController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
         spotifyAuthController.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
+        spotifyAuthController.clearCookies(nil)
 
         let topViewController = getTopViewControllerFrom(UIApplication.sharedApplication().delegate!.window!!.rootViewController!)
         

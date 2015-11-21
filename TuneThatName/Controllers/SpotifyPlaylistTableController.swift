@@ -27,6 +27,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
     @IBOutlet public weak var saveButton: UIBarButtonItem!
     @IBOutlet public weak var playPauseButton: UIBarButtonItem!
     @IBOutlet public weak var songViewButton: UIBarButtonItem!
+    @IBOutlet weak var spotifyActionsButton: UIBarButtonItem!
     
     override public func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +41,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
         super.viewWillAppear(animated)
         spotifyAudioFacade.playbackDelegate = self
         self.navigationController?.setToolbarHidden(false, animated: animated)
+
+        // TODO: testdrive this
+        setupSpotifyActionsButton()
     }
 
     override public func viewWillDisappear(animated: Bool) {
@@ -372,5 +376,15 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
     
     func updateSongViewButtonForImage(image: UIImage?) {
         ControllerHelper.updateBarButtonItemOnTarget(self, action: "songViewPressed:", atToolbarIndex: 0, withImage: image)
+    }
+    
+    func setupSpotifyActionsButton() {
+        ControllerHelper.updateBarButtonItemOnTarget(self, action: "spotifyActionsPressed:", atToolbarIndex: 1, withImage: UIImage(named: "Dakirby309-Simply-Styled-Spotify.ico"))
+    }
+    
+    @IBAction public func spotifyActionsPressed(sender: AnyObject) {
+        let spotifyActionSheet = SpotifyActionSheetController(application: UIApplication.sharedApplication(), spotifyAuthService: SpotifyAuthService())
+        
+        presentViewController(spotifyActionSheet, animated: true, completion: nil)
     }
 }

@@ -17,6 +17,8 @@ public protocol SpotifyAudioFacade: SPTAudioStreamingPlaybackDelegate {
     func toNextTrack(callback: SPTErrorableOperationCallback)
     
     func toPreviousTrack(callback: SPTErrorableOperationCallback)
+    
+    func reset(callback: SPTErrorableOperationCallback)
 }
 
 public protocol SpotifyPlaybackDelegate {
@@ -131,6 +133,18 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
     
     public func toPreviousTrack(callback: SPTErrorableOperationCallback) {
         spotifyAudioController.skipPrevious(callback)
+    }
+    
+    public func reset(callback: SPTErrorableOperationCallback) {
+        spotifyAudioController.logout() {
+            error in
+            
+            // TODO: if error, don't do this stuff
+            self.audioStreaming(self.spotifyAudioController, didChangePlaybackStatus: false)
+            self.audioStreaming(self.spotifyAudioController, didChangeToTrack: nil)
+            
+            callback(error)
+        }
     }
     
     public func audioStreaming(audioStreaming: SPTAudioStreamingController!, didChangePlaybackStatus isPlaying: Bool) {

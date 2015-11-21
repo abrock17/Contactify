@@ -1,6 +1,6 @@
-import TuneThatName
 import Quick
 import Nimble
+@testable import TuneThatName
 
 class SpotifyAuthServicesSpec: QuickSpec {
     
@@ -23,6 +23,7 @@ class SpotifyAuthServicesSpec: QuickSpec {
         describe("The Spotify Auth Service") {
             var spotifyAuthService: SpotifyAuthService!
             var mockSPTAuth: MockSPTAuth!
+            var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             
             beforeEach() {
                 self.callbackSession = nil
@@ -31,6 +32,8 @@ class SpotifyAuthServicesSpec: QuickSpec {
 
                 mockSPTAuth = MockSPTAuth()
                 spotifyAuthService = SpotifyAuthService(spotifyAuth: mockSPTAuth)
+                mockSpotifyAudioFacade = MockSpotifyAudioFacade()
+                spotifyAuthService.spotifyAudioFacadeRetriever = { () in return mockSpotifyAudioFacade }
             }
             
             describe("do with session") {
@@ -150,6 +153,22 @@ class SpotifyAuthServicesSpec: QuickSpec {
                             }
                         }
                     }
+                }
+            }
+            
+            describe("logout") {
+                beforeEach() {
+                    spotifyAuthService.logout()
+                }
+                
+                it("sets the auth session to null") {
+                    expect(mockSPTAuth.mocker.getCallCountFor(MockSPTAuth.Method.setSession)).to(equal(1))
+                    let sessionValue = mockSPTAuth.mocker.getNthCallTo(MockSPTAuth.Method.setSession, n: 0)!.first!
+                    expect(sessionValue).to(beNil())
+                }
+                
+                it("resets the spotify audio facade") {
+                    expect(mockSpotifyAudioFacade.mocker.getCallCountFor(MockSpotifyAudioFacade.Method.reset)).to(equal(1))
                 }
             }
         }

@@ -711,7 +711,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
     }
     
     func getPlayPauseButtonSystemItemFromToolbar(spotifyPlaylistTableController: SpotifyPlaylistTableController) -> UIBarButtonSystemItem {
-        let playPauseButton = spotifyPlaylistTableController.toolbarItems?[4]
+        let playPauseButton = spotifyPlaylistTableController.toolbarItems?[5]
         return UIBarButtonSystemItem(rawValue: playPauseButton!.valueForKey("systemItem") as! Int)!
     }
     
