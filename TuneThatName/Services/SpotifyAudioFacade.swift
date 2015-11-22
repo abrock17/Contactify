@@ -30,15 +30,17 @@ public protocol SpotifyPlaybackDelegate {
 
 public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
     
-    static let sharedSpotifyAudioController: SPTAudioStreamingController = {
-        let spotifyAudioController = SPTAudioStreamingController(clientId: SpotifyAuthService.clientID)
-        spotifyAudioController.diskCache = SPTDiskCache(capacity: 67108864)
-        return spotifyAudioController
+    static let sharedSPTCoreAudioController = SPTCoreAudioController()
+    static let sharedSPTAudioStreamingController: SPTAudioStreamingController = {
+        let audioStreamingController = SPTAudioStreamingController(clientId: SpotifyAuthService.clientID, audioController: sharedSPTCoreAudioController)
+        audioStreamingController.diskCache = SPTDiskCache(capacity: 67108864)
+        return audioStreamingController
         }()
     
-    static let sharedInstance = SpotifyAudioFacadeImpl(spotifyAudioController: sharedSpotifyAudioController, spotifyAuthService: SpotifyAuthService())
+    static let sharedInstance = SpotifyAudioFacadeImpl(sptAudioStreamingController: sharedSPTAudioStreamingController, sptCoreAudioController: sharedSPTCoreAudioController, spotifyAuthService: SpotifyAuthService())
 
-    let spotifyAudioController: SPTAudioStreamingController
+    let audioStreamingController: SPTAudioStreamingController
+    let coreAudioController: SPTCoreAudioController
     let spotifyAuthService: SpotifyAuthService
     public var playbackDelegate: SpotifyPlaybackDelegate? {
         didSet {
@@ -50,11 +52,12 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
     public var isPlaying = false
     public var currentSpotifyTrack: SpotifyTrack?
     
-    public init(spotifyAudioController: SPTAudioStreamingController, spotifyAuthService: SpotifyAuthService) {
-            self.spotifyAudioController = spotifyAudioController
-            self.spotifyAuthService = spotifyAuthService
-            super.init()
-            self.spotifyAudioController.playbackDelegate = self
+    public init(sptAudioStreamingController: SPTAudioStreamingController, sptCoreAudioController: SPTCoreAudioController, spotifyAuthService: SpotifyAuthService) {
+        self.audioStreamingController = sptAudioStreamingController
+        self.coreAudioController = sptCoreAudioController
+        self.spotifyAuthService = spotifyAuthService
+        super.init()
+        self.audioStreamingController.playbackDelegate = self
     }
     
     public func playTracksForURIs(uris: [NSURL], fromIndex index: Int, callback: SPTErrorableOperationCallback) {
@@ -68,7 +71,7 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
                     if error != nil {
                         callback(error)
                     } else {
-                        self.spotifyAudioController.playURIs(uris, fromIndex: Int32(index)) {
+                        self.audioStreamingController.playURIs(uris, fromIndex: Int32(index)) {
                             error in
                             callback(error)
                         }
@@ -83,32 +86,12 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
     }
     
     func prepareToPlayInSession(session: SPTSession, callback: SPTErrorableOperationCallback) {
-        if !spotifyAudioController.loggedIn {
-            spotifyAudioController.loginWithSession(session) {
+        coreAudioController.clearAudioBuffers()
+        if !audioStreamingController.loggedIn {
+            audioStreamingController.loginWithSession(session) {
                 error in
-                if error != nil {
-                    callback(error)
-                } else {
-                    self.resetIsPlaying(callback)
-                }
-            }
-        } else {
-            resetIsPlaying(callback)
-        }
-    }
-    
-    func resetIsPlaying(callback: SPTErrorableOperationCallback) {
-        if self.spotifyAudioController.isPlaying {
-            spotifyAudioController.setIsPlaying(false) {
-                error in
-                if error != nil {
-                    callback(error)
-                } else {
-                    self.spotifyAudioController.setIsPlaying(true) {
-                        error in
-                        callback(error)
-                    }
-                }
+
+                callback(error)
             }
         } else {
             callback(nil)
@@ -116,31 +99,31 @@ public class SpotifyAudioFacadeImpl: NSObject, SpotifyAudioFacade {
     }
     
     public func updatePlaylist(playlist: Playlist, withIndex index: Int, callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.replaceURIs(playlist.songURIs, withCurrentTrack: Int32(index), callback: callback)
+        audioStreamingController.replaceURIs(playlist.songURIs, withCurrentTrack: Int32(index), callback: callback)
     }
     
     public func togglePlay(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.setIsPlaying(!spotifyAudioController.isPlaying, callback: callback)
+        audioStreamingController.setIsPlaying(!audioStreamingController.isPlaying, callback: callback)
     }
     
     public func stopPlay(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.stop(callback)
+        audioStreamingController.stop(callback)
     }
     
     public func toNextTrack(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.skipNext(callback)
+        audioStreamingController.skipNext(callback)
     }
     
     public func toPreviousTrack(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.skipPrevious(callback)
+        audioStreamingController.skipPrevious(callback)
     }
     
     public func reset(callback: SPTErrorableOperationCallback) {
-        spotifyAudioController.logout() {
+        audioStreamingController.logout() {
             error in
             
-            self.audioStreaming(self.spotifyAudioController, didChangePlaybackStatus: false)
-            self.audioStreaming(self.spotifyAudioController, didChangeToTrack: nil)
+            self.audioStreaming(self.audioStreamingController, didChangePlaybackStatus: false)
+            self.audioStreaming(self.audioStreamingController, didChangeToTrack: nil)
             callback(error)
         }
     }

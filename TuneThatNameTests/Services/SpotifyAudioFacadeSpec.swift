@@ -19,6 +19,7 @@ class SpotifyAudioFacadeSpec: QuickSpec {
     override func spec() {
         describe("The Spotify Audio Facade") {
             var spotifyAudioFacade: SpotifyAudioFacade!
+            var mockCoreAudioController: MockSPTCoreAudioController!
             var mockAudioStreamingController: MockSPTAudioStreamingController!
             var mockSpotifyAuthService: MockSpotifyAuthService!
             var mockSpotifyPlaybackDelegate: MockSpotifyPlaybackDelegate!
@@ -26,8 +27,9 @@ class SpotifyAudioFacadeSpec: QuickSpec {
             beforeEach() {
                 self.callbackErrors.removeAll(keepCapacity: false)
                 mockSpotifyAuthService = MockSpotifyAuthService()
+                mockCoreAudioController = MockSPTCoreAudioController()
                 mockAudioStreamingController = MockSPTAudioStreamingController(clientId: SpotifyAuthService.clientID)
-                spotifyAudioFacade = SpotifyAudioFacadeImpl(spotifyAudioController: mockAudioStreamingController, spotifyAuthService: mockSpotifyAuthService)
+                spotifyAudioFacade = SpotifyAudioFacadeImpl(sptAudioStreamingController: mockAudioStreamingController, sptCoreAudioController: mockCoreAudioController, spotifyAuthService: mockSpotifyAuthService)
                 mockSpotifyPlaybackDelegate = MockSpotifyPlaybackDelegate()
             }
             
@@ -85,6 +87,12 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                     
                     beforeEach() {
                         mockSpotifyAuthService.mocker.prepareForCallTo(MockSpotifyAuthService.Method.doWithSession, returnValue: SpotifyAuthService.AuthResult.Success(session))
+                    }
+                    
+                    it("clears the audio buffer") {
+                        spotifyAudioFacade.playTracksForURIs(self.trackURIs, fromIndex: index, callback: self.errorCallback)
+                        
+                        expect(mockCoreAudioController.mocker.getCallCountFor(MockSPTCoreAudioController.Method.clearAudioBuffers)).to(equal(1))
                     }
 
                     it("calls the audio streaming controller with the track URIs, index") {
@@ -286,6 +294,19 @@ class SpotifyAudioFacadeSpec: QuickSpec {
                 }
             }
         }
+    }
+}
+
+class MockSPTCoreAudioController: SPTCoreAudioController {
+    
+    let mocker = Mocker()
+    
+    struct Method {
+        static let clearAudioBuffers = "clearAudioBuffers"
+    }
+    
+    override func clearAudioBuffers() {
+        mocker.recordCall(Method.clearAudioBuffers)
     }
 }
 
