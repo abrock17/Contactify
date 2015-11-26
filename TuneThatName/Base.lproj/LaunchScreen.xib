@@ -17,16 +17,18 @@
                     <rect key="frame" x="-1" y="24" width="482" height="288"/>
                 </imageView>
                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="spotify_logo_rgb_green.png" translatesAutoresizingMaskIntoConstraints="NO" id="zJy-qk-8hA">
-                    <rect key="frame" x="232" y="388" width="240" height="48"/>
+                    <rect key="frame" x="256" y="403" width="216" height="48"/>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="powered by:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="Hzn-Mr-7Zi">
                     <rect key="frame" x="0.0" y="336" width="480" height="36"/>
-                    <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="24"/>
+                    <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="20"/>
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
+                    <color key="shadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    <size key="shadowOffset" width="2" height="2"/>
                 </label>
                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="echonest.svg.png" translatesAutoresizingMaskIntoConstraints="NO" id="H1o-bZ-Jg7">
-                    <rect key="frame" x="8" y="352" width="240" height="120"/>
+                    <rect key="frame" x="8" y="352" width="216" height="120"/>
                 </imageView>
             </subviews>
             <color key="backgroundColor" red="0.048918098256367136" green="0.10989822904662434" blue="0.32360716540404044" alpha="1" colorSpace="calibratedRGB"/>
@@ -34,9 +36,9 @@
                 <constraint firstItem="H1o-bZ-Jg7" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.25" id="2Ww-qQ-BAn"/>
                 <constraint firstItem="zJy-qk-8hA" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.1" id="C70-yt-CWS"/>
                 <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="bottom" secondItem="H1o-bZ-Jg7" secondAttribute="top" constant="20" id="Dgt-3a-NTZ"/>
-                <constraint firstItem="zJy-qk-8hA" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.5" id="FPr-Wi-cdg"/>
+                <constraint firstItem="zJy-qk-8hA" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.45" id="FPr-Wi-cdg"/>
                 <constraint firstItem="nci-f9-sLz" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.6" id="NN3-Da-TmF"/>
-                <constraint firstItem="H1o-bZ-Jg7" firstAttribute="centerY" secondItem="zJy-qk-8hA" secondAttribute="centerY" id="PH5-l4-7z8"/>
+                <constraint firstItem="H1o-bZ-Jg7" firstAttribute="centerY" secondItem="zJy-qk-8hA" secondAttribute="centerY" constant="-15" id="PH5-l4-7z8"/>
                 <constraint firstAttribute="bottomMargin" secondItem="zJy-qk-8hA" secondAttribute="bottom" constant="8" id="afe-9F-f9Y"/>
                 <constraint firstItem="zJy-qk-8hA" firstAttribute="top" secondItem="H1o-bZ-Jg7" secondAttribute="bottom" id="b4H-wm-NK5"/>
                 <constraint firstItem="H1o-bZ-Jg7" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="c2W-ar-2Ss"/>
@@ -48,7 +50,7 @@
                 <constraint firstAttribute="trailing" secondItem="zJy-qk-8hA" secondAttribute="trailing" constant="8" id="iNF-DG-qh2"/>
                 <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.075" id="tgh-JQ-oez"/>
                 <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="vVF-CR-5eE"/>
-                <constraint firstItem="H1o-bZ-Jg7" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.5" id="yoP-Fq-OXy"/>
+                <constraint firstItem="H1o-bZ-Jg7" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.45" id="yoP-Fq-OXy"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
