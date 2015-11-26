@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
@@ -12,31 +13,58 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Copyright (c) 2015 Tony Brock. All rights reserved." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="8ie-xW-0ye">
-                    <rect key="frame" x="20" y="439" width="441" height="21"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="TTN.png" translatesAutoresizingMaskIntoConstraints="NO" id="nci-f9-sLz">
+                    <rect key="frame" x="-1" y="24" width="482" height="288"/>
+                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="spotify_logo_rgb_green.png" translatesAutoresizingMaskIntoConstraints="NO" id="zJy-qk-8hA">
+                    <rect key="frame" x="232" y="388" width="240" height="48"/>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="powered by:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="Hzn-Mr-7Zi">
+                    <rect key="frame" x="0.0" y="336" width="480" height="36"/>
+                    <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="24"/>
+                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tune That Name" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="kId-c2-rCX">
-                    <rect key="frame" x="20" y="140" width="441" height="43"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="echonest.svg.png" translatesAutoresizingMaskIntoConstraints="NO" id="H1o-bZ-Jg7">
+                    <rect key="frame" x="8" y="352" width="240" height="120"/>
+                </imageView>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <color key="backgroundColor" red="0.048918098256367136" green="0.10989822904662434" blue="0.32360716540404044" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
-                <constraint firstItem="kId-c2-rCX" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="bottom" multiplier="1/3" constant="1" id="5cJ-9S-tgC"/>
-                <constraint firstAttribute="centerX" secondItem="kId-c2-rCX" secondAttribute="centerX" id="Koa-jz-hwk"/>
-                <constraint firstAttribute="bottom" secondItem="8ie-xW-0ye" secondAttribute="bottom" constant="20" id="Kzo-t9-V3l"/>
-                <constraint firstItem="8ie-xW-0ye" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="MfP-vx-nX0"/>
-                <constraint firstAttribute="centerX" secondItem="8ie-xW-0ye" secondAttribute="centerX" id="ZEH-qu-HZ9"/>
-                <constraint firstItem="kId-c2-rCX" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="fvb-Df-36g"/>
+                <constraint firstItem="H1o-bZ-Jg7" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.25" id="2Ww-qQ-BAn"/>
+                <constraint firstItem="zJy-qk-8hA" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.1" id="C70-yt-CWS"/>
+                <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="bottom" secondItem="H1o-bZ-Jg7" secondAttribute="top" constant="20" id="Dgt-3a-NTZ"/>
+                <constraint firstItem="zJy-qk-8hA" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.5" id="FPr-Wi-cdg"/>
+                <constraint firstItem="nci-f9-sLz" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.6" id="NN3-Da-TmF"/>
+                <constraint firstItem="H1o-bZ-Jg7" firstAttribute="centerY" secondItem="zJy-qk-8hA" secondAttribute="centerY" id="PH5-l4-7z8"/>
+                <constraint firstAttribute="bottomMargin" secondItem="zJy-qk-8hA" secondAttribute="bottom" constant="8" id="afe-9F-f9Y"/>
+                <constraint firstItem="zJy-qk-8hA" firstAttribute="top" secondItem="H1o-bZ-Jg7" secondAttribute="bottom" id="b4H-wm-NK5"/>
+                <constraint firstItem="H1o-bZ-Jg7" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="c2W-ar-2Ss"/>
+                <constraint firstItem="nci-f9-sLz" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="dBD-JV-y6v"/>
+                <constraint firstItem="zJy-qk-8hA" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="doq-WA-M7n"/>
+                <constraint firstItem="nci-f9-sLz" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="centerY" multiplier="0.1" id="eXB-DL-RTW"/>
+                <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="emE-p1-y3R"/>
+                <constraint firstAttribute="bottom" secondItem="H1o-bZ-Jg7" secondAttribute="bottom" constant="8" id="hkX-5Z-rvr"/>
+                <constraint firstAttribute="trailing" secondItem="zJy-qk-8hA" secondAttribute="trailing" constant="8" id="iNF-DG-qh2"/>
+                <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.075" id="tgh-JQ-oez"/>
+                <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="vVF-CR-5eE"/>
+                <constraint firstItem="H1o-bZ-Jg7" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.5" id="yoP-Fq-OXy"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="afe-9F-f9Y"/>
+                    <exclude reference="b4H-wm-NK5"/>
+                    <exclude reference="doq-WA-M7n"/>
+                </mask>
+            </variation>
             <point key="canvasLocation" x="548" y="455"/>
         </view>
     </objects>
+    <resources>
+        <image name="TTN.png" width="482" height="722"/>
+        <image name="echonest.svg.png" width="304" height="240"/>
+        <image name="spotify_logo_rgb_green.png" width="2362" height="709"/>
+    </resources>
 </document>

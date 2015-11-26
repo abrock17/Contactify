@@ -27,6 +27,10 @@
 		4440E4A31B33954C005A4333 /* NameSelectionTableControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4440E4A21B33954C005A4333 /* NameSelectionTableControllerSpec.swift */; };
 		4440E4A51B339725005A4333 /* MockContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4440E4A41B339725005A4333 /* MockContactService.swift */; };
 		44410E651BB6D451001EB2B0 /* SingleNameEntryControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44410E641BB6D451001EB2B0 /* SingleNameEntryControllerSpec.swift */; };
+		444471F91C0751DC002B782B /* TTN.png in Resources */ = {isa = PBXBuildFile; fileRef = 444471F71C0751DC002B782B /* TTN.png */; };
+		444471FA1C0751DC002B782B /* A440.png in Resources */ = {isa = PBXBuildFile; fileRef = 444471F81C0751DC002B782B /* A440.png */; };
+		444471FD1C075F1E002B782B /* spotify_logo_rgb_green.png in Resources */ = {isa = PBXBuildFile; fileRef = 444471FB1C075F1E002B782B /* spotify_logo_rgb_green.png */; };
+		444472021C07631B002B782B /* echonest.svg.png in Resources */ = {isa = PBXBuildFile; fileRef = 444472011C07631B002B782B /* echonest.svg.png */; };
 		4446FF0E1B2FD43100368ED7 /* NameSelectionTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446FF0D1B2FD43100368ED7 /* NameSelectionTableController.swift */; };
 		4447107E1B73764A004F79C5 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4447107D1B73764A004F79C5 /* Spotify.framework */; };
 		444710801B7A0AD0004F79C5 /* skull.png in Resources */ = {isa = PBXBuildFile; fileRef = 4447107F1B7A0AD0004F79C5 /* skull.png */; };
@@ -129,6 +133,10 @@
 		4440E4A21B33954C005A4333 /* NameSelectionTableControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameSelectionTableControllerSpec.swift; sourceTree = "<group>"; };
 		4440E4A41B339725005A4333 /* MockContactService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockContactService.swift; sourceTree = "<group>"; };
 		44410E641BB6D451001EB2B0 /* SingleNameEntryControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleNameEntryControllerSpec.swift; sourceTree = "<group>"; };
+		444471F71C0751DC002B782B /* TTN.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TTN.png; path = ../../TTN.png; sourceTree = "<group>"; };
+		444471F81C0751DC002B782B /* A440.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = A440.png; path = ../../A440.png; sourceTree = "<group>"; };
+		444471FB1C075F1E002B782B /* spotify_logo_rgb_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spotify_logo_rgb_green.png; sourceTree = "<group>"; };
+		444472011C07631B002B782B /* echonest.svg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = echonest.svg.png; sourceTree = "<group>"; };
 		4446FF0D1B2FD43100368ED7 /* NameSelectionTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameSelectionTableController.swift; sourceTree = "<group>"; };
 		4447107D1B73764A004F79C5 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = Frameworks/Spotify.framework; sourceTree = "<group>"; };
 		4447107F1B7A0AD0004F79C5 /* skull.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skull.png; sourceTree = "<group>"; };
@@ -373,6 +381,10 @@
 		44ACBEE11BFADFA100946B31 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				444472011C07631B002B782B /* echonest.svg.png */,
+				444471FB1C075F1E002B782B /* spotify_logo_rgb_green.png */,
+				444471F71C0751DC002B782B /* TTN.png */,
+				444471F81C0751DC002B782B /* A440.png */,
 				44ACBEF21BFB568700946B31 /* Dakirby309-Simply-Styled-Spotify.ico */,
 			);
 			path = Images;
@@ -641,10 +653,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				444471FA1C0751DC002B782B /* A440.png in Resources */,
+				444472021C07631B002B782B /* echonest.svg.png in Resources */,
 				44E9D5F11A952D2F001E4792 /* Main.storyboard in Resources */,
 				44ACBEF31BFB568700946B31 /* Dakirby309-Simply-Styled-Spotify.ico in Resources */,
 				44E9D5F61A952D2F001E4792 /* LaunchScreen.xib in Resources */,
+				444471FD1C075F1E002B782B /* spotify_logo_rgb_green.png in Resources */,
 				44E9D5F31A952D2F001E4792 /* Images.xcassets in Resources */,
+				444471F91C0751DC002B782B /* TTN.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1057,6 +1073,7 @@
 			baseConfigurationReference = 750B2AB07B1625927EAA3522 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1094,6 +1111,7 @@
 			baseConfigurationReference = A2393EA9661264AFAB780F39 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
