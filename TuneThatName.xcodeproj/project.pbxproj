@@ -32,6 +32,7 @@
 		444471FD1C075F1E002B782B /* spotify_logo_rgb_green.png in Resources */ = {isa = PBXBuildFile; fileRef = 444471FB1C075F1E002B782B /* spotify_logo_rgb_green.png */; };
 		444472021C07631B002B782B /* echonest.svg.png in Resources */ = {isa = PBXBuildFile; fileRef = 444472011C07631B002B782B /* echonest.svg.png */; };
 		444472161C07A5FD002B782B /* A440-pretty.png in Resources */ = {isa = PBXBuildFile; fileRef = 444472151C07A5FD002B782B /* A440-pretty.png */; };
+		444472181C07A7D6002B782B /* UIAppearanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444472171C07A7D6002B782B /* UIAppearanceManager.swift */; };
 		4446FF0E1B2FD43100368ED7 /* NameSelectionTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446FF0D1B2FD43100368ED7 /* NameSelectionTableController.swift */; };
 		4447107E1B73764A004F79C5 /* Spotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4447107D1B73764A004F79C5 /* Spotify.framework */; };
 		444710801B7A0AD0004F79C5 /* skull.png in Resources */ = {isa = PBXBuildFile; fileRef = 4447107F1B7A0AD0004F79C5 /* skull.png */; };
@@ -139,6 +140,7 @@
 		444471FB1C075F1E002B782B /* spotify_logo_rgb_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spotify_logo_rgb_green.png; sourceTree = "<group>"; };
 		444472011C07631B002B782B /* echonest.svg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = echonest.svg.png; sourceTree = "<group>"; };
 		444472151C07A5FD002B782B /* A440-pretty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "A440-pretty.png"; sourceTree = "<group>"; };
+		444472171C07A7D6002B782B /* UIAppearanceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAppearanceManager.swift; sourceTree = "<group>"; };
 		4446FF0D1B2FD43100368ED7 /* NameSelectionTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameSelectionTableController.swift; sourceTree = "<group>"; };
 		4447107D1B73764A004F79C5 /* Spotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Spotify.framework; path = Frameworks/Spotify.framework; sourceTree = "<group>"; };
 		4447107F1B7A0AD0004F79C5 /* skull.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skull.png; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 				441A9BF71BCA997400A57F11 /* SpotifyAuthService.swift */,
 				44BE53971AACEAD50089BFCD /* SpotifyPlaylistService.swift */,
 				4474E3331BDC2DB00004E605 /* SpotifyUserService.swift */,
+				444472171C07A7D6002B782B /* UIAppearanceManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -865,6 +868,7 @@
 				44ACBEF51BFC981500946B31 /* SpotifyActionSheetController.swift in Sources */,
 				44AEBC981AE89DFF00D96CD1 /* ControllerHelper.swift in Sources */,
 				44D3C1A91ACF1DDF00F51EB9 /* Constants.swift in Sources */,
+				444472181C07A7D6002B782B /* UIAppearanceManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
