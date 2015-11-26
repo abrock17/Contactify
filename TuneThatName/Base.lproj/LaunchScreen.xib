@@ -20,7 +20,7 @@
                     <rect key="frame" x="256" y="403" width="216" height="48"/>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="powered by:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="Hzn-Mr-7Zi">
-                    <rect key="frame" x="0.0" y="336" width="480" height="36"/>
+                    <rect key="frame" x="0.0" y="351" width="480" height="36"/>
                     <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="20"/>
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
@@ -35,7 +35,7 @@
             <constraints>
                 <constraint firstItem="H1o-bZ-Jg7" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.25" id="2Ww-qQ-BAn"/>
                 <constraint firstItem="zJy-qk-8hA" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.1" id="C70-yt-CWS"/>
-                <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="bottom" secondItem="H1o-bZ-Jg7" secondAttribute="top" constant="20" id="Dgt-3a-NTZ"/>
+                <constraint firstItem="Hzn-Mr-7Zi" firstAttribute="bottom" secondItem="H1o-bZ-Jg7" secondAttribute="top" multiplier="1.1" id="Dgt-3a-NTZ"/>
                 <constraint firstItem="zJy-qk-8hA" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.45" id="FPr-Wi-cdg"/>
                 <constraint firstItem="nci-f9-sLz" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.6" id="NN3-Da-TmF"/>
                 <constraint firstItem="H1o-bZ-Jg7" firstAttribute="centerY" secondItem="zJy-qk-8hA" secondAttribute="centerY" constant="-15" id="PH5-l4-7z8"/>
