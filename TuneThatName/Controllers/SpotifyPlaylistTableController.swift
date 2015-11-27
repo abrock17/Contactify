@@ -122,7 +122,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
     
     override public func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
         return [
-            UITableViewRowAction(style: .Default, title: "Delete", handler: handleDeleteRow),
+            UITableViewRowAction(style: .Destructive, title: "Delete", handler: handleDeleteRow),
             UITableViewRowAction(style: .Normal, title: "Replace", handler: handleReplaceRow)
         ]
     }
