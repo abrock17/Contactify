@@ -12,8 +12,8 @@ class UIAppearanceManager {
     
     static func initializeAppearance() {
         let window = UIApplication.sharedApplication().delegate!.window!!
-        
         window.tintColor = tint
+        UIApplication.sharedApplication().statusBarStyle = .LightContent
         
         UISwitch.appearance().onTintColor = mutedTint
         

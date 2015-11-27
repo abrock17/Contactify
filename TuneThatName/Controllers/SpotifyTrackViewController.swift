@@ -19,10 +19,11 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     @IBOutlet public weak var trackDataView: UIView!
     var albumImageActivityIndicator: UIActivityIndicatorView!
     
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = UIAppearanceManager.barBackground
     }
-
+    
     public override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         

@@ -753,7 +753,6 @@
                                 </items>
                             </toolbar>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="0ao-tI-YGQ" firstAttribute="top" secondItem="IHd-TI-bO3" secondAttribute="bottom" id="4Q0-WZ-HXb"/>
                             <constraint firstItem="jc7-p1-t9r" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leadingMargin" id="BTx-Qe-5g1"/>
