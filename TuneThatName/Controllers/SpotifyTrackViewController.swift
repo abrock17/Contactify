@@ -16,8 +16,9 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
     @IBOutlet public weak var playPauseButton: UIBarButtonItem!
     @IBOutlet public weak var nextTrackButton: UIBarButtonItem!
     @IBOutlet public weak var previousTrackButton: UIBarButtonItem!
+    @IBOutlet public weak var trackDataView: UIView!
     var albumImageActivityIndicator: UIActivityIndicatorView!
-
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -33,6 +34,18 @@ public class SpotifyTrackViewController: UIViewController, SpotifyPlaybackDelega
             toolbar.items?.removeAtIndex(4)
             toolbar.items?.removeAtIndex(2)
         }
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        addTrackDetailGradient()
+    }
+    
+    func addTrackDetailGradient() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [UIColor.whiteColor().CGColor, UIAppearanceManager.barBackground.CGColor]
+        gradientLayer.locations = [0.0, 1.0]
+        gradientLayer.frame = trackDataView.bounds
+        trackDataView.layer.insertSublayer(gradientLayer, atIndex: 0)
     }
     
     public override func didReceiveMemoryWarning() {

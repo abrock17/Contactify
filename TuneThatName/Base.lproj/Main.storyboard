@@ -703,6 +703,9 @@
                                     <constraint firstAttribute="width" secondItem="Cjq-1l-EBm" secondAttribute="height" multiplier="1:1" id="2Su-aq-K2S"/>
                                 </constraints>
                             </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IHd-TI-bO3">
+                                <rect key="frame" x="0.0" y="420" width="400" height="136"/>
+                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.70000000000000018" translatesAutoresizingMaskIntoConstraints="NO" id="vlL-tc-JA8">
                                 <rect key="frame" x="16" y="408" width="368" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -721,7 +724,7 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0ao-tI-YGQ">
+                            <toolbar clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0ao-tI-YGQ">
                                 <rect key="frame" x="0.0" y="556" width="400" height="44"/>
                                 <items>
                                     <barButtonItem systemItem="stop" id="Zcz-CM-isw">
@@ -752,6 +755,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="0ao-tI-YGQ" firstAttribute="top" secondItem="IHd-TI-bO3" secondAttribute="bottom" id="4Q0-WZ-HXb"/>
                             <constraint firstItem="jc7-p1-t9r" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leadingMargin" id="BTx-Qe-5g1"/>
                             <constraint firstAttribute="trailingMargin" secondItem="vlL-tc-JA8" secondAttribute="trailing" id="F5Q-s8-Rrk"/>
                             <constraint firstItem="pjz-d6-2Vz" firstAttribute="top" secondItem="jc7-p1-t9r" secondAttribute="bottom" constant="8" id="R6t-N4-XDZ"/>
@@ -760,8 +764,11 @@
                             <constraint firstItem="Cjq-1l-EBm" firstAttribute="top" secondItem="2Uh-YI-clu" secondAttribute="bottom" id="cZd-5k-re2"/>
                             <constraint firstItem="vlL-tc-JA8" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leadingMargin" id="dLR-Sm-8tJ"/>
                             <constraint firstItem="rHm-eE-H8v" firstAttribute="top" secondItem="0ao-tI-YGQ" secondAttribute="bottom" id="eVX-nH-h5N"/>
+                            <constraint firstItem="IHd-TI-bO3" firstAttribute="width" secondItem="lyg-un-FjL" secondAttribute="width" id="ebp-ax-Klh"/>
                             <constraint firstAttribute="trailing" secondItem="0ao-tI-YGQ" secondAttribute="trailing" id="hjF-5y-JNO"/>
                             <constraint firstItem="vlL-tc-JA8" firstAttribute="top" secondItem="Cjq-1l-EBm" secondAttribute="bottom" constant="8" id="iuZ-1N-rvN"/>
+                            <constraint firstItem="IHd-TI-bO3" firstAttribute="centerX" secondItem="lyg-un-FjL" secondAttribute="centerX" id="nIp-xv-fxo"/>
+                            <constraint firstItem="IHd-TI-bO3" firstAttribute="top" secondItem="Cjq-1l-EBm" secondAttribute="bottom" id="pnV-7B-j5p"/>
                             <constraint firstItem="Cjq-1l-EBm" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leading" id="qyJ-Ny-yFR"/>
                             <constraint firstItem="jc7-p1-t9r" firstAttribute="top" secondItem="vlL-tc-JA8" secondAttribute="bottom" constant="8" id="scC-ZX-CrQ"/>
                             <constraint firstItem="0ao-tI-YGQ" firstAttribute="leading" secondItem="lyg-un-FjL" secondAttribute="leading" id="tUc-lN-j5d"/>
@@ -781,6 +788,7 @@
                         <outlet property="previousTrackButton" destination="dUg-nW-Ufa" id="1Q6-qV-I84"/>
                         <outlet property="titleLabel" destination="vlL-tc-JA8" id="zCS-c2-q6G"/>
                         <outlet property="toolbar" destination="0ao-tI-YGQ" id="Fvz-yg-bEz"/>
+                        <outlet property="trackDataView" destination="IHd-TI-bO3" id="lAC-uk-Bpk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sV7-AV-Ucz" userLabel="First Responder" sceneMemberID="firstResponder"/>

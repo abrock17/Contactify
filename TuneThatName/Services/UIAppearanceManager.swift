@@ -36,6 +36,7 @@ class UIAppearanceManager {
     
     static func initializeToolbarAppearance() {
         UIToolbar.appearance().barTintColor = barBackground
+        UIToolbar.appearance().backgroundColor = barBackground
         UIToolbar.appearance().tintColor = barTint
     }
     
