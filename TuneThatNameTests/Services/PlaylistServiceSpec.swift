@@ -64,7 +64,7 @@ class PlaylistServiceSpec: QuickSpec {
                         }
                     }
                     
-                    context("and the contact service calls back with a list of contacts with first names") {
+                    context("and the contact service calls back with a list of searchable contacts") {
                         let contactList = [
                             Contact(id: 1, firstName: "Johnny", lastName: "Hodges"),
                             Contact(id: 2, firstName: "Billy", lastName: "Crystal"),
@@ -134,7 +134,7 @@ class PlaylistServiceSpec: QuickSpec {
                                     
                                     expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(numberOfSongs))
                                     for contact in contactList {
-                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.firstName!, mockEchoNestService: mockEchoNestService)).to(equal(1))
+                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.searchString, mockEchoNestService: mockEchoNestService)).to(equal(1))
                                     }
                                 }
                             }
@@ -148,7 +148,7 @@ class PlaylistServiceSpec: QuickSpec {
                                     
                                     expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(numberOfSongs))
                                     for contact in contactList {
-                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.firstName!, mockEchoNestService: mockEchoNestService)).to(beLessThanOrEqualTo(1))
+                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.searchString, mockEchoNestService: mockEchoNestService)).to(beLessThanOrEqualTo(1))
                                     }
                                 }
                             }
@@ -163,7 +163,7 @@ class PlaylistServiceSpec: QuickSpec {
                                     expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService))
                                         .toEventually(equal(contactList.count))
                                     for contact in contactList {
-                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.firstName!, mockEchoNestService: mockEchoNestService)).to(equal(1))
+                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.searchString, mockEchoNestService: mockEchoNestService)).to(equal(1))
                                     }
                                 }
                                 
@@ -243,7 +243,7 @@ class PlaylistServiceSpec: QuickSpec {
                                     
                                     expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(numberOfSongs + 1))
                                     for contact in contactList {
-                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.firstName!, mockEchoNestService: mockEchoNestService)).to(equal(1))
+                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.searchString, mockEchoNestService: mockEchoNestService)).to(equal(1))
                                     }
                                 }
                             }
@@ -265,7 +265,7 @@ class PlaylistServiceSpec: QuickSpec {
                                     
                                     expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(numberOfSongs + 1))
                                     for contact in contactList {
-                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.firstName!, mockEchoNestService: mockEchoNestService)).to(equal(1))
+                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.searchString, mockEchoNestService: mockEchoNestService)).to(equal(1))
                                     }
                                 }
                             }
@@ -347,8 +347,8 @@ class PlaylistServiceSpec: QuickSpec {
                                     expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(contactList.count))
                                     let expectedSearchNumber = (defaultSearchNumber / 2 + 1) * 2
                                     for contact in contactList {
-                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.firstName!, mockEchoNestService: mockEchoNestService)).to(equal(1))
-                                        expect(self.numberRequestedFromFindSongsForName(contact.firstName!, callIndex: 0, mockEchoNestService: mockEchoNestService)).to(equal(expectedSearchNumber))
+                                        expect(self.numberOfTimesFindSongsWasCalledForName(contact.searchString, mockEchoNestService: mockEchoNestService)).to(equal(1))
+                                        expect(self.numberRequestedFromFindSongsForName(contact.searchString, callIndex: 0, mockEchoNestService: mockEchoNestService)).to(equal(expectedSearchNumber))
                                     }
                                 }
                             }
@@ -356,7 +356,7 @@ class PlaylistServiceSpec: QuickSpec {
                     }
                 }
 
-                context("when the contact service calls back with a larger list of contacts with first names") {
+                context("when the contact service calls back with a larger list of searchable contacts") {
                     let contactList = Array(1...40).map({ Contact(id: Int32($0), firstName: "John", lastName: "Doe") })
                     beforeEach() {
                         mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
@@ -425,25 +425,30 @@ class PlaylistServiceSpec: QuickSpec {
                     }
                 }
                 
-                context("when the contact service calls back with contacts not all of whom have first names") {
+                context("when the contact service calls back with contacts not all of whom are searchable") {
                     let contactList = [
                         Contact(id: 1, firstName: "Sylvester", lastName: "Stalone"),
                         Contact(id: 2, firstName: nil, lastName: "Schwarzenegger"),
-                        Contact(id: 3, firstName: "", lastName: "Van Damme"),
-                        Contact(id: 4, firstName: " \t\r\n", lastName: "Segal")]
+                        Contact(id: 3, firstName: "", lastName: "   ", fullName: "The Muscles from Brussells"),
+                        Contact(id: 4, firstName: nil, lastName: nil),
+                        Contact(id: 5, firstName: "", lastName: ""),
+                        Contact(id: 6, firstName: " \t\r\n", lastName: "")]
                     
                     beforeEach() {
                         mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
                         mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
+                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
                     }
                     
-                    it("only calls the echo nest service contacts that have a first name") {
+                    it("only calls the echo nest service contacts that have valid search strings") {
                         playlistPreferences.numberOfSongs = contactList.count
                         
                         playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                         
-                        expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(1))
-                        expect(self.numberOfTimesFindSongsWasCalledForName(contactList.first!.firstName!, mockEchoNestService: mockEchoNestService)).to(equal(1))
+                        expect(self.numberOfTimesFindSongsWasCalled(mockEchoNestService)).toEventually(equal(3))
+                        expect(self.numberOfTimesFindSongsWasCalledForName(contactList[0].searchString, mockEchoNestService: mockEchoNestService)).to(equal(1))
+                        expect(self.numberOfTimesFindSongsWasCalledForName(contactList[1].searchString, mockEchoNestService: mockEchoNestService)).to(equal(1))
+                        expect(self.numberOfTimesFindSongsWasCalledForName(contactList[2].searchString, mockEchoNestService: mockEchoNestService)).to(equal(1))
                     }
                 }
                 

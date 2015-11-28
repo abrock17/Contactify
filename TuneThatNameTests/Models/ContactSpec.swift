@@ -107,7 +107,7 @@ class ContactSpec: QuickSpec {
                     
                     context("and the full name is blank") {
                         it("is the empty string") {
-                            expect(Contact(id: self.id1, firstName: "    ", lastName: "\t\t", fullName: " ").searchString)
+                            expect(Contact(id: self.id1, firstName: "    ", lastName: " \r\n ", fullName: " ").searchString)
                                 .to(equal(""))
                         }
                     }

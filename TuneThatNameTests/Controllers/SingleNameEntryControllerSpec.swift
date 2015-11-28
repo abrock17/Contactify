@@ -124,6 +124,28 @@ class SingleNameEntryControllerSpec: QuickSpec {
                                 .to(equal(expectedSuggestedContacts[1].fullName))
                         }
                     }
+                    
+                    context("and the text starts with the same uppercase characters as a word in one of the suggested full names") {
+                        let text = "BI"
+                        let expectedSuggestedContacts = [contactList[1]]
+                        
+                        beforeEach() {
+                            self.changeNameEntryTextTo(text, on: singleNameEntryController)
+                        }
+                        
+                        it("enables the done button") {
+                            expect(singleNameEntryController.doneButton.enabled).to(beTrue())
+                        }
+                        
+                        it("displays the name suggestion table with the expectecd contacts") {
+                            expect(singleNameEntryController.nameSuggestionTableView.hidden).to(beFalse())
+                            expect(singleNameEntryController.tableView(singleNameEntryController.nameSuggestionTableView, numberOfRowsInSection: 0)).to(equal(1))
+                            expect(singleNameEntryController.tableView(
+                                singleNameEntryController.nameSuggestionTableView,
+                                cellForRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 0)).textLabel?.text)
+                                .to(equal(expectedSuggestedContacts[0].fullName))
+                        }
+                    }
                 }
             }
             

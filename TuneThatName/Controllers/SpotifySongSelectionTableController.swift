@@ -53,7 +53,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
             self.retrieveCurrentUser() {
                 user in
                 
-                self.echoNestService.findSongs(titleSearchTerm: self.searchContact.firstName!, withSongPreferences: playlistPreferences!.songPreferences, desiredNumberOfSongs: 20, inLocale: user.territory) {
+                self.echoNestService.findSongs(titleSearchTerm: self.searchContact.searchString, withSongPreferences: playlistPreferences!.songPreferences, desiredNumberOfSongs: 20, inLocale: user.territory) {
                     songResult in
                     
                     dispatch_async(dispatch_get_main_queue()) {

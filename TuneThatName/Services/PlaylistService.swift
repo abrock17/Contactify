@@ -62,7 +62,7 @@ public class PlaylistService {
     
     func createPlaylistForContactList(contactList: [Contact], withPlaylistPreferences playlistPreferences: PlaylistPreferences,
         inLocale locale: String?, callback: PlaylistResult -> Void) {
-        let searchableContacts = contactList.filter({$0.firstName != nil && !$0.firstName!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).isEmpty})
+        let searchableContacts = contactList.filter({ !$0.searchString.isEmpty })
         let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: playlistPreferences.numberOfSongs, numberOfContacts: searchableContacts.count)
         var contactSongsMap = [Contact: [Song]]()
         var contactErrorMap = [Contact: NSError]()
@@ -126,7 +126,7 @@ public class PlaylistService {
         let group = dispatch_group_create()
         for contact in contacts {
             dispatch_group_enter(group)
-            self.echoNestService.findSongs(titleSearchTerm: contact.firstName!, withSongPreferences: songPreferences, desiredNumberOfSongs: searchNumber, inLocale: locale) {
+            self.echoNestService.findSongs(titleSearchTerm: contact.searchString, withSongPreferences: songPreferences, desiredNumberOfSongs: searchNumber, inLocale: locale) {
                 songsResult in
                 
                 contactSongsResultMap[contact] = songsResult

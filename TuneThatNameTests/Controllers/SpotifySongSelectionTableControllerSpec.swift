@@ -138,7 +138,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                             .toEventually(equal(1))
                         expect(mockEchoNestService.mocker.getNthCallTo(
                             MockEchoNestService.Method.findSongs, n: 0)?[0] as? String)
-                            .toEventually(equal(searchContact.firstName))
+                            .toEventually(equal(searchContact.searchString))
                         expect(mockEchoNestService.mocker.getNthCallTo(
                             MockEchoNestService.Method.findSongs, n: 0)?[1] as? SongPreferences)
                             .toEventually(equal(defaultPlaylistPreferences.songPreferences))

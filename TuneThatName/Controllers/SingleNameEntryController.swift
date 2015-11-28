@@ -100,7 +100,7 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
             for contact in allConctacts {
                 let contactWords = contact.fullName.componentsSeparatedByString(" ")
                     .map({ $0.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) })
-                let matchingWords = contactWords.filter({ $0.lowercaseString.hasPrefix(text) })
+                let matchingWords = contactWords.filter({ $0.lowercaseString.hasPrefix(text.lowercaseString) })
                 if !matchingWords.isEmpty {
                     suggestedContacts.append(contact)
                 }
