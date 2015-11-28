@@ -9,6 +9,26 @@ public class Contact: NSObject, NSCoding {
     public override var description: String {
         return "Contact:[id:\(id), firstName:\(firstName), lastName:\(lastName)]"
     }
+    public var searchString: String {
+        let empty = ""
+        var result = empty
+        let first = firstName?.trim() ?? empty
+        if !first.isEmpty {
+            result = first
+        } else {
+            let last = lastName?.trim() ?? empty
+            if !last.isEmpty {
+                result = last
+            } else {
+                let full = fullName?.trim() ?? empty
+                if !full.isEmpty {
+                    result = full
+                }
+            }
+        }
+        
+        return result
+    }
     
     public override var hashValue: Int {
         return "\(id),\(firstName),\(lastName)".hashValue
