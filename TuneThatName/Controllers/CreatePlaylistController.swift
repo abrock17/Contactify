@@ -12,7 +12,7 @@ public class CreatePlaylistController: UIViewController {
     public var preferencesService = PreferencesService()
     public var notificationCenter = NSNotificationCenter.defaultCenter()
     
-    lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.navigationController!.view)
+    lazy var activityIndicator: UIView = NSBundle.mainBundle().loadNibNamed("PlaylsitCreationActivityIndicator", owner: self, options: nil).first as! UIView
 
     @IBOutlet public weak var numberOfSongsSlider: UISlider!
     @IBOutlet public weak var numberOfSongsLabel: UILabel!
@@ -158,7 +158,8 @@ public class CreatePlaylistController: UIViewController {
     }
     
     @IBAction public func createPlaylistPressed(sender: UIBarButtonItem) {
-        ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
+        activityIndicator.frame = self.navigationController!.view.bounds
+        self.view.addSubview(activityIndicator)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             self.playlistService.createPlaylistWithPreferences(self.playlistPreferences) {
                 playlistResult in
@@ -171,7 +172,7 @@ public class CreatePlaylistController: UIViewController {
                     case .Success(let playlist):
                         self.handleCreatedPlaylist(playlist, sender: sender)
                     }
-                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                    self.activityIndicator.removeFromSuperview()
                 }
             }
         }
