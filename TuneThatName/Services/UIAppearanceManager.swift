@@ -11,8 +11,10 @@ class UIAppearanceManager {
     static let destructive = UIAppearanceManager.rgbColor(179, 45, 45)
     
     static func initializeAppearance() {
+
         let window = UIApplication.sharedApplication().delegate!.window!!
         window.tintColor = tint
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
         UIApplication.sharedApplication().statusBarStyle = .LightContent
         
         UISwitch.appearance().onTintColor = mutedTint

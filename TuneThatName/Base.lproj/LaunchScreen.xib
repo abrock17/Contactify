@@ -53,6 +53,9 @@
                 <constraint firstItem="H1o-bZ-Jg7" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.45" id="yoP-Fq-OXy"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <variation key="default">
                 <mask key="constraints">
@@ -66,7 +69,7 @@
     </objects>
     <resources>
         <image name="TTN.png" width="482" height="722"/>
-        <image name="echonest.svg.png" width="304" height="240"/>
+        <image name="echonest.svg.png" width="283" height="128"/>
         <image name="spotify_logo_rgb_green.png" width="2362" height="709"/>
     </resources>
 </document>
