@@ -185,7 +185,8 @@ public class CreatePlaylistController: UIViewController {
     }
     
     @IBAction public func spotifyActionsPressed(sender: AnyObject) {
-        let spotifyActionSheet = SpotifyActionSheetController(application: UIApplication.sharedApplication(), spotifyAuthService: SpotifyAuthService())
+        let spotifyActionSheet = SpotifyActionSheetController(presentingView: (sender as! UIView),
+            application: UIApplication.sharedApplication(), spotifyAuthService: SpotifyAuthService())
 
         presentViewController(spotifyActionSheet, animated: true, completion: nil)
     }

@@ -13,11 +13,13 @@ public class SpotifyActionSheetController: UIAlertController {
     var application: UIApplicationProtocol!
     var spotifyAuthService: SpotifyAuthService!
     
-    public convenience init(application: UIApplicationProtocol, spotifyAuthService: SpotifyAuthService) {
+    public convenience init(presentingView: UIView, application: UIApplicationProtocol, spotifyAuthService: SpotifyAuthService) {
         self.init()
         self.init(title: nil, message: nil, preferredStyle: .ActionSheet)
         self.application = application
         self.spotifyAuthService = spotifyAuthService
+        popoverPresentationController?.sourceView = presentingView
+        popoverPresentationController?.sourceRect = presentingView.bounds
         
         addActions()
     }
