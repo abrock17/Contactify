@@ -16,12 +16,15 @@ public struct Constants {
         
         public static let PlaylistNotEnoughSongsCode = 21
         public static let PlaylistNotEnoughSongsMessage = "Could not find enough songs matching the provided search criteria."
-
+        
         public static let SpotifyNoCurrentTrackCode = 25
         public static let SpotifyNoCurrentTrackMessage = "There is no track in the current session."
         
         public static let SpotifyLoginCanceledCode = 30
         public static let SpotifyLoginCanceledMessage = "Login to spotify was canceled."
+        
+        public static let EchonestErrorCode = 40
+        public static let EchonestUnknownErrorMessage = "unknown error"
         
         public static let GenericPlaybackMessage = "Unable to Play Song"
         public static let GenericSongSearchMessage = "Unable to Search for Songs"

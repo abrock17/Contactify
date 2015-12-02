@@ -50,45 +50,73 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
         
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            self.retrieveCurrentUser() {
-                user in
+            self.spotifyUserService.retrieveCurrentUser() {
+                userResult in
                 
-                self.echoNestService.findSongs(titleSearchTerm: self.searchContact.searchString, withSongPreferences: playlistPreferences!.songPreferences, desiredNumberOfSongs: 20, inLocale: user.territory) {
-                    songResult in
+                self.handleUserResult(userResult) {
+                    user in
                     
-                    dispatch_async(dispatch_get_main_queue()) {
-                        switch (songResult) {
-                        case .Success(let songs):
-                            self.songs = songs
-                            self.tableView.reloadData()
-                        case .Failure(let error):
-                            ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericSongSearchMessage, andError: error, onController: self) {
-                                alertAction in
-                                
-                                self.navigationController?.popViewControllerAnimated(true)
-                            }
-                        }
-                        ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                    self.echoNestService.findSongs(titleSearchTerm: self.searchContact.searchString,
+                        withSongPreferences: playlistPreferences!.songPreferences,
+                        desiredNumberOfSongs: 20, inLocale: user.territory) {
+                        songsResult in
+                        
+                        self.handleSongsResult(songsResult)
                     }
                 }
             }
         }
     }
     
-    func retrieveCurrentUser(userRetrievalHandler: SPTUser -> Void) {
-        self.spotifyUserService.retrieveCurrentUser() {
-            userResult in
-            
-            switch (userResult) {
-            case .Success(let user):
-                userRetrievalHandler(user)
+    func handleUserResult(userResult: SpotifyUserService.UserResult, userResultSuccessHandler: SPTUser -> Void) {
+        switch (userResult) {
+        case .Success(let user):
+            userResultSuccessHandler(user)
+        case .Failure(let error):
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericSongSearchMessage, andError: error, onController: self)
+                ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+            }
+        }
+    }
+    
+    func handleSongsResult(songsResult: EchoNestService.SongsResult) {
+        dispatch_async(dispatch_get_main_queue()) {
+            switch (songsResult) {
+                
+            case .Success(let songs):
+                if !songs.isEmpty {
+                    self.songs = songs
+                    self.tableView.reloadData()
+                } else {
+                    self.handleSongSearchFailureForNoSongsFound()
+                }
             case .Failure(let error):
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    ControllerHelper.displaySimpleAlertForTitle(Constants.Error.GenericSongSearchMessage, andError: error, onController: self)
-                    ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+                if Constants.Error.Domain == error.domain &&
+                    Constants.Error.EchonestErrorCode == error.code &&
+                    Constants.Error.EchonestUnknownErrorMessage == error.localizedDescription {
+                    self.handleSongSearchFailureForNoSongsFound()
+                } else {
+                    self.handleSongSearchFailureWithTitle(Constants.Error.GenericSongSearchMessage, andMessage: error.localizedDescription)
                 }
             }
+            
+            ControllerHelper.handleCompleteBackgroundActivityForView(self.view, activityIndicator: self.activityIndicator)
+        }
+    }
+    
+    func handleSongSearchFailureForNoSongsFound() {
+        handleSongSearchFailureWithTitle("No Songs Found\nfor \"\(self.searchContact.searchString)\"",
+            andMessage: "Try searching with a different name. Results are best when you use only a first name."
+        )
+    }
+    
+    func handleSongSearchFailureWithTitle(title: String, andMessage message: String) {
+        ControllerHelper.displaySimpleAlertForTitle(title, andMessage: message, onController: self) {
+            alertAction in
+            
+            self.navigationController?.popViewControllerAnimated(true)
         }
     }
 

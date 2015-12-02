@@ -55,6 +55,7 @@ public class EchoNestService {
                     if code == 0 {
                         callback(.Success(self.getValidSongsFromJSON(json, titleSearchTerm: titleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)))
                     } else {
+                        print("Error searching for \"\(titleSearchTerm)\" -- response body:\n\(statusJSON)")
                         callback(.Failure(self.errorForUnexpectedStatusJSON(statusJSON)))
                     }
                 } else {
@@ -164,7 +165,7 @@ public class EchoNestService {
     }
     
     func errorForMessage(message: String, andFailureReason reason: String) -> NSError {
-        return NSError(domain: Constants.Error.Domain, code: 0, userInfo: [NSLocalizedDescriptionKey: message, NSLocalizedFailureReasonErrorKey: reason])
+        return NSError(domain: Constants.Error.Domain, code: Constants.Error.EchonestErrorCode, userInfo: [NSLocalizedDescriptionKey: message, NSLocalizedFailureReasonErrorKey: reason])
     }
     
     func getSongSearchParametersForTitleSearchTerm(titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int) -> [String : AnyObject] {

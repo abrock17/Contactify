@@ -162,6 +162,37 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                         }
                     }
                     
+                    context("when the song search returns the echo nest 'unknown error'") {
+                        let error = NSError(domain: Constants.Error.Domain, code: Constants.Error.EchonestErrorCode, userInfo: [NSLocalizedDescriptionKey: "unknown error"])
+                        it("displays the 'no songs found' alert") {
+                            mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Failure(error))
+                            
+                            self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
+                            
+                            self.assertSimpleUIAlertControllerPresentedOnController(
+                                spotifySongSelectionTableController,
+                                withTitle: "No Songs Found\nfor \"\(searchContact.searchString)\"",
+                                andMessage: "Try searching with a different name. " +
+                                "Results are best when you use only a first name."
+                            )
+                        }
+                    }
+                    
+                    context("when the song search returns a successful empty result") {
+                        it ("displays the 'no songs found' alert") {
+                            mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success([Song]()))
+                            
+                            self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
+                            
+                            self.assertSimpleUIAlertControllerPresentedOnController(
+                                spotifySongSelectionTableController,
+                                withTitle: "No Songs Found\nfor \"\(searchContact.searchString)\"",
+                                andMessage: "Try searching with a different name. " +
+                                    "Results are best when you use only a first name."
+                            )
+                        }
+                    }
+                    
                     context("when the song search returns a successful result") {
                         it("displays the expected results in the table") {
                             mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success(resultSongList))
