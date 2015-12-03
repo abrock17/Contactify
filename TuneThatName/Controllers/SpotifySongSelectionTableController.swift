@@ -7,7 +7,6 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
     public var songs = [Song]()
     
     public var echoNestService = EchoNestService()
-    public var preferencesService = PreferencesService()
     public var spotifyAudioFacadeOverride: SpotifyAudioFacade!
     lazy var spotifyAudioFacade: SpotifyAudioFacade! = {
         return self.spotifyAudioFacadeOverride != nil ? self.spotifyAudioFacadeOverride : SpotifyAudioFacadeImpl.sharedInstance
@@ -43,11 +42,6 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
     }
     
     func populateSongs() {
-        var playlistPreferences = preferencesService.retrievePlaylistPreferences()
-        if playlistPreferences == nil {
-            playlistPreferences = preferencesService.getDefaultPlaylistPreferences()
-        }
-        
         ControllerHelper.handleBeginBackgroundActivityForView(view, activityIndicator: activityIndicator)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             self.spotifyUserService.retrieveCurrentUser() {
@@ -57,7 +51,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
                     user in
                     
                     self.echoNestService.findSongs(titleSearchTerm: self.searchContact.searchString,
-                        withSongPreferences: playlistPreferences!.songPreferences,
+                        withSongPreferences: SongPreferences(),
                         desiredNumberOfSongs: 20, inLocale: user.territory) {
                         songsResult in
                         

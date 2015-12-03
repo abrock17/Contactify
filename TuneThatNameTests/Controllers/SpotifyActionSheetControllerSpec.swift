@@ -50,14 +50,18 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
                         application: mockApplication, spotifyAuthService: mockSpotifyAuthService)
                 }
                 
-                fit("has the presenting view as its source view") {
-                    expect(spotifyActionSheetController.popoverPresentationController?.sourceView)
-                        .to(beIdenticalTo(presentingView))
+                it("has the presenting view as its source view") {
+                    if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                        expect(spotifyActionSheetController.popoverPresentationController?.sourceView)
+                            .to(beIdenticalTo(presentingView))
+                    }
                 }
                 
-                fit("has the presenting view's bounds for its source rect") {
-                    expect(spotifyActionSheetController.popoverPresentationController?.sourceRect)
-                        .to(equal(presentingView.bounds))
+                it("has the presenting view's bounds for its source rect") {
+                    if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                        expect(spotifyActionSheetController.popoverPresentationController?.sourceRect)
+                            .to(equal(presentingView.bounds))
+                    }
                 }
             }
             

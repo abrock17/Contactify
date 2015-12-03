@@ -17,7 +17,6 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
             var spotifySongSelectionTableController: SpotifySongSelectionTableController!
             var navigationController: UINavigationController!
             var mockEchoNestService: MockEchoNestService!
-            var mockPreferencesService: MockPreferencesService!
             var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             var mockSpotifyUserService: MockSpotifyUserService!
             var mockControllerHelper: MockControllerHelper!
@@ -25,8 +24,6 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
 
             let userLocale = "SE"
             let searchContact = Contact(id: 23, firstName: "Michael", lastName: "Jordan")
-            let defaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences:
-                SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Positive])))
             let resultSongList = [
                 Song(title: "Michael", artistName: "Franz Ferdinand", uri: NSURL(string: "spotify:track:1HcYhFRFQVSu8CGc0dl9to")!),
                 Song(title: "The Ballad of Michael Valentine", artistName: "The Killers", uri:  NSURL(string: "spotify:track:2MwNreqilyOvET5lEiv9E1")!),
@@ -51,8 +48,6 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 spotifySongSelectionTableController.songSelectionCompletionHandler = self.songSelectionCompletionHandler
                 mockEchoNestService = MockEchoNestService()
                 spotifySongSelectionTableController.echoNestService = mockEchoNestService
-                mockPreferencesService = MockPreferencesService()
-                spotifySongSelectionTableController.preferencesService = mockPreferencesService
                 mockSpotifyAudioFacade = MockSpotifyAudioFacade()
                 spotifySongSelectionTableController.spotifyAudioFacadeOverride = mockSpotifyAudioFacade
                 mockSpotifyUserService = MockSpotifyUserService()
@@ -66,43 +61,12 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
             
             describe("view load") {
                 it("disables the done button") {
-                    mockPreferencesService.mocker.prepareForCallTo(
-                        MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
-
                     self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
 
                     expect(spotifySongSelectionTableController.doneButton.enabled).toEventually(beFalse())
                 }
                 
-                it("retrieves preferences from the preferences service") {
-                    mockPreferencesService.mocker.prepareForCallTo(
-                        MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
-
-                    self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
-                    
-                    expect(mockPreferencesService.mocker.getCallCountFor(MockPreferencesService.Method.retrievePlaylistPreferences)).toEventually(equal(1))
-                }
-                
-                context("when there are no existing playlist preferences") {
-                    it("gets the default playlist preferences from the preferences service") {
-                        mockPreferencesService.mocker.prepareForCallTo(
-                            MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: nil)
-                        mockPreferencesService.mocker.prepareForCallTo(
-                            MockPreferencesService.Method.getDefaultPlaylistPreferences, returnValue: defaultPlaylistPreferences)
-                        
-                        self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
-                        
-                        expect(
-                            mockPreferencesService.mocker.getCallCountFor(
-                                MockPreferencesService.Method.getDefaultPlaylistPreferences))
-                            .toEventually(equal(1))
-                    }
-                }
-                
                 it("retrieves the current user from the user service") {
-                    mockPreferencesService.mocker.prepareForCallTo(
-                        MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
-
                     self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
                     
                     expect(mockSpotifyUserService.mocker.getCallCountFor(MockSpotifyUserService.Method.retrieveCurrentUser)).toEventually(equal(1))
@@ -112,9 +76,6 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                     let userServiceError = NSError(domain: "DOMAIN", code: 234, userInfo: [NSLocalizedDescriptionKey: "couldn't get no user"])
                     
                     it("calls back with the same error") {
-                        mockPreferencesService.mocker.prepareForCallTo(
-                            MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
-
                         mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Failure(userServiceError))
                         
                         self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
@@ -126,8 +87,6 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 
                 context("and user service calls back with a user") {
                     beforeEach() {
-                        mockPreferencesService.mocker.prepareForCallTo(
-                            MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
                         mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
                     }
                     
@@ -139,9 +98,10 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                         expect(mockEchoNestService.mocker.getNthCallTo(
                             MockEchoNestService.Method.findSongs, n: 0)?[0] as? String)
                             .toEventually(equal(searchContact.searchString))
+                        let expectedSongPreferences = SongPreferences()
                         expect(mockEchoNestService.mocker.getNthCallTo(
                             MockEchoNestService.Method.findSongs, n: 0)?[1] as? SongPreferences)
-                            .toEventually(equal(defaultPlaylistPreferences.songPreferences))
+                            .toEventually(equal(expectedSongPreferences))
                         expect(mockEchoNestService.mocker.getNthCallTo(
                             MockEchoNestService.Method.findSongs, n: 0)?[2] as? Int)
                             .toEventually(equal(20))
@@ -224,8 +184,6 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 let indexPath = NSIndexPath(forRow: 1, inSection: 0)
 
                 beforeEach() {
-                    mockPreferencesService.mocker.prepareForCallTo(
-                        MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: defaultPlaylistPreferences)
                     mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
                     mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success(resultSongList))
                     
