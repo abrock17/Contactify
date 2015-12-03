@@ -192,5 +192,11 @@ public class CreatePlaylistController: UIViewController {
     }
     
     @IBAction public func unwindToCreatePlaylist(sender: UIStoryboardSegue) {
+        if let nameSelectionTableController = sender.sourceViewController as? NameSelectionTableController {
+            if nameSelectionTableController.filteredContacts.isEmpty {
+                filterContactsSwitch.on = false
+                filterContactsStateChanged(filterContactsSwitch)
+            }
+        }
     }
 }

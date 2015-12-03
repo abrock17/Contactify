@@ -1,7 +1,6 @@
-import TuneThatName
+@testable import TuneThatName
 import Quick
 import Nimble
-import UIKit
 
 class CreatePlaylistControllerSpec: QuickSpec {
     
@@ -11,6 +10,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
             var createPlaylistController: CreatePlaylistController!
             var mockPlaylistService: MockPlaylistService!
             var mockPreferencesService: MockPreferencesService!
+            var mockNameSelectionTableController: MockNameSelectionTableController!
             let defaultPlaylistPreferences = PlaylistPreferences(numberOfSongs: 10, filterContacts: false, songPreferences: SongPreferences(characteristics: Set<SongPreferences.Characteristic>([.Popular])))
             let numberOfSongsSliderInitialValue = 0.1837
             
@@ -24,6 +24,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 createPlaylistController.playlistService = mockPlaylistService
                 mockPreferencesService = MockPreferencesService()
                 createPlaylistController.preferencesService = mockPreferencesService
+                mockNameSelectionTableController = MockNameSelectionTableController()
                 
                 mockPreferencesService.mocker.prepareForCallTo(MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: nil)
                 mockPreferencesService.mocker.prepareForCallTo(MockPreferencesService.Method.getDefaultPlaylistPreferences, returnValue: defaultPlaylistPreferences)
@@ -489,6 +490,61 @@ class CreatePlaylistControllerSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("unwind to create playlist from name selection") {
+                var storyboardSegue: UIStoryboardSegue!
+                beforeEach() {
+                    storyboardSegue = UIStoryboardSegue(identifier: "fake segue", source: mockNameSelectionTableController, destination: createPlaylistController)
+                    createPlaylistController.filterContactsSwitch.on = true
+                    createPlaylistController.filterContactsStateChanged(createPlaylistController.filterContactsSwitch)
+                }
+                
+                context("when filtered contacts are empty") {
+                    beforeEach() {
+                        mockNameSelectionTableController.mocker.prepareForCallTo(
+                            MockNameSelectionTableController.Method.getFilteredContacts, returnValue: Set<Contact>())
+                        
+                        createPlaylistController.unwindToCreatePlaylist(storyboardSegue)
+                    }
+                    
+                    it("sets the filter contacts switch to off") {
+                        expect(createPlaylistController.filterContactsSwitch.on).to(beFalse())
+                    }
+
+                    it("disables the 'select names' button") {
+                        expect(createPlaylistController.selectNamesButton.enabled).toEventually(beFalse())
+                    }
+                    
+                    it("sets the filter contacts flag to false") {
+                        self.pressBarButton(createPlaylistController.createPlaylistButton)
+                        
+                        expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.filterContacts).toEventually(beFalse())
+                    }
+                }
+                
+                context("when filtered contacts are not empty") {
+                    beforeEach() {
+                        mockNameSelectionTableController.mocker.prepareForCallTo(
+                            MockNameSelectionTableController.Method.getFilteredContacts, returnValue: Set<Contact>([Contact(id: 1, firstName: "Fred", lastName: "Jones")]))
+                        
+                        createPlaylistController.unwindToCreatePlaylist(storyboardSegue)
+                    }
+                    
+                    it("does not change the filter contacts switch") {
+                        expect(createPlaylistController.filterContactsSwitch.on).to(beTrue())
+                    }
+                    
+                    it("does not disable the 'select names' button") {
+                        expect(createPlaylistController.selectNamesButton.enabled).toEventually(beTrue())
+                    }
+                    
+                    it("does not change the filter contacts flag") {
+                        self.pressBarButton(createPlaylistController.createPlaylistButton)
+                        
+                        expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.filterContacts).toEventually(beTrue())
+                    }
+                }
+            }
         }
     }
     
@@ -532,6 +588,25 @@ class MockPlaylistService: PlaylistService {
             callback(mockedResult)
         } else {
             callback(.Success(Playlist(name: "unimportant mocked playlist")))
+        }
+    }
+}
+
+class MockNameSelectionTableController: NameSelectionTableController {
+    
+    let mocker = Mocker()
+    
+    struct Method {
+        static let getFilteredContacts = "getFilteredContacts"
+        static let setFilteredContacts = "setFilteredContacts"
+    }
+    
+    override var filteredContacts: Set<Contact> {
+        get {
+            return mocker.mockCallTo(Method.getFilteredContacts) as! Set<Contact>
+        }
+        set {
+            mocker.recordCall(Method.setFilteredContacts, parameters: newValue)
         }
     }
 }
