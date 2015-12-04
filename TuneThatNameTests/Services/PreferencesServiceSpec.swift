@@ -44,6 +44,71 @@ class PreferencesServiceSpec: QuickSpec {
                         
                         expect(retrievedPlaylistPreferences).to(equal(playlistPreferences))
                     }
+                    
+                    context("and filterContacts is false") {
+                        it("does not retrieve filtered contacts from user defaults") {
+                            let playlistPreferencesData = NSKeyedArchiver.archivedDataWithRootObject(playlistPreferences)
+                            mockUserDefaults.mocker.prepareForCallTo(
+                                MockUserDefaults.Method.dataForKey, returnValue: playlistPreferencesData)
+                            mockUserDefaults.mocker.prepareForCallTo(
+                                MockUserDefaults.Method.arrayForKey, returnValue: [NSData]())
+                            
+                            preferencesService.retrievePlaylistPreferences()
+                            
+                            expect(mockUserDefaults.mocker.getCallCountFor(
+                                MockUserDefaults.Method.arrayForKey)).to(equal(0))
+                        }
+                    }
+                    
+                    context("and filterContacts is true") {
+                        beforeEach() {
+                            playlistPreferences.filterContacts = true
+                            let playlistPreferencesData = NSKeyedArchiver.archivedDataWithRootObject(playlistPreferences)
+                            mockUserDefaults.mocker.prepareForCallTo(
+                                MockUserDefaults.Method.dataForKey, returnValue: playlistPreferencesData)
+                        }
+                        
+                        it("retrieves filtered contacts from user defaults") {
+                            mockUserDefaults.mocker.prepareForCallTo(
+                                MockUserDefaults.Method.arrayForKey, returnValue: [NSData]())
+
+                            preferencesService.retrievePlaylistPreferences()
+
+                            expect(mockUserDefaults.mocker.getNthCallTo(
+                                MockUserDefaults.Method.arrayForKey, n: 0)?.first as? String)
+                            .to(equal(Constants.StorageKeys.filteredContacts))
+                        }
+                        
+                        context("and filtered contact data array is nil") {
+                            it("returns filterContacts flag as false") {
+                                mockUserDefaults.mocker.prepareForCallTo(
+                                    MockUserDefaults.Method.arrayForKey, returnValue: nil)
+                                
+                                expect(preferencesService.retrievePlaylistPreferences()?.filterContacts)
+                                    .to(beFalse())
+                            }
+                        }
+                        
+                        context("and filtered contact data array is empty") {
+                            it("returns filterContacts flag as false") {
+                                mockUserDefaults.mocker.prepareForCallTo(
+                                    MockUserDefaults.Method.arrayForKey, returnValue: [NSData]())
+                                
+                                expect(preferencesService.retrievePlaylistPreferences()?.filterContacts)
+                                    .to(beFalse())
+                            }
+                        }
+                        
+                        context("and filtered contact data array is not empty") {
+                            it("returns filterContacts flag as true") {
+                                mockUserDefaults.mocker.prepareForCallTo(
+                                    MockUserDefaults.Method.arrayForKey, returnValue: [NSData()])
+                                
+                                expect(preferencesService.retrievePlaylistPreferences()?.filterContacts)
+                                    .to(beTrue())
+                            }
+                        }
+                    }
                 }
             }
             

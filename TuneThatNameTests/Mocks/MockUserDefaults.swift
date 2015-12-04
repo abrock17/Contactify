@@ -9,7 +9,8 @@ class MockUserDefaults: NSUserDefaults {
     let mocker = Mocker()
     
     override func arrayForKey(defaultName: String) -> [AnyObject]? {
-        return mocker.mockCallTo(Method.arrayForKey, parameters: defaultName) as! [NSData]?
+        mocker.recordCall(Method.arrayForKey, parameters: defaultName)
+        return mocker.returnValueForCallTo(Method.arrayForKey) as? [NSData]
     }
     
     override func dataForKey(defaultName: String) -> NSData? {
