@@ -91,11 +91,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
             updatePlaylistState(.Unsaved)
         }
         
-        selectRowForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack)
+        selectRowForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack, scroll: !editing)
     }
     
-    func syncEditedPlaylist() {
-        selectRowForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack)
+    func syncEditedPlaylist(scrollToSelectedRow scroll: Bool) {
+        selectRowForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack, scroll: scroll)
         let currentIndex = ControllerHelper.getIndexForSpotifyTrack(spotifyAudioFacade.currentSpotifyTrack, inSongs: playlist.songs)
         self.spotifyAudioFacade.updatePlaylist(self.playlist, withIndex: currentIndex ?? 0) {
             error in
@@ -106,7 +106,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
         }
     }
     
-    func selectRowForSpotifyTrack(spotifyTrack: SpotifyTrack?) {
+    func selectRowForSpotifyTrack(spotifyTrack: SpotifyTrack?, scroll: Bool) {
         let currentTrackIndex = ControllerHelper.getIndexForSpotifyTrack(spotifyTrack, inSongs: playlist.songs)
         let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
         dispatch_after(delayTime, dispatch_get_main_queue()) {
@@ -114,7 +114,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
                 self.tableView.selectRowAtIndexPath(
                     NSIndexPath(forRow: index, inSection: 0),
                     animated: true,
-                    scrollPosition: self.editing ? .None : .Middle
+                    scrollPosition: scroll ? .Middle : .None
                 )
             } else if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
                 self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: false)
@@ -142,7 +142,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
         let deletedSong = self.playlist.songsWithContacts.removeAtIndex(indexPath.row)
         self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
         if hasPlayed {
-            self.syncEditedPlaylist()
+            self.syncEditedPlaylist(scrollToSelectedRow: false)
             if spotifyAudioFacade.currentSpotifyTrack?.uri == deletedSong.song.uri {
                 self.stopPlay()
             }
@@ -184,13 +184,13 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
                 if spotifyAudioFacade.currentSpotifyTrack?.uri == oldSong.uri {
                     playFromIndex(indexPath.row)
                 } else {
-                    syncEditedPlaylist()
+                    syncEditedPlaylist(scrollToSelectedRow: false)
                 }
             }
         } else {
             playlist.songsWithContacts.append((song: song, contact: contact))
             tableView.reloadData()
-            syncEditedPlaylist()
+            syncEditedPlaylist(scrollToSelectedRow: true)
         }
     }
     
@@ -207,7 +207,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
         let songWithContact = playlist.songsWithContacts.removeAtIndex(fromIndexPath.row)
         playlist.songsWithContacts.insert(songWithContact, atIndex: toIndexPath.row)
         if hasPlayed {
-            syncEditedPlaylist()
+            syncEditedPlaylist(scrollToSelectedRow: false)
         }
     }
 
@@ -374,7 +374,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
     }
     
     public func changedCurrentTrack(spotifyTrack: SpotifyTrack?) {
-        selectRowForSpotifyTrack(spotifyTrack)
+        selectRowForSpotifyTrack(spotifyTrack, scroll: !self.editing)
         updateSongViewButtonForTrack(spotifyTrack)
     }
     
