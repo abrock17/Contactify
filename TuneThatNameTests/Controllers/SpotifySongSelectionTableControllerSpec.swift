@@ -60,10 +60,10 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
             }
             
             describe("view load") {
-                it("disables the done button") {
+                it("disables the select button") {
                     self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)
 
-                    expect(spotifySongSelectionTableController.doneButton.enabled).toEventually(beFalse())
+                    expect(spotifySongSelectionTableController.selectButton.enabled).toEventually(beFalse())
                 }
                 
                 it("retrieves the current user from the user service") {
@@ -192,10 +192,10 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 }
                 
                 describe("did select a row") {
-                    it("enables the done button") {
+                    it("enables the select button") {
                         spotifySongSelectionTableController.tableView(spotifySongSelectionTableController.tableView, didSelectRowAtIndexPath: indexPath)
                         
-                        expect(spotifySongSelectionTableController.doneButton.enabled).toEventually(beTrue())
+                        expect(spotifySongSelectionTableController.selectButton.enabled).toEventually(beTrue())
                     }
                     
                     it("plays the track") {
@@ -234,11 +234,11 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                     }
                 }
                 
-                describe("press the done button") {
+                describe("press the select button") {
                     it("calls the completion handler") {
                         spotifySongSelectionTableController.tableView.selectRowAtIndexPath(indexPath, animated: false, scrollPosition: .None)
                         
-                        self.pressDoneButton(spotifySongSelectionTableController)
+                        self.pressSelectButton(spotifySongSelectionTableController)
                         
                         expect(self.callbackSong).toEventually(equal(resultSongList[indexPath.row]))
                         expect(self.callbackContact).toEventually(equal(searchContact))
@@ -351,9 +351,9 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
         }
     }
     
-    func pressDoneButton(spotifySongSelectionTableController: SpotifySongSelectionTableController) {
-        UIApplication.sharedApplication().sendAction(spotifySongSelectionTableController.doneButton.action,
-            to: spotifySongSelectionTableController.doneButton.target, from: self, forEvent: nil)
+    func pressSelectButton(spotifySongSelectionTableController: SpotifySongSelectionTableController) {
+        UIApplication.sharedApplication().sendAction(spotifySongSelectionTableController.selectButton.action,
+            to: spotifySongSelectionTableController.selectButton.target, from: self, forEvent: nil)
     }
     
     func pressPlayPauseButton(spotifySongSelectionTableController: SpotifySongSelectionTableController) {

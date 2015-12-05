@@ -16,7 +16,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
     
     lazy var activityIndicator: UIActivityIndicatorView = ControllerHelper.newActivityIndicatorForView(self.navigationController!.view)
     
-    @IBOutlet public weak var doneButton: UIBarButtonItem!
+    @IBOutlet public weak var selectButton: UIBarButtonItem!
     @IBOutlet public weak var playPauseButton: UIBarButtonItem!
     @IBOutlet public weak var songViewButton: UIBarButtonItem!
     
@@ -24,7 +24,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
         super.viewDidLoad()
         
         clearsSelectionOnViewWillAppear = false
-        doneButton.enabled = false
+        selectButton.enabled = false
         populateSongs()
     }
     
@@ -144,7 +144,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
     }
     
     override public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        doneButton.enabled = true
+        selectButton.enabled = true
         playFromIndex(indexPath.row)
     }
     
@@ -215,7 +215,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
         navigationController?.popViewControllerAnimated(true)
     }
     
-    @IBAction func donePressed(sender: UIBarButtonItem) {
+    @IBAction func selectPressed(sender: UIBarButtonItem) {
         let selectedSong = songs[tableView.indexPathForSelectedRow!.row]
         songSelectionCompletionHandler(selectedSong, searchContact)
     }

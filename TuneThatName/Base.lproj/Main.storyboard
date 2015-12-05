@@ -480,7 +480,7 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <state key="normal" title="Untitled">
-                                <color key="titleColor" red="1" green="0.98224754320106" blue="0.57906466461497774" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleColor" red="1" green="0.97918842520286364" blue="0.24893970373399077" alpha="0.70000000000000007" colorSpace="calibratedRGB"/>
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
@@ -593,14 +593,14 @@
                                 <action selector="cancelPressed:" destination="cAw-7i-YC1" id="QoI-bU-hWf"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="lF3-2L-g7r">
+                        <barButtonItem key="rightBarButtonItem" title="Find Songs" id="lF3-2L-g7r">
                             <connections>
-                                <action selector="donePressed:" destination="cAw-7i-YC1" id="Aja-KN-98t"/>
+                                <action selector="findSongsPressed:" destination="cAw-7i-YC1" id="qEA-PY-lBQ"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="doneButton" destination="lF3-2L-g7r" id="4Ja-OT-vlS"/>
+                        <outlet property="findSongsButton" destination="lF3-2L-g7r" id="ALS-rK-l4R"/>
                         <outlet property="lastNameLabel" destination="fR5-fj-DCd" id="PiT-X5-QBr"/>
                         <outlet property="nameEntryTextField" destination="hoB-qE-gO1" id="DXD-1f-xen"/>
                         <outlet property="nameSuggestionTableView" destination="90l-Zb-RJ5" id="cwB-7g-p8T"/>
@@ -669,15 +669,15 @@
                                 <action selector="cancelPressed:" destination="zTz-r1-XjC" id="Jei-iO-vO2"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="5Tx-jh-9WN">
+                        <barButtonItem key="rightBarButtonItem" title="Select" id="5Tx-jh-9WN">
                             <connections>
-                                <action selector="donePressed:" destination="zTz-r1-XjC" id="UbW-AS-glk"/>
+                                <action selector="selectPressed:" destination="zTz-r1-XjC" id="w2V-Id-YNg"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="doneButton" destination="5Tx-jh-9WN" id="t3V-ck-Nuk"/>
                         <outlet property="playPauseButton" destination="DF5-vI-cgt" id="VnX-rP-KJk"/>
+                        <outlet property="selectButton" destination="5Tx-jh-9WN" id="px0-9n-xYt"/>
                         <outlet property="songViewButton" destination="EaX-Kn-hVO" id="NW0-dJ-A5q"/>
                         <segue destination="njU-17-JH3" kind="presentation" identifier="ShowSpotifyTrackFromSongSelectionSegue" id="mu1-Yo-RgQ"/>
                     </connections>
@@ -832,7 +832,7 @@
         <image name="Dakirby309-Simply-Styled-Spotify.ico" width="256" height="256"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Xtd-C4-B77"/>
-        <segue reference="thZ-EL-OxA"/>
+        <segue reference="uSv-zE-s4T"/>
+        <segue reference="mu1-Yo-RgQ"/>
     </inferredMetricsTieBreakers>
 </document>

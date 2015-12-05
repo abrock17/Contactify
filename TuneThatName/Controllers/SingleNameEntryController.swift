@@ -1,6 +1,6 @@
 import UIKit
 
-public class SingleNameEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+public class SingleNameEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
 
     public var selectedContact: Contact?
     var allConctacts = [Contact]()
@@ -12,13 +12,11 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
     @IBOutlet public weak var nameEntryTextField: UITextField!
     @IBOutlet public weak var lastNameLabel: UILabel!
     @IBOutlet public weak var nameSuggestionTableView: UITableView!
-    @IBOutlet public weak var doneButton: UIBarButtonItem!
+    @IBOutlet public weak var findSongsButton: UIBarButtonItem!
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-
-        nameEntryTextChanged(nameEntryTextField)
-        nameSuggestionTableView.hidden = true
+        initializeNameEntry()
         
         contactService.retrieveAllContacts() {
             contactListResult in
@@ -30,6 +28,13 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
                 print("Unable to retrieve contacts: \(error)")
             }
         }
+    }
+    
+    func initializeNameEntry() {
+        nameEntryTextField.returnKeyType = .Go
+        nameEntryTextField.delegate = self
+        nameEntryTextChanged(nameEntryTextField)
+        nameSuggestionTableView.hidden = true
     }
 
     override public func didReceiveMemoryWarning() {
@@ -84,9 +89,8 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
     }
     
     @IBAction public func nameEntryTextChanged(sender: UITextField) {
-        let trimmedText = nameEntryTextField.text!
-            .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-        doneButton.enabled = !trimmedText.isEmpty
+        let trimmedText = nameEntryTextField.text!.trim()
+        findSongsButton.enabled = !trimmedText.isEmpty
         
         selectedContact = nil
         lastNameLabel.text = ""
@@ -116,7 +120,15 @@ public class SingleNameEntryController: UIViewController, UITableViewDelegate, U
         navigationController?.popViewControllerAnimated(true)
     }
     
-    @IBAction public func donePressed(sender: UIBarButtonItem) {
+    public func textFieldShouldReturn(textField: UITextField) -> Bool {
+        print("textFieldShouldReturn")
+        if findSongsButton.enabled {
+            findSongsPressed(textField)
+        }
+        return findSongsButton.enabled
+    }
+    
+    @IBAction public func findSongsPressed(sender: AnyObject) {
         if selectedContact == nil {
             selectedContact = Contact(id: -1,
                 firstName: nameEntryTextField.text!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()),

@@ -43,8 +43,8 @@ class SingleNameEntryControllerSpec: QuickSpec {
                         MockContactService.Method.retrieveAllContacts)).toEventually(equal(1))
                 }
                 
-                it("disables the done button") {
-                    expect(singleNameEntryController.doneButton.enabled).to(beFalse())
+                it("disables the find songs button") {
+                    expect(singleNameEntryController.findSongsButton.enabled).to(beFalse())
                 }
                 
                 it("hides the name suggestion table") {
@@ -54,22 +54,22 @@ class SingleNameEntryControllerSpec: QuickSpec {
             
             describe("name entry text change") {
                 context("when the text changes to empty") {
-                    it("disables the done button") {
+                    it("disables the find songs button") {
                         self.changeNameEntryTextTo("a", on: singleNameEntryController)
                         
                         self.changeNameEntryTextTo("", on: singleNameEntryController)
                         
-                        expect(singleNameEntryController.doneButton.enabled).to(beFalse())
+                        expect(singleNameEntryController.findSongsButton.enabled).to(beFalse())
                     }
                 }
                 
                 context("when the text changes to blank") {
-                    it("disables the done button") {
+                    it("disables the find songs button") {
                         self.changeNameEntryTextTo("a", on: singleNameEntryController)
                         
                         self.changeNameEntryTextTo("    ", on: singleNameEntryController)
                         
-                        expect(singleNameEntryController.doneButton.enabled).to(beFalse())
+                        expect(singleNameEntryController.findSongsButton.enabled).to(beFalse())
                     }
                 }
                 
@@ -84,12 +84,12 @@ class SingleNameEntryControllerSpec: QuickSpec {
                             self.changeNameEntryTextTo(text, on: singleNameEntryController)
                         }
                         
-                        it("enables the done button") {
-                            expect(singleNameEntryController.doneButton.enabled).to(beTrue())
+                        it("enables the find songs button") {
+                            expect(singleNameEntryController.findSongsButton.enabled).to(beTrue())
                         }
                         
                         it("sets the first name on the contact") {
-                            self.pressDoneButton(singleNameEntryController)
+                            self.pressFindSongsButton(singleNameEntryController)
                             let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
                             expect(spotifySongSelectionTableController?.searchContact.firstName).to(equal(text))
                         }
@@ -107,8 +107,8 @@ class SingleNameEntryControllerSpec: QuickSpec {
                             self.changeNameEntryTextTo(text, on: singleNameEntryController)
                         }
                         
-                        it("enables the done button") {
-                            expect(singleNameEntryController.doneButton.enabled).to(beTrue())
+                        it("enables the find songs button") {
+                            expect(singleNameEntryController.findSongsButton.enabled).to(beTrue())
                         }
                         
                         it("displays the name suggestion table with the expectecd contacts") {
@@ -133,8 +133,8 @@ class SingleNameEntryControllerSpec: QuickSpec {
                             self.changeNameEntryTextTo(text, on: singleNameEntryController)
                         }
                         
-                        it("enables the done button") {
-                            expect(singleNameEntryController.doneButton.enabled).to(beTrue())
+                        it("enables the find songs button") {
+                            expect(singleNameEntryController.findSongsButton.enabled).to(beTrue())
                         }
                         
                         it("displays the name suggestion table with the expectecd contacts") {
@@ -174,7 +174,7 @@ class SingleNameEntryControllerSpec: QuickSpec {
                     }
                     
                     it("sets the selected contact") {
-                        self.pressDoneButton(singleNameEntryController)
+                        self.pressFindSongsButton(singleNameEntryController)
                         let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
                         expect(spotifySongSelectionTableController?.searchContact).to(equal(expectedContact))
                     }
@@ -191,7 +191,7 @@ class SingleNameEntryControllerSpec: QuickSpec {
                         }
                         
                         it("resets the selected contact") {
-                            self.pressDoneButton(singleNameEntryController)
+                            self.pressFindSongsButton(singleNameEntryController)
                             let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
                             expect(spotifySongSelectionTableController?.searchContact.firstName).to(equal(newText))
                         }
@@ -210,7 +210,7 @@ class SingleNameEntryControllerSpec: QuickSpec {
                     }
                     
                     it("sets the selected contact") {
-                        self.pressDoneButton(singleNameEntryController)
+                        self.pressFindSongsButton(singleNameEntryController)
                         let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
                         expect(spotifySongSelectionTableController?.searchContact).to(equal(contactList[3]))
                     }
@@ -233,19 +233,19 @@ class SingleNameEntryControllerSpec: QuickSpec {
                     }
                     
                     it("sets the selected contact") {
-                        self.pressDoneButton(singleNameEntryController)
+                        self.pressFindSongsButton(singleNameEntryController)
                         let spotifySongSelectionTableController = navigationController.topViewController as? SpotifySongSelectionTableController
                         expect(spotifySongSelectionTableController?.searchContact).to(equal(contactList[4]))
                     }
                 }
             }
             
-            describe("press done button") {
+            describe("press find songs button") {
                 let firstName = "Shaniqua"
                 beforeEach() {
                     self.changeNameEntryTextTo(firstName, on: singleNameEntryController)
                     
-                    self.pressDoneButton(singleNameEntryController)
+                    self.pressFindSongsButton(singleNameEntryController)
                 }
                 
                 it("segues to the song selection controller") {
@@ -272,8 +272,8 @@ class SingleNameEntryControllerSpec: QuickSpec {
     }
     
     
-    func pressDoneButton(singleNameEntryController: SingleNameEntryController) {
-        UIApplication.sharedApplication().sendAction(singleNameEntryController.doneButton.action,
-            to: singleNameEntryController.doneButton.target, from: self, forEvent: nil)
+    func pressFindSongsButton(singleNameEntryController: SingleNameEntryController) {
+        UIApplication.sharedApplication().sendAction(singleNameEntryController.findSongsButton.action,
+            to: singleNameEntryController.findSongsButton.target, from: self, forEvent: nil)
     }
 }
