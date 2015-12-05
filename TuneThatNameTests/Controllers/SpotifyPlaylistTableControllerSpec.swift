@@ -573,7 +573,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                 }
                 
-                describe("replace button pressed") {
+                describe("replace song") {
                     it("sets the song replacement index") {
                         spotifyPlaylistTableController.handleReplaceRow(replaceAction, indexPath: firstIndexPath)
 
@@ -593,6 +593,22 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                             expect(navigationController.topViewController)
                                 .toEventually(beAnInstanceOf(SingleNameEntryController))
                         }
+                    }
+                }
+                
+                describe("add song") {
+                    beforeEach() {
+                        spotifyPlaylistTableController.songReplacementIndexPath = NSIndexPath()
+                        spotifyPlaylistTableController.addSong(UIBarButtonItem())
+                    }
+                    
+                    it("prompts the user to enter a name") {
+                        expect(navigationController.topViewController)
+                            .toEventually(beAnInstanceOf(SingleNameEntryController))
+                    }
+                    
+                    it("nils the songReplacementIndexPath") {
+                        expect(spotifyPlaylistTableController.songReplacementIndexPath).to(beNil())
                     }
                 }
                 

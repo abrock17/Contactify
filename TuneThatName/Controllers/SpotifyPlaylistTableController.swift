@@ -119,7 +119,8 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
     }
     
     public func addSong(sender: UIBarButtonItem) {
-        print("addSong")
+        performSegueWithIdentifier("EnterNameSegue", sender: sender)
+        songReplacementIndexPath = nil
     }
     
     override public func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
