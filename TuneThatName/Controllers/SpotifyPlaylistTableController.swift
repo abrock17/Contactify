@@ -31,7 +31,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        self.navigationItem.rightBarButtonItems = [self.editButtonItem()]
         self.tableView.allowsSelectionDuringEditing = true
         
         updatePlaylistState(.Unsaved)
@@ -42,7 +42,6 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
         spotifyAudioFacade.playbackDelegate = self
         self.navigationController?.setToolbarHidden(false, animated: animated)
 
-        // TODO: testdrive this
         setupSpotifyActionsButton()
     }
 
@@ -84,8 +83,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
         super.setEditing(editing, animated: animated)
         
         if editing {
+            let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "addSong:")
+            self.navigationItem.rightBarButtonItems = [self.editButtonItem(), addButton]
             updatePlaylistState(.Editing)
         } else {
+            self.navigationItem.rightBarButtonItems = [self.editButtonItem()]
             updatePlaylistState(.Unsaved)
         }
         
@@ -114,6 +116,10 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
                 self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: false)
             }
         }
+    }
+    
+    public func addSong(sender: UIBarButtonItem) {
+        print("addSong")
     }
     
     override public func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {

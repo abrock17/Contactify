@@ -383,18 +383,72 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
             }
             
             describe("edit pressed") {
-                it("updates the save button text") {
-                    self.pressEditButton(spotifyPlaylistTableController)
+                context("switch to editing") {
+                    it("updates the save button text") {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.saveButton.title).to(equal("Editing Playlist"))
+                    }
                     
-                    expect(spotifyPlaylistTableController.saveButton.title).to(equal("Editing Playlist"))
+                    it("disables the save button") {
+                        spotifyPlaylistTableController.saveButton.enabled = true
+                        
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.saveButton.enabled).toNot(beTrue())
+                    }
+                    
+                    it("replaces the edit button with a done button") {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.navigationItem.rightBarButtonItems?.first?
+                            .title).to(equal("Done"))
+                    }
+                    
+                    it("adds an 'add' button to the right bar button items") {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.navigationItem.rightBarButtonItems?.count).to(equal(2))
+                        expect((spotifyPlaylistTableController.navigationItem.rightBarButtonItems?.last)?
+                            .valueForKey("systemItem") as? Int).to(equal(UIBarButtonSystemItem.Add.rawValue))
+                        expect((spotifyPlaylistTableController.navigationItem.rightBarButtonItems?.last)?
+                            .target as? UIViewController).to(beIdenticalTo(spotifyPlaylistTableController))
+                        expect((spotifyPlaylistTableController.navigationItem.rightBarButtonItems?.last)?
+                            .action).to(equal(Selector("addSong:")))
+                    }
                 }
                 
-                it("disables the save button") {
-                    spotifyPlaylistTableController.saveButton.enabled = true
+                context("switch to not editing") {
+                    beforeEach() {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                    }
                     
-                    self.pressEditButton(spotifyPlaylistTableController)
+                    it("updates the save button text") {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.saveButton.title).to(equal("Save to Spotify"))
+                    }
                     
-                    expect(spotifyPlaylistTableController.saveButton.enabled).toNot(beTrue())
+                    it("enables the save button") {
+                        spotifyPlaylistTableController.saveButton.enabled = false
+                        
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.saveButton.enabled).to(beTrue())
+                    }
+                    
+                    it("replaces the done button with the edit button") {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.navigationItem.rightBarButtonItems?.first?
+                            .title).to(equal("Edit"))
+                    }
+                    
+                    it("removes the 'add' button from the right bar button items") {
+                        self.pressEditButton(spotifyPlaylistTableController)
+                        
+                        expect(spotifyPlaylistTableController.navigationItem.rightBarButtonItems?.count).to(equal(1))
+                    }
                 }
                 
                 context("when play has already started") {
