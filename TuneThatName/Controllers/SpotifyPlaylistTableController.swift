@@ -111,7 +111,11 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
         let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
         dispatch_after(delayTime, dispatch_get_main_queue()) {
             if let index = currentTrackIndex {
-                self.tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: true, scrollPosition: UITableViewScrollPosition.Middle)
+                self.tableView.selectRowAtIndexPath(
+                    NSIndexPath(forRow: index, inSection: 0),
+                    animated: true,
+                    scrollPosition: self.editing ? .None : .Middle
+                )
             } else if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
                 self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: false)
             }
