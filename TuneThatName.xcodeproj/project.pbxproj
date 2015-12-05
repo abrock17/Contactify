@@ -125,7 +125,7 @@
 		441A9BF91BCC6A8800A57F11 /* MockSpotifyAuthService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSpotifyAuthService.swift; sourceTree = "<group>"; };
 		441A9BFB1BD108D900A57F11 /* SpotifyAuthServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyAuthServiceSpec.swift; sourceTree = "<group>"; };
 		441A9BFD1BD10A9E00A57F11 /* MockSPTAuth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSPTAuth.swift; sourceTree = "<group>"; };
-		4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyPlaylistTableControllerSpec.swift; sourceTree = "<group>"; };
+		4433E6251ABD9708006CE8B8 /* SpotifyPlaylistTableControllerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = SpotifyPlaylistTableControllerSpec.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		4433E6271AC119A6006CE8B8 /* Playlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		443963941A9755FA00E0C385 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		443963981A97567100E0C385 /* TuneThatName-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TuneThatName-Bridging-Header.h"; sourceTree = "<group>"; };

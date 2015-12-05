@@ -612,7 +612,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                     }
                 }
                 
-                describe("complete replacement with song and contact") {
+                describe("complete selection of song with contact") {
                     let newSong = Song(title: "Don’t call me Whitney, Bobby",
                         artistNames: ["Islands"],
                         uri: NSURL(string:"spotify:track:51L6XqGwYaRUh5qenzko3F")!)
@@ -622,19 +622,35 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         numberOfRowsBefore = spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, numberOfRowsInSection: 0)
                     }
                     
-                    it("replaces the row in the table") {
-                        spotifyPlaylistTableController.songReplacementIndexPath = firstIndexPath
-                        spotifyPlaylistTableController.completeReplacementWithSong(newSong, andContact: nil)
-                        
-                        expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, numberOfRowsInSection: 0)).to(equal(numberOfRowsBefore))
-                        expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).textLabel?.text).to(equal(newSong.title))
-                        expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).detailTextLabel?.text).to(equal(newSong.displayArtistName))
+                    context("when the songReplacementIndexPath is set") {
+                        it("replaces the row in the table") {
+                            spotifyPlaylistTableController.songReplacementIndexPath = firstIndexPath
+                            
+                            spotifyPlaylistTableController.completeSelectionOfSong(newSong, withContact: nil)
+                            
+                            expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, numberOfRowsInSection: 0)).to(equal(numberOfRowsBefore))
+                            expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).textLabel?.text).to(equal(newSong.title))
+                            expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: firstIndexPath).detailTextLabel?.text).to(equal(newSong.displayArtistName))
+                        }
+                    }
+                    
+                    context("when the songReplacementIndexPath is nil") {
+                        it("appends the row to the end of the table") {
+                            spotifyPlaylistTableController.songReplacementIndexPath = nil
+                            
+                            spotifyPlaylistTableController.completeSelectionOfSong(newSong, withContact: nil)
+
+                            expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, numberOfRowsInSection: 0)).to(equal(numberOfRowsBefore + 1))
+                            let newIndexPath = NSIndexPath(forRow: numberOfRowsBefore, inSection: 0)
+                            expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: newIndexPath).textLabel?.text).to(equal(newSong.title))
+                            expect(spotifyPlaylistTableController.tableView(spotifyPlaylistTableController.tableView, cellForRowAtIndexPath: newIndexPath).detailTextLabel?.text).to(equal(newSong.displayArtistName))
+                        }
                     }
                     
                     context("when play has not yet started") {
                         it("does not update the playlist with the spotify audio facade") {
                             spotifyPlaylistTableController.songReplacementIndexPath = firstIndexPath
-                            spotifyPlaylistTableController.completeReplacementWithSong(newSong, andContact: nil)
+                            spotifyPlaylistTableController.completeSelectionOfSong(newSong, withContact: nil)
                             
                             expect(mockSpotifyAudioFacade.mocker.getCallCountFor(
                                 MockSpotifyAudioFacade.Method.updatePlaylist)).toEventually(equal(0))
@@ -649,7 +665,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         context("and the replaced song is not currently playing") {
                             beforeEach() {
                                 spotifyPlaylistTableController.songReplacementIndexPath = firstIndexPath
-                                spotifyPlaylistTableController.completeReplacementWithSong(newSong, andContact: nil)
+                                spotifyPlaylistTableController.completeSelectionOfSong(newSong, withContact: nil)
                             }
                             
                             it("updates the playlist with the spotify audio facade") {
@@ -665,7 +681,7 @@ class SpotifyPlaylistTableControllerSpec: QuickSpec {
                         context("and the replaced song is playing") {
                             beforeEach() {
                                 spotifyPlaylistTableController.songReplacementIndexPath = secondIndexPath
-                                spotifyPlaylistTableController.completeReplacementWithSong(newSong, andContact: nil)
+                                spotifyPlaylistTableController.completeSelectionOfSong(newSong, withContact: nil)
                             }
                             
                             it("does not update the playlist with the spotify audio facade") {

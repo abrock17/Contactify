@@ -170,7 +170,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
         presentViewController(alertController, animated: true, completion: nil)
     }
     
-    public func completeReplacementWithSong(song: Song, andContact contact: Contact?) {
+    public func completeSelectionOfSong(song: Song, withContact contact: Contact?) {
         navigationController?.popToViewController(self, animated: true)
         if let indexPath = songReplacementIndexPath {
             let oldSong = playlist.songsWithContacts[indexPath.row].song
@@ -183,6 +183,10 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
                     syncEditedPlaylist()
                 }
             }
+        } else {
+            playlist.songsWithContacts.append((song: song, contact: contact))
+            tableView.reloadData()
+            syncEditedPlaylist()
         }
     }
     
@@ -217,9 +221,9 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
             spotifyTrackViewController.spotifyAudioFacade = spotifyAudioFacade
         } else if let spotifySongSelectionController = destinationViewController as? SpotifySongSelectionTableController {
             spotifySongSelectionController.searchContact = playlist.songsWithContacts[songReplacementIndexPath!.row].contact
-            spotifySongSelectionController.songSelectionCompletionHandler = completeReplacementWithSong
+            spotifySongSelectionController.songSelectionCompletionHandler = completeSelectionOfSong
         } else if let singleNameEntryController = destinationViewController as? SingleNameEntryController {
-            singleNameEntryController.songSelectionCompletionHandler = completeReplacementWithSong
+            singleNameEntryController.songSelectionCompletionHandler = completeSelectionOfSong
         }
     }
     
