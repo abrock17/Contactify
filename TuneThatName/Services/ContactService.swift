@@ -55,7 +55,7 @@ public class ContactService {
             let recordID = addressBook.RecordGetRecordID(recordRef)
             let firstName = addressBook.RecordCopyValue(recordRef, property: kABPersonFirstNameProperty)?.takeRetainedValue() as? String
             let lastName = addressBook.RecordCopyValue(recordRef, property: kABPersonLastNameProperty)?.takeRetainedValue() as? String
-            let fullName = addressBook.RecordCopyCompositeName(recordRef).takeRetainedValue() as String
+            let fullName = addressBook.RecordCopyCompositeName(recordRef)?.takeRetainedValue() as? String
             contactList.append(Contact(id: recordID, firstName: firstName, lastName: lastName, fullName: fullName))
         }
         
@@ -134,7 +134,7 @@ public class AddressBookWrapper {
         return ABRecordCopyValue(record, property)
     }
     
-    public func RecordCopyCompositeName(record: ABRecord!) -> Unmanaged<CFString> {
+    public func RecordCopyCompositeName(record: ABRecord!) -> Unmanaged<CFString>! {
         return ABRecordCopyCompositeName(record)
     }
 }
