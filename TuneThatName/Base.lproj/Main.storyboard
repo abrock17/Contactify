@@ -281,6 +281,12 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="nqJ-dV-x3J"/>
+                                    <barButtonItem image="HelpIcon" id="BsJ-PE-wAc">
+                                        <connections>
+                                            <action selector="helpPressed:" destination="BYZ-38-t0r" id="0zH-Qm-QRy"/>
+                                            <segue destination="17S-CF-bE9" kind="presentation" id="aM1-m6-UTU"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -367,6 +373,93 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1117" y="340"/>
+        </scene>
+        <!--Create Playlist Help Controller-->
+        <scene sceneID="R2L-mF-USB">
+            <objects>
+                <viewController storyboardIdentifier="CreatePlaylistHelpController" id="17S-CF-bE9" customClass="CreatePlaylistHelpController" customModule="TuneThatName" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="0LQ-ca-YLd"/>
+                        <viewControllerLayoutGuide type="bottom" id="gu6-zt-dSe"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="7vA-Zf-yfW">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vue-Pj-aUp">
+                                <rect key="frame" x="0.0" y="20" width="600" height="536"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How to Tune Your Names" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUA-Da-STj">
+                                        <rect key="frame" x="8" y="8" width="584" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="0.792156862745098" green="0.792156862745098" blue="0.792156862745098" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lkv-Jl-VOr">
+                                        <rect key="frame" x="8" y="36.5" width="584" height="491.5"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <attributedString key="attributedText">
+                                            <fragment>
+                                                <string key="content">Create music playlists using the names of the people stored in your phone contacts.
+
+• Select the desired number of songs for your playlist.
+• Optionally select names you want to include in the playlist (or default to all names).
+• Choose some basic song preferences to set the mood.
+• Press "Create Playlist," and Tune That Name will attempt to find songs with titles matching the names you provided.
+• Using a Spotify premium account, you can preview songs in your playlist, add additional songs, and remove or replace the songs you don't like.
+• NOTE -- Playlists are currently not saved locally when the application is terminated.  If you want to keep a playlist, you can preserve it in your Spotify account by pressing "Save to Spotify."
+
+Enjoy!  Tune That Name is a fun way to discover new music and create playlists with a personal touch.</string>
+                                                <attributes>
+                                                    <color key="NSColor" red="0.79215686269999996" green="0.79215686269999996" blue="0.79215686269999996" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <font key="NSFont" size="14" name="HelveticaNeue-Italic"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Lkv-Jl-VOr" firstAttribute="leading" secondItem="vue-Pj-aUp" secondAttribute="leadingMargin" id="37L-fq-mfE"/>
+                                    <constraint firstItem="Lkv-Jl-VOr" firstAttribute="top" secondItem="aUA-Da-STj" secondAttribute="bottom" constant="8" id="8tJ-es-Pk9"/>
+                                    <constraint firstItem="aUA-Da-STj" firstAttribute="leading" secondItem="vue-Pj-aUp" secondAttribute="leadingMargin" id="Kie-PU-i1C"/>
+                                    <constraint firstAttribute="bottomMargin" secondItem="Lkv-Jl-VOr" secondAttribute="bottom" id="Sk9-Jx-5BH"/>
+                                    <constraint firstAttribute="trailingMargin" secondItem="aUA-Da-STj" secondAttribute="trailing" id="UOp-cr-BYu"/>
+                                    <constraint firstAttribute="trailingMargin" secondItem="Lkv-Jl-VOr" secondAttribute="trailing" id="XgP-NG-hh7"/>
+                                    <constraint firstItem="aUA-Da-STj" firstAttribute="top" secondItem="vue-Pj-aUp" secondAttribute="topMargin" id="lio-3E-QbW"/>
+                                </constraints>
+                            </view>
+                            <toolbar clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QrO-3Z-D0a">
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="PN1-YB-dkI"/>
+                                    <barButtonItem systemItem="stop" id="QKH-0B-mM2">
+                                        <connections>
+                                            <segue destination="8ow-nb-ogk" kind="unwind" unwindAction="unwindToCreatePlaylist:" id="aOL-d6-eFv"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="QrO-3Z-D0a" firstAttribute="top" secondItem="vue-Pj-aUp" secondAttribute="bottom" id="3rF-mr-GBN"/>
+                            <constraint firstAttribute="trailing" secondItem="QrO-3Z-D0a" secondAttribute="trailing" id="4m3-gC-703"/>
+                            <constraint firstAttribute="trailing" secondItem="vue-Pj-aUp" secondAttribute="trailing" id="5my-sp-RwS"/>
+                            <constraint firstItem="vue-Pj-aUp" firstAttribute="leading" secondItem="7vA-Zf-yfW" secondAttribute="leading" id="HYh-sT-ktE"/>
+                            <constraint firstItem="vue-Pj-aUp" firstAttribute="top" secondItem="0LQ-ca-YLd" secondAttribute="bottom" id="Llv-m6-vPa"/>
+                            <constraint firstItem="QrO-3Z-D0a" firstAttribute="leading" secondItem="7vA-Zf-yfW" secondAttribute="leading" id="gjx-Xw-wyy"/>
+                            <constraint firstItem="gu6-zt-dSe" firstAttribute="top" secondItem="QrO-3Z-D0a" secondAttribute="bottom" id="ytm-SS-kZW"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="helpSubView" destination="vue-Pj-aUp" id="xIL-mU-zUJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1kB-BB-IML" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="8ow-nb-ogk" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="1117" y="1127"/>
         </scene>
         <!--Select Names-->
         <scene sceneID="Ogf-1l-cc8">
@@ -830,6 +923,7 @@
     </scenes>
     <resources>
         <image name="Dakirby309-Simply-Styled-Spotify.ico" width="256" height="256"/>
+        <image name="HelpIcon" width="22" height="22"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="uSv-zE-s4T"/>
