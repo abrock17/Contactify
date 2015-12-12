@@ -119,6 +119,29 @@ class PreferencesServiceSpec: QuickSpec {
                     expect(preferencesService.getDefaultPlaylistPreferences()).to(equal(expectedPlaylistPreferences))
                 }
             }
+            
+            describe("has presented initial help") {
+                it("retreives property from user defaults") {
+                    mockUserDefaults.mocker.prepareForCallTo(MockUserDefaults.Method.boolForKey, returnValue: true)
+                    
+                    preferencesService.hasPresentedInitialHelp()
+                    
+                    expect(mockUserDefaults.mocker.getNthCallTo(
+                        MockUserDefaults.Method.boolForKey, n: 0)?.first as? String)
+                        .to(equal(Constants.StorageKeys.presentedInitialHelp))
+                }
+                
+                it("saves the property") {
+                    preferencesService.savePresentedInitialHelp(true)
+
+                    expect(mockUserDefaults.mocker.getNthCallTo(
+                        MockUserDefaults.Method.setBool, n: 0)?[0] as? Bool)
+                        .to(beTrue())
+                    expect(mockUserDefaults.mocker.getNthCallTo(
+                        MockUserDefaults.Method.setBool, n: 0)?[1] as? String)
+                        .to(equal(Constants.StorageKeys.presentedInitialHelp))
+                }
+            }
         }
     }
 }

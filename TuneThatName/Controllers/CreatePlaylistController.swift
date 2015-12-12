@@ -38,6 +38,15 @@ public class CreatePlaylistController: UIViewController {
         notificationCenter.addObserver(self, selector: "savePlaylistPreferences", name: UIApplicationWillTerminateNotification, object: nil)
     }
     
+    override public func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if !preferencesService.hasPresentedInitialHelp() {
+            performSegueWithIdentifier("CreatePlaylistHelpSegue", sender: self)
+            preferencesService.savePresentedInitialHelp(true)
+        }
+    }
+    
     override public func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         savePlaylistPreferences()

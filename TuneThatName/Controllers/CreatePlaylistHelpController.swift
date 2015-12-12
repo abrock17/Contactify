@@ -21,7 +21,7 @@ class CreatePlaylistHelpController: UIViewController {
             "• Choose some basic song preferences to set the mood.",
         "• Press Create Playlist, and Tune That Name will attempt to find songs with titles matching the names you provided.",
         "• Using a Spotify premium account, you can preview songs in your playlist, add additional songs, and remove or replace the songs you don't like.",
-        "• NOTE -- Playlists are currently not saved locally when the application is terminated.  If you want to keep a playlist, you can preserve it in your Spotify account by pressing Save to Spotify.",
+        "• NOTE - Playlists are currently not saved locally when Tune That Name is terminated.  If you want to keep a playlist, you can preserve it in your Spotify account by pressing Save to Spotify.",
         "Enjoy! Tune That Name is a fun way to discover new music and create playlists with a personal touch."
     ]
     let bold = ["Create Playlist", "Save to Spotify"]

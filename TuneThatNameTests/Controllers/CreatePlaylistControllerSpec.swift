@@ -28,6 +28,7 @@ class CreatePlaylistControllerSpec: QuickSpec {
                 
                 mockPreferencesService.mocker.prepareForCallTo(MockPreferencesService.Method.retrievePlaylistPreferences, returnValue: nil)
                 mockPreferencesService.mocker.prepareForCallTo(MockPreferencesService.Method.getDefaultPlaylistPreferences, returnValue: defaultPlaylistPreferences)
+                mockPreferencesService.mocker.prepareForCallTo(MockPreferencesService.Method.hasPresentedInitialHelp, returnValue: true)
 
                 navigationController.pushViewController(createPlaylistController, animated: false)
                 UIApplication.sharedApplication().keyWindow!.rootViewController = navigationController
@@ -46,6 +47,12 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         mockPreferencesService.mocker.getCallCountFor(
                             MockPreferencesService.Method.getDefaultPlaylistPreferences)).toEventually(equal(1))
                 }
+            }
+            
+            it("checks to see if initial help has been presented") {
+                expect(
+                    mockPreferencesService.mocker.getCallCountFor(
+                        MockPreferencesService.Method.hasPresentedInitialHelp)).toEventually(equal(1))
             }
             
             describe("number of songs slider") {
@@ -542,6 +549,46 @@ class CreatePlaylistControllerSpec: QuickSpec {
                         self.pressBarButton(createPlaylistController.createPlaylistButton)
                         
                         expect((mockPlaylistService.mocker.getNthCallTo(MockPlaylistService.Method.createPlaylistWithPreferences, n: 0)?.first as? PlaylistPreferences)?.filterContacts).toEventually(beTrue())
+                    }
+                }
+            }
+            
+            describe("view did appear") {
+                context("initial help has not yet presented") {
+                    beforeEach() {
+                        mockPreferencesService.mocker.clearMockedReturnsFor(
+                            MockPreferencesService.Method.hasPresentedInitialHelp)
+                        mockPreferencesService.mocker.prepareForCallTo(MockPreferencesService.Method.hasPresentedInitialHelp, returnValue: false)
+                        
+                        createPlaylistController.viewDidAppear(false)
+                    }
+                    
+                    it("segues to create playlist help") {
+                        expect(createPlaylistController.presentedViewController).toEventuallyNot(beNil())
+                        expect(createPlaylistController.presentedViewController).toEventually(beAnInstanceOf(CreatePlaylistHelpController))
+                    }
+                    
+                    it("saves that initial help was presented") {
+                        expect(mockPreferencesService.mocker.getNthCallTo(MockPreferencesService.Method.savePresentedInitialHelp, n: 0)?.first as? Bool).to(beTrue())
+                    }
+                }
+                
+                context("initial help has already been presented") {
+                    beforeEach() {
+                        mockPreferencesService.mocker.clearMockedReturnsFor(
+                            MockPreferencesService.Method.hasPresentedInitialHelp)
+                        mockPreferencesService.mocker.prepareForCallTo(MockPreferencesService.Method.hasPresentedInitialHelp, returnValue: true)
+                        
+                        createPlaylistController.viewDidAppear(false)
+                    }
+                    
+                    it("does not segue to create playlist help") {
+                        expect(createPlaylistController.presentedViewController).to(beNil())
+                    }
+                    
+                    it("does not save that initial help was presented") {
+                        expect(mockPreferencesService.mocker.getCallCountFor(
+                            MockPreferencesService.Method.savePresentedInitialHelp)).to(equal(0))
                     }
                 }
             }

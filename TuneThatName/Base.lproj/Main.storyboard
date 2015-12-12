@@ -284,7 +284,7 @@
                                     <barButtonItem image="HelpIcon" id="BsJ-PE-wAc">
                                         <connections>
                                             <action selector="helpPressed:" destination="BYZ-38-t0r" id="0zH-Qm-QRy"/>
-                                            <segue destination="17S-CF-bE9" kind="presentation" id="aM1-m6-UTU"/>
+                                            <segue destination="17S-CF-bE9" kind="presentation" identifier="CreatePlaylistHelpSegue" id="aM1-m6-UTU"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -398,25 +398,7 @@
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lkv-Jl-VOr">
                                         <rect key="frame" x="8" y="36.5" width="584" height="491.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <attributedString key="attributedText">
-                                            <fragment>
-                                                <string key="content">Create music playlists using the names of the people stored in your phone contacts.
-
-• Select the desired number of songs for your playlist.
-• Optionally select names you want to include in the playlist (or default to all names).
-• Choose some basic song preferences to set the mood.
-• Press "Create Playlist," and Tune That Name will attempt to find songs with titles matching the names you provided.
-• Using a Spotify premium account, you can preview songs in your playlist, add additional songs, and remove or replace the songs you don't like.
-• NOTE -- Playlists are currently not saved locally when the application is terminated.  If you want to keep a playlist, you can preserve it in your Spotify account by pressing "Save to Spotify."
-
-Enjoy!  Tune That Name is a fun way to discover new music and create playlists with a personal touch.</string>
-                                                <attributes>
-                                                    <color key="NSColor" red="0.79215686269999996" green="0.79215686269999996" blue="0.79215686269999996" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <font key="NSFont" size="14" name="HelveticaNeue-Italic"/>
-                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                                </attributes>
-                                            </fragment>
-                                        </attributedString>
+                                        <attributedString key="attributedText"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
                                 </subviews>
@@ -454,6 +436,7 @@ Enjoy!  Tune That Name is a fun way to discover new music and create playlists w
                     </view>
                     <connections>
                         <outlet property="helpSubView" destination="vue-Pj-aUp" id="xIL-mU-zUJ"/>
+                        <outlet property="helpText" destination="Lkv-Jl-VOr" id="Xg9-Yo-dL9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1kB-BB-IML" userLabel="First Responder" sceneMemberID="firstResponder"/>

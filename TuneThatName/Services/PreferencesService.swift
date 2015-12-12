@@ -37,4 +37,12 @@ public class PreferencesService {
     public func savePlaylistPreferences(playlistPreferences: PlaylistPreferences) {
         userDefaults.setObject(NSKeyedArchiver.archivedDataWithRootObject(playlistPreferences), forKey: Constants.StorageKeys.playlistPreferences)
     }
+    
+    public func hasPresentedInitialHelp() -> Bool {
+        return userDefaults.boolForKey(Constants.StorageKeys.presentedInitialHelp)
+    }
+    
+    public func savePresentedInitialHelp(helpPresented: Bool) {
+        userDefaults.setBool(helpPresented, forKey: Constants.StorageKeys.presentedInitialHelp)
+    }
 }
