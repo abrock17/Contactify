@@ -12,8 +12,8 @@ public class EchoNestService {
     static func defaultAlamoFireManager() -> Manager {
         let configuration: NSURLSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.HTTPAdditionalHeaders = Manager.defaultHTTPHeaders
-        configuration.timeoutIntervalForRequest = 10
-        configuration.HTTPMaximumConnectionsPerHost = 8
+        configuration.timeoutIntervalForRequest = 20
+        configuration.HTTPMaximumConnectionsPerHost = 10
         
         return Manager(configuration: configuration)
     }

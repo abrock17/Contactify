@@ -145,7 +145,13 @@ public class NameSelectionTableController: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier("ContactNameTableCell", forIndexPath: indexPath)
         
         let contact = contactForIndexPath(indexPath)
-        cell.textLabel?.text = contact.fullName
+        
+        let fontSize = cell.textLabel!.font.pointSize
+        let attributedNameText = NSMutableAttributedString(string: contact.fullName, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontSize)])
+        attributedNameText.addAttribute(NSFontAttributeName, value: UIFont.boldSystemFontOfSize(fontSize),
+            range: (contact.fullName as NSString).rangeOfString(contact.searchString))
+        cell.textLabel?.attributedText = attributedNameText
+
         if filteredContacts.contains(contact) {
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
         } else {

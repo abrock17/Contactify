@@ -46,9 +46,11 @@ public class PlaylistService {
     }
     
     func retrieveCurrentUser(userRetrievalHandler: SPTUser -> Void, finalPlaylistResultCallback: PlaylistResult -> Void) {
+        let start = NSDate()
         self.spotifyUserService.retrieveCurrentUser() {
             userResult in
             
+            print("retrieveCurrentUser returned after \(NSDate().timeIntervalSinceDate(start))")
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
                 switch (userResult) {
                 case .Success(let user):
@@ -62,6 +64,7 @@ public class PlaylistService {
     
     func createPlaylistForContactList(contactList: [Contact], withPlaylistPreferences playlistPreferences: PlaylistPreferences,
         inLocale locale: String?, callback: PlaylistResult -> Void) {
+        let start = NSDate()
         let searchableContacts = contactList.filter({ !$0.searchString.isEmpty })
         let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: playlistPreferences.numberOfSongs, numberOfContacts: searchableContacts.count)
         var contactSongsMap = [Contact: [Song]]()
@@ -99,6 +102,7 @@ public class PlaylistService {
             callback(.Failure(generalError()))
         } else {
             let playlist = buildPlaylistFromContactSongsMap(contactSongsMap, numberOfSongs: playlistPreferences.numberOfSongs)
+            print("createPlaylistForContactList returned after \(NSDate().timeIntervalSinceDate(start))")
             if Float(playlist.songs.count) / Float(playlistPreferences.numberOfSongs) <= unacceptableSongResultPercentage {
                 callback(.Failure(notEnoughSongsError()))
             } else {
@@ -126,9 +130,11 @@ public class PlaylistService {
         let group = dispatch_group_create()
         for contact in contacts {
             dispatch_group_enter(group)
+            let start = NSDate()
             self.echoNestService.findSongs(titleSearchTerm: contact.searchString, withSongPreferences: songPreferences, desiredNumberOfSongs: searchNumber, inLocale: locale) {
                 songsResult in
                 
+                print("findSongs returned for \(contact.searchString) after \(NSDate().timeIntervalSinceDate(start))")
                 contactSongsResultMap[contact] = songsResult
                 dispatch_group_leave(group)
             }

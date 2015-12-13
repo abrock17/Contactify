@@ -30,6 +30,7 @@ class SpotifyUserServiceSpec: QuickSpec {
             }
             
             describe("retrieve current user") {
+                
                 context("when the auth service calls back with an error") {
                     let error = NSError(domain: "com.spotify.ios", code: 9876, userInfo: [NSLocalizedDescriptionKey: "error logging in"])
                     
