@@ -23,17 +23,14 @@ class PlaylistServiceSpec: QuickSpec {
             var mockContactService: MockContactService!
             var mockEchoNestService: MockEchoNestService!
             var mockSpotifyUserService: MockSpotifyUserService!
-            var mockSPTUser: MockSPTUser!
             let playlistPreferences = PlaylistPreferences(numberOfSongs: 1, filterContacts: false, songPreferences: SongPreferences())
             let userLocale = "SE"
+            let spotifyUser: SpotifyUser = SpotifyUser(username: "yourdad", territory: userLocale)
             
             beforeEach() {
                 self.callbackPlaylistList.removeAll(keepCapacity: false)
                 self.callbackErrorList.removeAll(keepCapacity: false)
                 
-                mockSPTUser = MockSPTUser()
-                mockSPTUser.mocker.prepareForCallTo(MockSPTUser.Method.getTerritory, returnValue: userLocale)
-
                 mockContactService = MockContactService()
                 mockEchoNestService = MockEchoNestService()
                 mockSpotifyUserService = MockSpotifyUserService()
@@ -96,7 +93,7 @@ class PlaylistServiceSpec: QuickSpec {
                         
                         context("and user service calls back with a user") {
                             beforeEach() {
-                                mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
+                                mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(spotifyUser))
                             }
                             
                             it("always calls the echo nest service with the expected locale") {
@@ -360,7 +357,7 @@ class PlaylistServiceSpec: QuickSpec {
                     let contactList = Array(1...40).map({ Contact(id: Int32($0), firstName: "John", lastName: "Doe") })
                     beforeEach() {
                         mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
-                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
+                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(spotifyUser))
                     }
                     
                     context("and the echo nest service calls back with errors for at least one third of the calls to find songs") {
@@ -436,8 +433,8 @@ class PlaylistServiceSpec: QuickSpec {
                     
                     beforeEach() {
                         mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success(contactList))
-                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
-                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
+                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(spotifyUser))
+                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(spotifyUser))
                     }
                     
                     it("only calls the echo nest service contacts that have valid search strings") {
@@ -456,7 +453,7 @@ class PlaylistServiceSpec: QuickSpec {
                     let expectedError = NSError(domain: Constants.Error.Domain, code: Constants.Error.NoContactsCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.NoContactsMessage])
                     it("calls back with an appropriate error") {
                         mockContactService.mocker.prepareForCallTo(MockContactService.Method.retrieveAllContacts, returnValue: ContactService.ContactListResult.Success([]))
-                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
+                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(spotifyUser))
                         
                         playlistService.createPlaylistWithPreferences(playlistPreferences, callback: self.playlistCallback)
                         
@@ -509,20 +506,5 @@ class PlaylistServiceSpec: QuickSpec {
         }
         
         return number
-    }
-}
-
-class MockSPTUser: SPTUser {
-    
-    let mocker = Mocker()
-    
-    struct Method {
-        static let getTerritory = "getTerritory"
-    }
-
-    override var territory: String! {
-        get {
-            return mocker.mockCallTo(Method.getTerritory) as! String
-        }
     }
 }

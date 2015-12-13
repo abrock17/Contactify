@@ -35,5 +35,6 @@ public struct Constants {
         public static let filteredContacts = "TuneThatName.contacts.filtered"
         public static let playlistPreferences = "TuneThatName.playlist.preferences"
         public static let presentedInitialHelp = "TuneThatName.presentedInitialHelp"
+        public static let spotifyCurrentUser = "TuneThatName.spotify.currentUser"
     }
 }

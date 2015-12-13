@@ -23,6 +23,7 @@ class SpotifyAuthServicesSpec: QuickSpec {
         describe("The Spotify Auth Service") {
             var spotifyAuthService: SpotifyAuthService!
             var mockSPTAuth: MockSPTAuth!
+            var mockUserDefaults: MockUserDefaults!
             var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             
             beforeEach() {
@@ -31,7 +32,8 @@ class SpotifyAuthServicesSpec: QuickSpec {
                 self.callbackForCanceled = false
 
                 mockSPTAuth = MockSPTAuth()
-                spotifyAuthService = SpotifyAuthService(spotifyAuth: mockSPTAuth)
+                mockUserDefaults = MockUserDefaults()
+                spotifyAuthService = SpotifyAuthService(spotifyAuth: mockSPTAuth, userDefaults: mockUserDefaults)
                 mockSpotifyAudioFacade = MockSpotifyAudioFacade()
                 spotifyAuthService.getSpotifyAudioFacade = { () in return mockSpotifyAudioFacade }
             }
@@ -183,6 +185,13 @@ class SpotifyAuthServicesSpec: QuickSpec {
                     expect(mockSPTAuth.mocker.getCallCountFor(MockSPTAuth.Method.setSession)).to(equal(1))
                     let sessionValue = mockSPTAuth.mocker.getNthCallTo(MockSPTAuth.Method.setSession, n: 0)!.first!
                     expect(sessionValue).to(beNil())
+                }
+                
+                it("clears the cached current user") {
+                    expect(mockUserDefaults.mocker.getNthCallTo(MockUserDefaults.Method.setObject, n: 0)?[0]).to(beNil())
+                    expect(mockUserDefaults.mocker.getNthCallTo(
+                        MockUserDefaults.Method.setObject, n: 0)?[1] as? String)
+                        .to(equal(Constants.StorageKeys.spotifyCurrentUser))
                 }
                 
                 it("resets the spotify audio facade") {

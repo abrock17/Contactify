@@ -16,7 +16,8 @@ class MockUserDefaults: NSUserDefaults {
     }
     
     override func dataForKey(defaultName: String) -> NSData? {
-        return mocker.mockCallTo(Method.dataForKey, parameters: defaultName) as? NSData
+        mocker.recordCall(Method.dataForKey, parameters: defaultName)
+        return mocker.returnValueForCallTo(Method.dataForKey) as? NSData
     }
     
     override func boolForKey(defaultName: String) -> Bool {

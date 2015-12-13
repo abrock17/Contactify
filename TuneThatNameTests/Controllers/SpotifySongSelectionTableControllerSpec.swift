@@ -20,9 +20,9 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
             var mockSpotifyAudioFacade: MockSpotifyAudioFacade!
             var mockSpotifyUserService: MockSpotifyUserService!
             var mockControllerHelper: MockControllerHelper!
-            var mockSPTUser: MockSPTUser!
 
             let userLocale = "SE"
+            let spotifyUser: SpotifyUser = SpotifyUser(username: "yourmom", territory: userLocale)
             let searchContact = Contact(id: 23, firstName: "Michael", lastName: "Jordan")
             let resultSongList = [
                 Song(title: "Michael", artistName: "Franz Ferdinand", uri: NSURL(string: "spotify:track:1HcYhFRFQVSu8CGc0dl9to")!),
@@ -54,9 +54,6 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 spotifySongSelectionTableController.spotifyUserService = mockSpotifyUserService
                 mockControllerHelper = MockControllerHelper()
                 spotifySongSelectionTableController.controllerHelper = mockControllerHelper
-
-                mockSPTUser = MockSPTUser()
-                mockSPTUser.mocker.prepareForCallTo(MockSPTUser.Method.getTerritory, returnValue: userLocale)
             }
             
             describe("view load") {
@@ -87,7 +84,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 
                 context("and user service calls back with a user") {
                     beforeEach() {
-                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
+                        mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(spotifyUser))
                     }
                     
                     it("searches for songs from the echo nest service") {
@@ -184,7 +181,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                 let indexPath = NSIndexPath(forRow: 1, inSection: 0)
 
                 beforeEach() {
-                    mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(mockSPTUser))
+                    mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.retrieveCurrentUser, returnValue: SpotifyUserService.UserResult.Success(spotifyUser))
                     mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Success(resultSongList))
                     
                     self.loadViewForController(spotifySongSelectionTableController, withNavigationController: navigationController)

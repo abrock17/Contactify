@@ -45,7 +45,7 @@ public class PlaylistService {
         }
     }
     
-    func retrieveCurrentUser(userRetrievalHandler: SPTUser -> Void, finalPlaylistResultCallback: PlaylistResult -> Void) {
+    func retrieveCurrentUser(userRetrievalHandler: SpotifyUser -> Void, finalPlaylistResultCallback: PlaylistResult -> Void) {
         let start = NSDate()
         self.spotifyUserService.retrieveCurrentUser() {
             userResult in

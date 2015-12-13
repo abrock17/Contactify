@@ -62,7 +62,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
         }
     }
     
-    func handleUserResult(userResult: SpotifyUserService.UserResult, userResultSuccessHandler: SPTUser -> Void) {
+    func handleUserResult(userResult: SpotifyUserService.UserResult, userResultSuccessHandler: SpotifyUser -> Void) {
         switch (userResult) {
         case .Success(let user):
             userResultSuccessHandler(user)

@@ -93,6 +93,8 @@
 		44E9D5F11A952D2F001E4792 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5EF1A952D2F001E4792 /* Main.storyboard */; };
 		44E9D5F31A952D2F001E4792 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F21A952D2F001E4792 /* Images.xcassets */; };
 		44E9D5F61A952D2F001E4792 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F41A952D2F001E4792 /* LaunchScreen.xib */; };
+		44F444A01C1DC8F200D42EA1 /* SpotifyUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F4449F1C1DC8F200D42EA1 /* SpotifyUser.swift */; };
+		44F444A21C1E041700D42EA1 /* SpotifyUserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F444A11C1E041700D42EA1 /* SpotifyUserSpec.swift */; };
 		44F696241AEB198F00F2C2F8 /* PlaylistServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F696231AEB198F00F2C2F8 /* PlaylistServiceSpec.swift */; };
 		44FBFE981AC650EE0087C9FF /* SongSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FBFE971AC650EE0087C9FF /* SongSpec.swift */; };
 		44FBFE9A1AC655050087C9FF /* PlaylistSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FBFE991AC655050087C9FF /* PlaylistSpec.swift */; };
@@ -212,6 +214,8 @@
 		44E9D5F51A952D2F001E4792 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		44E9D5FB1A952D2F001E4792 /* TuneThatNameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuneThatNameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D6001A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		44F4449F1C1DC8F200D42EA1 /* SpotifyUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyUser.swift; sourceTree = "<group>"; };
+		44F444A11C1E041700D42EA1 /* SpotifyUserSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyUserSpec.swift; sourceTree = "<group>"; };
 		44F696231AEB198F00F2C2F8 /* PlaylistServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistServiceSpec.swift; sourceTree = "<group>"; };
 		44FBFE971AC650EE0087C9FF /* SongSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongSpec.swift; sourceTree = "<group>"; };
 		44FBFE991AC655050087C9FF /* PlaylistSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistSpec.swift; sourceTree = "<group>"; };
@@ -321,6 +325,7 @@
 				44FDE0C11A9F40040052C6D1 /* Song.swift */,
 				44C93D581B1D51AE008FDCDB /* SongPreferences.swift */,
 				44AFD9B61B1722FC00E99FBF /* SpotifyTrack.swift */,
+				44F4449F1C1DC8F200D42EA1 /* SpotifyUser.swift */,
 				444472191C0A04CA002B782B /* StringExtension.swift */,
 			);
 			path = Models;
@@ -520,6 +525,7 @@
 				44FBFE991AC655050087C9FF /* PlaylistSpec.swift */,
 				44FBFE971AC650EE0087C9FF /* SongSpec.swift */,
 				44C93D5A1B1D5D2E008FDCDB /* SongPreferencesSpec.swift */,
+				44F444A11C1E041700D42EA1 /* SpotifyUserSpec.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -889,6 +895,7 @@
 				44AEBC981AE89DFF00D96CD1 /* ControllerHelper.swift in Sources */,
 				44D3C1A91ACF1DDF00F51EB9 /* Constants.swift in Sources */,
 				444472181C07A7D6002B782B /* UIAppearanceManager.swift in Sources */,
+				44F444A01C1DC8F200D42EA1 /* SpotifyUser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -909,6 +916,7 @@
 				44FBFE981AC650EE0087C9FF /* SongSpec.swift in Sources */,
 				446B1C701B495D5400E5FA22 /* PreferencesServiceSpec.swift in Sources */,
 				44B2191C1AEA5C53002EA154 /* ControllerHelperSpec.swift in Sources */,
+				44F444A21C1E041700D42EA1 /* SpotifyUserSpec.swift in Sources */,
 				446B8F9F1B53C807002C687E /* SpotifyTrackViewControllerSpec.swift in Sources */,
 				4474E33A1BDD54BD0004E605 /* MockSpotifyUserService.swift in Sources */,
 				449E66DD1B5156DC0036A9AD /* MockSpotifyPlaybackDelegate.swift in Sources */,

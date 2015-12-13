@@ -22,6 +22,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     }
     
     let spotifyAuth: SPTAuth
+    let userDefaults: NSUserDefaults
     var getSpotifyAudioFacade: (() -> SpotifyAudioFacade) = { return SpotifyAudioFacadeImpl.sharedInstance }
     
     public var hasSession: Bool {
@@ -32,7 +33,9 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     
     var postLoginCallback: (AuthResult -> Void)?
     
-    public init(spotifyAuth: SPTAuth = sharedDefaultSPTAuth) {
+    public init(spotifyAuth: SPTAuth = sharedDefaultSPTAuth,
+        userDefaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()) {
+        self.userDefaults = userDefaults
         self.spotifyAuth = spotifyAuth
     }
     
@@ -46,6 +49,7 @@ public class SpotifyAuthService: SPTAuthViewDelegate {
     
     public func logout() {
         spotifyAuth.session = nil
+        userDefaults.setObject(nil, forKey: Constants.StorageKeys.spotifyCurrentUser)
         getSpotifyAudioFacade().reset() {
             error in
             if error != nil {
