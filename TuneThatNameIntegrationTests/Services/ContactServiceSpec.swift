@@ -82,6 +82,25 @@ class ContactServiceSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("screenshot contacts") {
+                let contacts = [
+                    Contact(id: 100, firstName: "BJ", lastName: "Armstrong"),
+                    Contact(id: 101, firstName: "Michael", lastName: "Jordan"),
+                    Contact(id: 102, firstName: "Scottie", lastName: "Pippen"),
+                    Contact(id: 103, firstName: "Horace", lastName: "Grant"),
+                    Contact(id: 104, firstName: "Bill", lastName: "Cartwright"),
+                    Contact(id: 105, firstName: "Stephen", lastName: "Stills"),
+                    Contact(id: 106, firstName: "David", lastName: "Crosby"),
+                    Contact(id: 107, firstName: "Graham", lastName: "Nash"),
+                    Contact(id: 108, firstName: "Neil", lastName: "Young"),
+                ]
+                xit("creates em") {
+                    for contact in contacts {
+                        self.saveNewContactWithFirstName(contact.firstName!, andLastName: contact.lastName!)
+                    }
+                }
+            }
         }
     }
     

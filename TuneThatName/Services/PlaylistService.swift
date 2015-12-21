@@ -140,7 +140,7 @@ public class PlaylistService {
             }
         }
         
-        dispatch_group_wait(group, dispatch_time(DISPATCH_TIME_NOW, Int64(30.0 * Double(NSEC_PER_SEC))))
+        dispatch_group_wait(group, dispatch_time(DISPATCH_TIME_NOW, Int64(60.0 * Double(NSEC_PER_SEC))))
         return contactSongsResultMap
     }
 

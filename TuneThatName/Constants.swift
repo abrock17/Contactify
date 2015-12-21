@@ -13,7 +13,7 @@ public struct Constants {
         public static let NoContactsMessage = "You currently have no contacts."
         
         public static let PlaylistGeneralErrorCode = 20
-        public static let PlaylistGeneralErrorMessage = "Encountered errors trying to build your playlist."
+        public static let PlaylistGeneralErrorMessage = "Encountered errors trying to build your playlist. Please try again later."
         
         public static let PlaylistNotEnoughSongsCode = 21
         public static let PlaylistNotEnoughSongsMessage = "Could not find enough songs matching the provided search criteria."
