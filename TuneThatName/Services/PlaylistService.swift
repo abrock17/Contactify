@@ -25,12 +25,13 @@ public class PlaylistService {
         func handleContactListResult(contactListResult: ContactService.ContactListResult) {
             switch (contactListResult) {
             case .Success(let contactList):
-                if contactList.isEmpty {
+                let searchableContacts = contactList.filter({ !$0.searchString.isEmpty })
+                if searchableContacts.isEmpty {
                     callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.NoContactsCode, userInfo: [NSLocalizedDescriptionKey: Constants.Error.NoContactsMessage])))
                 } else {
                     self.retrieveCurrentUser({
                         user in
-                        self.createPlaylistForContactList(contactList, withPlaylistPreferences: playlistPreferences, inLocale: user.territory, callback: callback)
+                        self.createPlaylistForContactList(searchableContacts, withPlaylistPreferences: playlistPreferences, inLocale: user.territory, callback: callback)
                     }, finalPlaylistResultCallback: callback)
                 }
             case .Failure(let error):
@@ -65,14 +66,13 @@ public class PlaylistService {
     func createPlaylistForContactList(contactList: [Contact], withPlaylistPreferences playlistPreferences: PlaylistPreferences,
         inLocale locale: String?, callback: PlaylistResult -> Void) {
         let start = NSDate()
-        let searchableContacts = contactList.filter({ !$0.searchString.isEmpty })
-        let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: playlistPreferences.numberOfSongs, numberOfContacts: searchableContacts.count)
+        let searchNumber = getEchoNestSearchNumberFor(totalRequestedNumberOfSongs: playlistPreferences.numberOfSongs, numberOfContacts: contactList.count)
         var contactSongsMap = [Contact: [Song]]()
         var contactErrorMap = [Contact: NSError]()
         let maxSongSearches = playlistPreferences.numberOfSongs + ((playlistPreferences.numberOfSongs - 5) / 9 + 5)
-        let errorThreshold = min(searchableContacts.count, max(5, maxSongSearches / 3))
+        let errorThreshold = min(contactList.count, max(5, maxSongSearches / 3))
         
-        var contactLists = separateNRandomForSearch(playlistPreferences.numberOfSongs, fromContacts: searchableContacts)
+        var contactLists = separateNRandomForSearch(playlistPreferences.numberOfSongs, fromContacts: contactList)
         repeat {
             let contactSongsResultMap = findSongsForContacts(contactLists.searchContacts, withPreferences: playlistPreferences.songPreferences, andSearchNumber: searchNumber, inLocale: locale)
             for (contact, songsResult) in contactSongsResultMap {

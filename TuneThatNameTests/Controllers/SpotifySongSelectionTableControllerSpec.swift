@@ -101,7 +101,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                             .toEventually(equal(expectedSongPreferences))
                         expect(mockEchoNestService.mocker.getNthCallTo(
                             MockEchoNestService.Method.findSongs, n: 0)?[2] as? Int)
-                            .toEventually(equal(20))
+                            .toEventually(equal(50))
                         expect(mockEchoNestService.mocker.getNthCallTo(
                             MockEchoNestService.Method.findSongs, n: 0)?[3] as? String)
                             .toEventually(equal(userLocale))

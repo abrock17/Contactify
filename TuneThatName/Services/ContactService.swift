@@ -56,7 +56,12 @@ public class ContactService {
             let firstName = addressBook.RecordCopyValue(recordRef, property: kABPersonFirstNameProperty)?.takeRetainedValue() as? String
             let lastName = addressBook.RecordCopyValue(recordRef, property: kABPersonLastNameProperty)?.takeRetainedValue() as? String
             let fullName = addressBook.RecordCopyCompositeName(recordRef)?.takeRetainedValue() as? String
-            contactList.append(Contact(id: recordID, firstName: firstName, lastName: lastName, fullName: fullName))
+            if (firstName != nil && !firstName!.trim().isEmpty) ||
+                (lastName != nil && !lastName!.trim().isEmpty) ||
+                (fullName != nil && !fullName!.trim().isEmpty)
+            {
+                contactList.append(Contact(id: recordID, firstName: firstName, lastName: lastName, fullName: fullName))
+            }
         }
         
         callback(.Success(contactList))

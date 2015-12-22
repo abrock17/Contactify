@@ -52,7 +52,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
                     
                     self.echoNestService.findSongs(titleSearchTerm: self.searchContact.searchString,
                         withSongPreferences: SongPreferences(),
-                        desiredNumberOfSongs: 20, inLocale: user.territory) {
+                        desiredNumberOfSongs: 50, inLocale: user.territory) {
                         songsResult in
                         
                         self.handleSongsResult(songsResult)

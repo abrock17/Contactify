@@ -58,16 +58,40 @@ class ContactServiceSpec: QuickSpec {
                 }
                 
                 context("when authorized to access the address book") {
-                    it("calls back with a list of expected contacts") {
+                    beforeEach() {
                         mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.Authorized)
-
-                        let expectedContactList = [Contact(id: 1, firstName: "billy", lastName: "johnson", fullName: "billy johnson"), Contact(id: 2, firstName: "johnny", lastName: "billson", fullName: "johnny billson")]
-                        self.prepareMockAddressBook(mockAddressBook, withExpectedContactList: expectedContactList)
+                    }
+                    
+                    it("calls back with a list of expected contacts") {
+                        let expectedContactList = [
+                            Contact(id: 1, firstName: "billy", lastName: "johnson", fullName: "billy johnson"),
+                            Contact(id: 2, firstName: "johnny", lastName: "billson", fullName: "johnny billson")
+                        ]
+                        self.prepareMockAddressBook(mockAddressBook, withContactList: expectedContactList)
                         
                         contactService.retrieveAllContacts(self.contactListCallback)
 
                         expect(self.callbackContactList).toEventually(equal(expectedContactList))
                         expect(self.callbackError).to(beNil())
+                    }
+                    
+                    context("when a contact has all blank or empty name fields") {
+                        fit("excludes it from the list") {
+                            let expectedContactList = [
+                                Contact(id: 1, firstName: "billy", lastName: "johnson", fullName: "billy johnson")
+                            ]
+                            self.prepareMockAddressBook(mockAddressBook,
+                                withContactList: [
+                                    expectedContactList.first!,
+                                    Contact(id: 2, firstName: "", lastName: "", fullName: " ")
+                                ]
+                            )
+                            
+                            contactService.retrieveAllContacts(self.contactListCallback)
+                            
+                            expect(self.callbackContactList).toEventually(equal(expectedContactList))
+                            expect(self.callbackError).to(beNil())
+                        }
                     }
                 }
                 
@@ -78,7 +102,7 @@ class ContactServiceSpec: QuickSpec {
                     
                     it("prompts the user for access") {
                         let expectedContactList = [Contact(id: 3, firstName: "mikhail", lastName: "gorbachev", fullName:  "gorby"), Contact(id: 4, firstName: "ronald", lastName: "reagan", fullName: "ronnie")]
-                        self.prepareMockAddressBook(mockAddressBook, withExpectedContactList: expectedContactList)
+                        self.prepareMockAddressBook(mockAddressBook, withContactList: expectedContactList)
                         mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookRequestAccessWithCompletion, returnValue: true)
 
                         contactService.retrieveAllContacts(self.contactListCallback)
@@ -155,7 +179,7 @@ class ContactServiceSpec: QuickSpec {
                         beforeEach() {
                             mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.AddressBookGetAuthorizationStatus, returnValue: ABAuthorizationStatus.Authorized)
                             
-                            self.prepareMockAddressBook(mockAddressBook, withExpectedContactList: addressBookContactList)
+                            self.prepareMockAddressBook(mockAddressBook, withContactList: addressBookContactList)
                         }
                         
                         it("calls back with the same contact from the address book") {
@@ -178,13 +202,13 @@ class ContactServiceSpec: QuickSpec {
         }
     }
     
-    func prepareMockAddressBook(mockAddressBook: MockAddressBookWrapper, withExpectedContactList contactList: [Contact]) {
+    func prepareMockAddressBook(mockAddressBook: MockAddressBookWrapper, withContactList contactList: [Contact]) {
         var ids = [AnyObject]()
         
         for contact in contactList {
             mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordGetRecordID, returnValue: contact.id)
-            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(contact.firstName! as AnyObject))
-            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(contact.lastName! as AnyObject))
+            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(contact.firstName as! AnyObject))
+            mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyValue, returnValue: Unmanaged.passRetained(contact.lastName as! AnyObject))
             mockAddressBook.mocker.prepareForCallTo(MockAddressBookWrapper.Method.RecordCopyCompositeName, returnValue: Unmanaged.passRetained(contact.fullName as CFStringRef))
 
             ids.append(Int(contact.id))
