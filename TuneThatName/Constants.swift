@@ -24,8 +24,8 @@ public struct Constants {
         public static let SpotifyLoginCanceledCode = 30
         public static let SpotifyLoginCanceledMessage = "Login to spotify was canceled."
         
-        public static let EchonestErrorCode = 40
-        public static let EchonestUnknownErrorMessage = "unknown error"
+        public static let EchoNestGeneralErrorCode = 40
+        public static let EchonestUnknownErrorCode = 41
         
         public static let GenericPlaybackMessage = "Unable to Play Song"
         public static let GenericSongSearchMessage = "Unable to Search for Songs"

@@ -87,9 +87,7 @@ public class SpotifySongSelectionTableController: UITableViewController, Spotify
                     self.handleSongSearchFailureForNoSongsFound()
                 }
             case .Failure(let error):
-                if Constants.Error.Domain == error.domain &&
-                    Constants.Error.EchonestErrorCode == error.code &&
-                    Constants.Error.EchonestUnknownErrorMessage == error.localizedDescription {
+                if Constants.Error.Domain == error.domain && Constants.Error.EchonestUnknownErrorCode == error.code {
                     self.handleSongSearchFailureForNoSongsFound()
                 } else {
                     self.handleSongSearchFailureWithTitle(Constants.Error.GenericSongSearchMessage, andMessage: error.localizedDescription)

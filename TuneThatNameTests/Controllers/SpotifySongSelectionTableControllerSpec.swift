@@ -120,7 +120,7 @@ class SpotifySongSelectionTableControllerSpec: QuickSpec {
                     }
                     
                     context("when the song search returns the echo nest 'unknown error'") {
-                        let error = NSError(domain: Constants.Error.Domain, code: Constants.Error.EchonestErrorCode, userInfo: [NSLocalizedDescriptionKey: "unknown error"])
+                        let error = NSError(domain: Constants.Error.Domain, code: Constants.Error.EchonestUnknownErrorCode, userInfo: [NSLocalizedDescriptionKey: "unknown error"])
                         it("displays the 'no songs found' alert") {
                             mockEchoNestService.mocker.prepareForCallTo(MockEchoNestService.Method.findSongs, returnValue: EchoNestService.SongsResult.Failure(error))
                             

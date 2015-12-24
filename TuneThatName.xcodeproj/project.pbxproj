@@ -89,6 +89,7 @@
 		44C93D601B1F1E92008FDCDB /* echonest-response-data-songs-with-discovery.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44C93D5F1B1F1E92008FDCDB /* echonest-response-data-songs-with-discovery.txt */; };
 		44D3C1A51ACF1B2800F51EB9 /* echonest-response-data-timeout-error.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44D3C1A41ACF1B2800F51EB9 /* echonest-response-data-timeout-error.txt */; };
 		44D3C1A91ACF1DDF00F51EB9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D3C1A81ACF1DDF00F51EB9 /* Constants.swift */; };
+		44DE9BFB1C2C3D6E0098F5BC /* echonest-response-data-unknown-error.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44DE9BFA1C2C3D6E0098F5BC /* echonest-response-data-unknown-error.txt */; };
 		44E9D5EC1A952D2F001E4792 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */; };
 		44E9D5F11A952D2F001E4792 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5EF1A952D2F001E4792 /* Main.storyboard */; };
 		44E9D5F31A952D2F001E4792 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E9D5F21A952D2F001E4792 /* Images.xcassets */; };
@@ -206,6 +207,7 @@
 		44C93D5F1B1F1E92008FDCDB /* echonest-response-data-songs-with-discovery.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-songs-with-discovery.txt"; sourceTree = "<group>"; };
 		44D3C1A41ACF1B2800F51EB9 /* echonest-response-data-timeout-error.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-timeout-error.txt"; sourceTree = "<group>"; };
 		44D3C1A81ACF1DDF00F51EB9 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		44DE9BFA1C2C3D6E0098F5BC /* echonest-response-data-unknown-error.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "echonest-response-data-unknown-error.txt"; sourceTree = "<group>"; };
 		44E9D5E61A952D2F001E4792 /* TuneThatName.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TuneThatName.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E9D5EA1A952D2F001E4792 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44E9D5EB1A952D2F001E4792 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -437,6 +439,7 @@
 			isa = PBXGroup;
 			children = (
 				44D3C1A41ACF1B2800F51EB9 /* echonest-response-data-timeout-error.txt */,
+				44DE9BFA1C2C3D6E0098F5BC /* echonest-response-data-unknown-error.txt */,
 				443F9EC01AA39CAE00705340 /* echonest-response-data-one-song.txt */,
 				445914741ACAB03A00E9734C /* echonest-response-data-one-song-no-foreign_id.txt */,
 				44BE53931AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt */,
@@ -698,6 +701,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44DE9BFB1C2C3D6E0098F5BC /* echonest-response-data-unknown-error.txt in Resources */,
 				44BE53941AAA31020089BFCD /* echonest-response-data-multiple-songs-with-incorrect-title.txt in Resources */,
 				444710801B7A0AD0004F79C5 /* skull.png in Resources */,
 				44AFD9B91B18822900E99FBF /* yuck.png in Resources */,

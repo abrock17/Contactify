@@ -76,7 +76,7 @@ class ContactServiceSpec: QuickSpec {
                     }
                     
                     context("when a contact has all blank or empty name fields") {
-                        fit("excludes it from the list") {
+                        it("excludes it from the list") {
                             let expectedContactList = [
                                 Contact(id: 1, firstName: "billy", lastName: "johnson", fullName: "billy johnson")
                             ]

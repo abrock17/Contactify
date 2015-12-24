@@ -200,14 +200,29 @@ class EchoNestServiceSpec: QuickSpec {
                     let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-timeout-error", withExtension: "txt")
                     let data = NSData(contentsOfURL: url!)
                     
-                    it("calls back with an error with the status message") {
+                    it("calls back with the appropriate error") {
                         MockURLProtocol.setMockResponseData(data)
                         
                         echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
                         
                         expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
-                        expect(self.callbackError?.userInfo[NSLocalizedDescriptionKey] as? String).toEventually(equal("Non-zero status code from the Echo Nest."))
-                        expect(self.callbackError?.userInfo[NSLocalizedFailureReasonErrorKey] as? String).toEventually(equal("The operation timed out"))
+                        expect(self.callbackError?.code).toEventually(equal(Constants.Error.EchoNestGeneralErrorCode))
+                        expect(self.callbackError?.userInfo[NSLocalizedDescriptionKey] as? String).toEventually(equal("The operation timed out"))
+                    }
+                }
+                
+                context("when the response data status is the dreaded echo nest 'unknown error'") {
+                    let url = NSBundle(forClass: EchoNestServiceSpec.self).URLForResource("echonest-response-data-unknown-error", withExtension: "txt")
+                    let data = NSData(contentsOfURL: url!)
+                    
+                    it("calls back with the appropriate error") {
+                        MockURLProtocol.setMockResponseData(data)
+                        
+                        echoNestService.findSongs(titleSearchTerm: self.arbitrarySongTitleSearchTerm, withSongPreferences: self.arbitrarySongPreferences, desiredNumberOfSongs: 1, callback: self.findSongsCallback)
+                        
+                        expect(self.callbackError?.domain).toEventually(equal(Constants.Error.Domain))
+                        expect(self.callbackError?.code).toEventually(equal(Constants.Error.EchonestUnknownErrorCode))
+                        expect(self.callbackError?.userInfo[NSLocalizedDescriptionKey] as? String).toEventually(equal("Unknown error"))
                     }
                 }
 

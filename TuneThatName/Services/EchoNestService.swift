@@ -24,8 +24,6 @@ public class EchoNestService {
     let songSearchEndpoint = "http://developer.echonest.com/api/v4/song/search"
     let songSearchBuckets = ["tracks", "song_discovery", "artist_discovery"]
     
-    let unexpectedResponseMessage = "Unexpected response from the Echo Nest."
-    
     let alamoFireManager: Manager!
     
     public init(alamoFireManager: Manager = EchoNestService.defaultAlamoFireManager()) {
@@ -53,17 +51,26 @@ public class EchoNestService {
                 let statusJSON = json["response"]["status"]
                 if let code = statusJSON["code"].int {
                     if code == 0 {
-                        callback(.Success(self.getValidSongsFromJSON(json, titleSearchTerm: titleSearchTerm, songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)))
+                        callback(.Success(self.getValidSongsFromJSON(json, titleSearchTerm: titleSearchTerm,
+                            songPreferences: songPreferences, desiredNumberOfSongs: desiredNumberOfSongs)))
                     } else {
                         print("Error searching for \"\(titleSearchTerm)\" -- response body:\n\(statusJSON)")
-                        callback(.Failure(self.errorForUnexpectedStatusJSON(statusJSON)))
+                        callback(.Failure(NSError(domain: Constants.Error.Domain,
+                            code: code == -1 ? Constants.Error.EchonestUnknownErrorCode :
+                                Constants.Error.EchoNestGeneralErrorCode,
+                            userInfo: [NSLocalizedDescriptionKey: self.getStatusMessageFromJSON(statusJSON)])))
                     }
                 } else {
                     print("json : \(json.rawString())")
-                    callback(.Failure(self.errorForMessage(self.unexpectedResponseMessage, andFailureReason: "No status code in the response.")))
+                    callback(.Failure(NSError(domain: Constants.Error.Domain, code: Constants.Error.EchoNestGeneralErrorCode,
+                        userInfo: [NSLocalizedDescriptionKey: "No status code in the response."])))
                 }
             }
         }
+    }
+    
+    func getStatusMessageFromJSON(statusJSON: JSON) -> String {
+        return statusJSON["message"].string ?? "[no message]"
     }
     
     func getValidSongsFromJSON(json: JSON, titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int) -> [Song] {
@@ -151,21 +158,6 @@ public class EchoNestService {
         }
         
         return uri
-    }
-    
-    func errorForUnexpectedStatusJSON(statusJSON: JSON) -> NSError {
-        var statusMessage: String!
-        let message = statusJSON["message"].string
-        if let message = message {
-            statusMessage = message
-        } else {
-            statusMessage = "[no message]"
-        }
-        return errorForMessage("Non-zero status code from the Echo Nest.", andFailureReason: statusMessage)
-    }
-    
-    func errorForMessage(message: String, andFailureReason reason: String) -> NSError {
-        return NSError(domain: Constants.Error.Domain, code: Constants.Error.EchonestErrorCode, userInfo: [NSLocalizedDescriptionKey: message, NSLocalizedFailureReasonErrorKey: reason])
     }
     
     func getSongSearchParametersForTitleSearchTerm(titleSearchTerm: String, songPreferences: SongPreferences, desiredNumberOfSongs: Int) -> [String : AnyObject] {
