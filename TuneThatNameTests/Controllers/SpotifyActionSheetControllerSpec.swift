@@ -7,7 +7,6 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
     override func spec() {
         var spotifyActionSheetController: SpotifyActionSheetController!
         var presentingView: UIView!
-        var mockApplication: MockUIApplication!
         var mockSpotifyAuthService: MockSpotifyAuthService!
         var mockSpotifyUserService: MockSpotifyUserService!
         
@@ -16,7 +15,6 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
         describe("SpotifyActionSheetController") {
             beforeEach() {
                 presentingView = UIView(frame: CGRect(x: 1, y: 1, width: 1, height: 1))
-                mockApplication = MockUIApplication()
                 mockSpotifyAuthService = MockSpotifyAuthService()
                 mockSpotifyUserService = MockSpotifyUserService()
             }
@@ -30,8 +28,8 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
                     it("displays the username in the message") {
                         mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.getCachedCurrentUser, returnValue: spotifyUser)
                         spotifyActionSheetController = SpotifyActionSheetController(
-                            presentingView: presentingView, application: mockApplication, spotifyAuthService:
-                            mockSpotifyAuthService, spotifyUserService: mockSpotifyUserService)
+                            presentingView: presentingView, spotifyAuthService: mockSpotifyAuthService,
+                            spotifyUserService: mockSpotifyUserService)
                         
                         expect(spotifyActionSheetController.message).to(equal("Logged in as \"\(spotifyUser.username)\""))
                     }
@@ -41,8 +39,8 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
                     it("displays no message") {
                         mockSpotifyUserService.mocker.prepareForCallTo(MockSpotifyUserService.Method.getCachedCurrentUser, returnValue: nil)
                         spotifyActionSheetController = SpotifyActionSheetController(
-                            presentingView: presentingView, application: mockApplication, spotifyAuthService:
-                            mockSpotifyAuthService, spotifyUserService: mockSpotifyUserService)
+                            presentingView: presentingView, spotifyAuthService: mockSpotifyAuthService,
+                            spotifyUserService: mockSpotifyUserService)
                         
                         expect(spotifyActionSheetController.message).to(beNil())
                     }
@@ -54,13 +52,12 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
                     it("has the expected actions") {
                         mockSpotifyAuthService.mocker.prepareForCallTo(MockSpotifyAuthService.Method.getHasSession, returnValue: true)
                         spotifyActionSheetController = SpotifyActionSheetController(
-                            presentingView: presentingView, application: mockApplication, spotifyAuthService:
-                            mockSpotifyAuthService, spotifyUserService: mockSpotifyUserService)
+                            presentingView: presentingView, spotifyAuthService: mockSpotifyAuthService,
+                            spotifyUserService: mockSpotifyUserService)
 
-                        expect(spotifyActionSheetController.actions.count).to(equal(3))
+                        expect(spotifyActionSheetController.actions.count).to(equal(2))
                         expect(spotifyActionSheetController.actions[0].title).to(equal("Log in as a different user"))
-                        expect(spotifyActionSheetController.actions[1].title).to(equal("spotify.com"))
-                        expect(spotifyActionSheetController.actions[2].title).to(equal("Cancel"))
+                        expect(spotifyActionSheetController.actions[1].title).to(equal("Cancel"))
                     }
                 }
                 
@@ -68,13 +65,12 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
                     it("has the expected actions") {
                         mockSpotifyAuthService.mocker.prepareForCallTo(MockSpotifyAuthService.Method.getHasSession, returnValue: false)
                         spotifyActionSheetController = SpotifyActionSheetController(
-                            presentingView: presentingView, application: mockApplication, spotifyAuthService:
-                            mockSpotifyAuthService, spotifyUserService: mockSpotifyUserService)
+                            presentingView: presentingView, spotifyAuthService: mockSpotifyAuthService,
+                            spotifyUserService: mockSpotifyUserService)
 
-                        expect(spotifyActionSheetController.actions.count).to(equal(3))
+                        expect(spotifyActionSheetController.actions.count).to(equal(2))
                             expect(spotifyActionSheetController.actions[0].title).to(equal("Log in to Spotify"))
-                        expect(spotifyActionSheetController.actions[1].title).to(equal("spotify.com"))
-                        expect(spotifyActionSheetController.actions[2].title).to(equal("Cancel"))
+                        expect(spotifyActionSheetController.actions[1].title).to(equal("Cancel"))
                     }
                 }
             }
@@ -82,8 +78,8 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
             describe("popoverPresentationController") {
                 beforeEach() {
                     spotifyActionSheetController = SpotifyActionSheetController(
-                        presentingView: presentingView, application: mockApplication, spotifyAuthService:
-                        mockSpotifyAuthService, spotifyUserService: mockSpotifyUserService)
+                        presentingView: presentingView, spotifyAuthService: mockSpotifyAuthService,
+                        spotifyUserService: mockSpotifyUserService)
                 }
                 
                 it("has the presenting view as its source view") {
@@ -101,24 +97,11 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
                 }
             }
             
-            describe("go to spotify") {
-                it("opens the spotify URL") {
-                    spotifyActionSheetController = SpotifyActionSheetController(
-                        presentingView: presentingView, application: mockApplication, spotifyAuthService:
-                        mockSpotifyAuthService, spotifyUserService: mockSpotifyUserService)
-
-                    spotifyActionSheetController.goToSpotify(spotifyActionSheetController.actions[0])
-                    
-                    expect(mockApplication.mocker.getNthCallTo(MockUIApplication.Method.openURL, n: 0)?
-                        .first as? NSURL).to(equal(NSURL(string: "https://www.spotify.com")!))
-                }
-            }
-            
             describe("login") {
                 beforeEach() {
                     spotifyActionSheetController = SpotifyActionSheetController(
-                        presentingView: presentingView, application: mockApplication, spotifyAuthService:
-                        mockSpotifyAuthService, spotifyUserService: mockSpotifyUserService)
+                        presentingView: presentingView, spotifyAuthService: mockSpotifyAuthService,
+                        spotifyUserService: mockSpotifyUserService)
                     
                     spotifyActionSheetController.login(spotifyActionSheetController.actions[0])
                 }
@@ -131,8 +114,8 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
             describe("re-login") {
                 beforeEach() {
                     spotifyActionSheetController = SpotifyActionSheetController(
-                        presentingView: presentingView, application: mockApplication, spotifyAuthService:
-                        mockSpotifyAuthService, spotifyUserService: mockSpotifyUserService)
+                        presentingView: presentingView, spotifyAuthService: mockSpotifyAuthService,
+                        spotifyUserService: mockSpotifyUserService)
                     
                     spotifyActionSheetController.reLogin(spotifyActionSheetController.actions[0])
                 }
@@ -146,19 +129,5 @@ class SpotifyActionSheetControllerSpec: QuickSpec {
                 }
             }
         }
-    }
-}
-
-class MockUIApplication: UIApplicationProtocol {
-    
-    struct Method {
-        static let openURL = "openURL"
-    }
-    
-    let mocker = Mocker()
-    
-    func openURL(url: NSURL) -> Bool {
-        mocker.recordCall(Method.openURL, parameters: url)
-        return true
     }
 }

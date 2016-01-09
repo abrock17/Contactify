@@ -10,15 +10,13 @@ import UIKit
 
 public class SpotifyActionSheetController: UIAlertController {
     
-    var application: UIApplicationProtocol!
     var spotifyAuthService: SpotifyAuthService!
     var spotifyUserService: SpotifyUserService!
     
-    public convenience init(presentingView: UIView, application: UIApplicationProtocol,
-        spotifyAuthService: SpotifyAuthService, spotifyUserService: SpotifyUserService = SpotifyUserService()) {
+    public convenience init(presentingView: UIView, spotifyAuthService: SpotifyAuthService,
+        spotifyUserService: SpotifyUserService = SpotifyUserService()) {
         self.init()
         self.init(title: nil, message: nil, preferredStyle: .ActionSheet)
-        self.application = application
         self.spotifyAuthService = spotifyAuthService
         self.spotifyUserService = spotifyUserService
         popoverPresentationController?.sourceView = presentingView
@@ -47,12 +45,7 @@ public class SpotifyActionSheetController: UIAlertController {
         } else {
             addAction(UIAlertAction(title: "Log in to Spotify", style: .Default, handler: login))
         }
-        addAction(UIAlertAction(title: "spotify.com", style: .Default, handler: goToSpotify))
         addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
-    }
-    
-    func goToSpotify(alertAction: UIAlertAction) {
-        application.openURL(NSURL(string: "https://www.spotify.com")!)
     }
     
     func login(alertAction: UIAlertAction) {

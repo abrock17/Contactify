@@ -1,11 +1,5 @@
 import UIKit
 
-public protocol UIApplicationProtocol {
-    func openURL(url: NSURL) -> Bool
-}
-
-extension UIApplication: UIApplicationProtocol {}
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

@@ -399,7 +399,7 @@ public class SpotifyPlaylistTableController: UITableViewController, SpotifyPlayb
     
     @IBAction public func spotifyActionsPressed(sender: AnyObject) {
         let spotifyActionSheet = SpotifyActionSheetController(presentingView: (sender as! UIView),
-            application: UIApplication.sharedApplication(), spotifyAuthService: SpotifyAuthService())
+            spotifyAuthService: SpotifyAuthService())
         
         presentViewController(spotifyActionSheet, animated: true, completion: nil)
     }
