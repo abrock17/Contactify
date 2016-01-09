@@ -53,18 +53,33 @@ public class ContactService {
         let records = addressBook.AddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for recordRef: ABRecordRef in records {
             let recordID = addressBook.RecordGetRecordID(recordRef)
-            let firstName = addressBook.RecordCopyValue(recordRef, property: kABPersonFirstNameProperty)?.takeRetainedValue() as? String
-            let lastName = addressBook.RecordCopyValue(recordRef, property: kABPersonLastNameProperty)?.takeRetainedValue() as? String
-            let fullName = addressBook.RecordCopyCompositeName(recordRef)?.takeRetainedValue() as? String
-            if (firstName != nil && !firstName!.trim().isEmpty) ||
-                (lastName != nil && !lastName!.trim().isEmpty) ||
-                (fullName != nil && !fullName!.trim().isEmpty)
-            {
-                contactList.append(Contact(id: recordID, firstName: firstName, lastName: lastName, fullName: fullName))
+            let firstName = addressBook.RecordCopyValue(recordRef, property: kABPersonFirstNameProperty)?
+                .takeRetainedValue() as? String
+            let lastName = addressBook.RecordCopyValue(recordRef, property: kABPersonLastNameProperty)?
+                .takeRetainedValue() as? String
+            let fullName = addressBook.RecordCopyCompositeName(recordRef)?
+                .takeRetainedValue() as? String
+            let contact = Contact(id: recordID, firstName: firstName, lastName: lastName, fullName: fullName)
+            if includeContact(contact, inList: contactList) {
+                contactList.append(contact)
             }
         }
         
         callback(.Success(contactList))
+    }
+    
+    func includeContact(contact: Contact, inList contactList: [Contact]) -> Bool {
+        var include = false
+        if (contact.firstName != nil && !contact.firstName!.trim().isEmpty) ||
+            (contact.lastName != nil && !contact.lastName!.trim().isEmpty) ||
+            (contact.fullName != nil && !contact.fullName!.trim().isEmpty)
+        {
+            let matchingContacts = contactList.filter(
+                { $0.fullName == contact.fullName && $0.searchString == contact.searchString })
+            if matchingContacts.isEmpty { include = true }
+        }
+        
+        return include
     }
     
     func noAccessError() -> NSError {

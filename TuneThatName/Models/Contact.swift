@@ -7,7 +7,7 @@ public class Contact: NSObject, NSCoding {
     public let lastName: String?
     public let fullName: String!
     public override var description: String {
-        return "Contact:[id:\(id), firstName:\(firstName), lastName:\(lastName)]"
+        return "Contact:[id:\(id), fullName:\(fullName), searchString:\(searchString)]"
     }
     public var searchString: String {
         let empty = ""
@@ -31,7 +31,7 @@ public class Contact: NSObject, NSCoding {
     }
     
     public override var hashValue: Int {
-        return "\(id),\(firstName),\(lastName)".hashValue
+        return "\(id),\(firstName),\(lastName),\(fullName)".hashValue
     }
     
     public init(id: Int32, firstName: String?, lastName: String?, fullName: String! = nil) {
@@ -45,13 +45,15 @@ public class Contact: NSObject, NSCoding {
         let id = decoder.decodeInt32ForKey("id")
         let firstName = decoder.decodeObjectForKey("firstName") as? String?
         let lastName = decoder.decodeObjectForKey("lastName") as? String?
-        self.init(id: id, firstName: firstName!, lastName: lastName!, fullName: nil)
+        let fullName = decoder.decodeObjectForKey("fullName") as? String
+        self.init(id: id, firstName: firstName!, lastName: lastName!, fullName: fullName)
     }
     
     public func encodeWithCoder(coder: NSCoder) {
         coder.encodeInt32(self.id, forKey: "id")
         coder.encodeObject(self.firstName, forKey: "firstName")
         coder.encodeObject(self.lastName, forKey: "lastName")
+        coder.encodeObject(self.fullName, forKey: "fullName")
     }
     
     override public func isEqual(object: AnyObject?) -> Bool {
@@ -67,5 +69,5 @@ public class Contact: NSObject, NSCoding {
 }
 
 public func ==(x: Contact, y: Contact) -> Bool {
-    return x.id == y.id && x.firstName == y.firstName && x.lastName == y.lastName
+    return x.id == y.id && x.firstName == y.firstName && x.lastName == y.lastName && x.fullName == y.fullName
 }

@@ -93,6 +93,27 @@ class ContactServiceSpec: QuickSpec {
                             expect(self.callbackError).to(beNil())
                         }
                     }
+                    
+                    context("and address book has duplicate names") {
+                        it("excludes the duplicates") {
+                            let contact = Contact(id: 1, firstName: "Ned", lastName: "Nederlander")
+                            let contactWithSingleName = Contact(id: 2, firstName: "Madonna", lastName: "")
+                            let expectedContactList = [contact, contactWithSingleName]
+                            self.prepareMockAddressBook(mockAddressBook,
+                                withContactList: [
+                                    contact,
+                                    contactWithSingleName,
+                                    Contact(id: 3, firstName: contact.firstName, lastName: contact.lastName),
+                                    Contact(id: 4, firstName: "", lastName: contactWithSingleName.lastName),
+                                ]
+                            )
+                            
+                            contactService.retrieveAllContacts(self.contactListCallback)
+                            
+                            expect(self.callbackContactList).toEventually(equal(expectedContactList))
+                            expect(self.callbackError).to(beNil())
+                        }
+                    }
                 }
                 
                 context("when the application's access to the address book has not been determined") {

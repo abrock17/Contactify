@@ -39,6 +39,13 @@ class ContactSpec: QuickSpec {
                     Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1)).toNot(equal(
                         Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName2)))
             }
+            
+            it("is not when the full names do not match") {
+                expect(
+                    Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1, fullName: "whatshisface"))
+                    .toNot(equal(
+                        Contact(id: self.id1, firstName: self.firstName1, lastName: self.lastName1, fullName: "thatoneguy")))
+            }
         }
         
         describe("hash value") {
